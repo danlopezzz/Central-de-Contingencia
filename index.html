@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Central de Contingência — Tráfego</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  :root{
+    --bg:#0d0d0d; --bg2:#141414; --bg3:#1a1a1a; --card:#1e1e1e; --card-hover:#222;
+    --border:#2a2a2a; --border2:#333; --accent:#00e5a0; --accent-dim:rgba(0,229,160,.12);
+    --accent-border:rgba(0,229,160,.35); --blue:#4dabf7; --blue-dim:rgba(77,171,247,.12);
+    --purple:#b197fc; --purple-dim:rgba(177,151,252,.12); --yellow:#ffd43b; --yellow-dim:rgba(255,212,59,.12);
+    --orange:#ff922b; --orange-dim:rgba(255,146,43,.12); --red:#ff6b6b; --red-dim:rgba(255,107,107,.12);
+    --text:#f0f0f0; --text2:#a0a0a0; --text3:#606060; --sidebar-w:238px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;display:flex}
+
+  /* SIDEBAR */
+  .sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;overflow-y:auto}
+  .logo{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
+  .logo h1{font-size:15px;font-weight:800;letter-spacing:-.3px}
+  .logo span{display:block;font-size:11px;color:var(--text3);font-weight:500;margin-top:2px;text-transform:uppercase;letter-spacing:.6px}
+  .nav{padding:12px 10px;flex:1}
+  .nav-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-weight:700;padding:14px 10px 6px}
+  .nav a{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;color:var(--text2);text-decoration:none;font-size:13.5px;font-weight:500;cursor:pointer;transition:.13s;margin-bottom:2px}
+  .nav a:hover{background:var(--bg3);color:var(--text)}
+  .nav a.on{background:var(--accent-dim);color:var(--accent);font-weight:600}
+  .nav a .ic{width:17px;text-align:center;font-size:14px}
+  .side-foot{padding:14px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
+
+  /* MAIN */
+  .main{margin-left:var(--sidebar-w);flex:1;padding:30px 34px 70px;max-width:1500px}
+  .page{display:none}
+  .page.on{display:block;animation:fade .22s ease}
+  .page:target{display:block}
+  body:has(.page:target) .page.on{display:none}
+  body:has(.page:target) .page:target{display:block;animation:fade .22s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .ph{margin-bottom:24px}
+  .ph h2{font-size:23px;font-weight:800;letter-spacing:-.5px;text-wrap:balance}
+  .ph p{color:var(--text2);font-size:13.5px;margin-top:5px;max-width:820px}
+
+  /* CARDS */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:20px;margin-bottom:16px}
+  .card h3{font-size:14px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .card .sub{font-size:12.5px;color:var(--text3);margin-bottom:16px}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(178px,1fr))}
+
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:17px 18px}
+  .kpi .lb{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;font-weight:700}
+  .kpi .vl{font-size:26px;font-weight:800;margin-top:7px;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+  .kpi .dt{font-size:11.5px;color:var(--text2);margin-top:4px}
+
+  /* FORM */
+  label{display:block;font-size:11.5px;color:var(--text2);font-weight:600;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+  input,select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;color:var(--text);font-family:inherit;font-size:13.5px;outline:none;transition:.13s}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent-border);background:var(--bg2)}
+  textarea{resize:vertical;min-height:96px;line-height:1.55}
+  .field{margin-bottom:13px}
+  .row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  button{background:var(--accent);color:#06231a;border:none;border-radius:8px;padding:10px 17px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.13s}
+  button:hover{filter:brightness(1.1)}
+  button.gh{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+  button.gh:hover{border-color:var(--accent-border);color:var(--accent);filter:none}
+  button.dg{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,107,107,.3)}
+  button.sm{padding:6px 11px;font-size:12px}
+
+  /* TABLE */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;padding:9px 10px;font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;font-weight:700;border-bottom:1px solid var(--border2);white-space:nowrap}
+  td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--bg3)}
+  .tw{overflow-x:auto}
+
+  /* BADGES */
+  .bg{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+  .b-gr{background:var(--accent-dim);color:var(--accent)}
+  .b-bl{background:var(--blue-dim);color:var(--blue)}
+  .b-pu{background:var(--purple-dim);color:var(--purple)}
+  .b-ye{background:var(--yellow-dim);color:var(--yellow)}
+  .b-or{background:var(--orange-dim);color:var(--orange)}
+  .b-rd{background:var(--red-dim);color:var(--red)}
+  .b-gy{background:#252525;color:var(--text3)}
+
+  .bar{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:6px}
+  .bar>i{display:block;height:100%;border-radius:4px;transition:.5s}
+
+  .acao{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--border2);border-radius:11px;padding:13px 16px;margin-bottom:9px}
+  .acao.critico{border-left-color:var(--red)} .acao.bloqueio,.acao.risco{border-left-color:var(--orange)}
+  .acao.escala{border-left-color:var(--accent)} .acao.pipeline{border-left-color:var(--blue)}
+  .acao.pendencia{border-left-color:var(--yellow)} .acao.ok{border-left-color:var(--border2);opacity:.62}
+  .acao-h{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:6px}
+  .acao-h b{font-size:13.5px}
+  .acao-t{font-size:14.5px;font-weight:700;letter-spacing:-.2px}
+  .acao-d{font-size:12.5px;color:var(--text2);margin-top:3px;line-height:1.55}
+  .secao{font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;font-weight:800;color:var(--text3);margin:0 0 11px 2px}
+  .bmcard{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:15px 16px;border-left:3px solid var(--border2)}
+  .bmcard.cofre{border-left-color:var(--purple)} .bmcard.anun{border-left-color:var(--blue)}
+  .bmcard-h{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .bmcard-h b{font-size:14px;letter-spacing:-.2px}
+  .idin{width:100%;margin-top:9px;padding:5px 8px;font-size:11px;border-radius:6px;background:var(--bg3);border:1px solid var(--border2);
+        color:var(--text2);font-family:ui-monospace,Menlo,monospace}
+  .idin::placeholder{color:var(--text3)}
+  .bmstats{display:flex;gap:14px;flex-wrap:wrap;margin-top:11px;font-size:12px;color:var(--text3)}
+  .bmstats b{color:var(--text);font-variant-numeric:tabular-nums}
+  .perigo{margin-top:11px;padding:8px 11px;border-radius:8px;background:var(--red-dim);border:1px solid rgba(255,107,107,.3);
+          color:#ffb3b3;font-size:12px;font-weight:600}
+  .cli{background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:14px;overflow:hidden}
+  .cli-h{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);background:var(--bg3);flex-wrap:wrap}
+  .cli-h b{font-size:14.5px;letter-spacing:-.2px}
+  .ini{width:33px;height:33px;border-radius:9px;background:var(--accent-dim);color:var(--accent);
+       display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0}
+  .cli-stats{margin-left:auto;display:flex;gap:13px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--text3)}
+  .cli-stats b{color:var(--text);font-variant-numeric:tabular-nums}
+  .aviso{padding:9px 16px;background:var(--yellow-dim);color:#ffe27a;font-size:12px;border-bottom:1px solid var(--border)}
+  .quick{padding:11px 16px;background:var(--bg2)}
+  .barra{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .bm{background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:14px;overflow:hidden}
+  .bm-h{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid var(--border);background:var(--bg3);flex-wrap:wrap}
+  .bm-h b{font-size:14px;letter-spacing:-.2px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--text3);letter-spacing:-.2px}
+  .ca{display:flex;align-items:center;gap:9px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:nowrap;overflow-x:auto}
+  .ca>*{flex-shrink:0}
+  .ca:last-child{border-bottom:none}
+  .ca:hover{background:var(--bg3)}
+  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .ca-n{flex:1 1 150px;min-width:140px}
+  .ca-n b{font-size:13.5px}
+  .ca-acts{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap}
+  .num{font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--text2);min-width:62px}
+  .queda{padding:13px 16px;background:var(--red-dim);border-top:1px solid rgba(255,107,107,.3)}
+  button.dgr{background:var(--red-dim);color:#ffb3b3;border:1px solid rgba(255,107,107,.35)}
+  button.dgr:hover{background:rgba(255,107,107,.22);filter:none}
+  .mini-sel{padding:4px 6px;font-size:11.5px;border-radius:6px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);max-width:124px}
+  .mini-sel.alerta{border-color:rgba(255,107,107,.5);color:#ffb3b3}
+  .mini-in{padding:4px 6px;font-size:11.5px;border-radius:6px;width:78px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-variant-numeric:tabular-nums}
+  .empty{text-align:center;padding:34px 16px;color:var(--text3);font-size:13px}
+  .alert{border-radius:10px;padding:13px 15px;font-size:13px;margin-bottom:13px;border:1px solid;line-height:1.55}
+  .a-rd{background:var(--red-dim);border-color:rgba(255,107,107,.3);color:#ffb3b3}
+  .a-ye{background:var(--yellow-dim);border-color:rgba(255,212,59,.3);color:#ffe27a}
+  .a-gr{background:var(--accent-dim);border-color:var(--accent-border);color:#7fffd4}
+  .a-bl{background:var(--blue-dim);border-color:rgba(77,171,247,.3);color:#a8d6ff}
+
+  .hl{border-radius:4px;padding:1px 3px;font-weight:700}
+  .h-cr{background:rgba(255,107,107,.28);color:#ffc9c9}
+  .h-al{background:rgba(255,146,43,.25);color:#ffd3a8}
+  .h-md{background:rgba(255,212,59,.2);color:#ffe27a}
+  .h-bx{background:rgba(77,171,247,.16);color:#a8d6ff}
+
+  .step{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--border)}
+  .step:last-child{border-bottom:none}
+  .step .n{width:26px;height:26px;border-radius:7px;background:var(--bg3);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .step.done .n{background:var(--accent-dim);color:var(--accent)}
+  .step .tx{flex:1;font-size:13.5px}
+  .step .tx b{display:block;margin-bottom:2px}
+  .step .tx span{color:var(--text2);font-size:12.5px}
+  .step.done .tx b{text-decoration:line-through;color:var(--text3)}
+  .chk{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;margin-top:4px}
+
+  .pill{display:inline-block;padding:5px 11px;border-radius:7px;background:var(--bg3);border:1px solid var(--border2);font-size:12px;color:var(--text2);cursor:pointer;margin:0 6px 6px 0;font-weight:600}
+  .pill.on{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent)}
+  .mini{font-size:12px;color:var(--text3);margin-top:7px;line-height:1.6}
+  .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+  .kv:last-child{border-bottom:none}
+  .kv b{font-variant-numeric:tabular-nums}
+  .kv span{color:var(--text2)}.kv b{font-weight:700}
+
+  /* LOGIN */
+  #login-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
+  #login-screen.ativo{display:flex}
+  .lbox{width:100%;max-width:370px;background:var(--card);border:1px solid var(--border);border-radius:15px;padding:32px}
+  .lbox h1{font-size:19px;font-weight:800;margin-bottom:4px}
+  .lbox p{font-size:13px;color:var(--text3);margin-bottom:22px}
+  .lerr{color:var(--red);font-size:12.5px;margin-top:11px;min-height:18px}
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media(max-width:820px){
+    body{flex-direction:column;height:auto;min-height:100%}
+    .sidebar{position:static;width:100%;min-height:0;flex:0 0 auto;overflow:visible;border-right:none;border-bottom:1px solid var(--border);position:sticky;top:0}
+    .main{margin-left:0;padding:20px 16px 60px;flex:1 1 auto;min-width:0}
+    .logo{padding:14px 16px 12px}
+    .nav{display:flex;gap:6px;overflow-x:auto;padding:9px 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .nav::-webkit-scrollbar{display:none}
+    .nav-label{display:none}
+    .nav a{white-space:nowrap;margin-bottom:0;flex:0 0 auto;padding:8px 13px}
+    .side-foot{display:none}
+    .ph h2{font-size:20px}
+    .row{grid-template-columns:1fr 1fr}
+    .ca{flex-wrap:wrap;overflow-x:visible}
+    .ca-acts{margin-left:0}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div class="lbox">
+    <h1>Central de Contingência</h1>
+    <p>Operação de tráfego — Meta Ads</p>
+    <div class="field"><label>Usuário</label><input type="text" id="login-user" placeholder="usuário" data-enter="1"></div>
+    <div class="field"><label>Senha</label><input type="password" id="login-pass" placeholder="senha" data-enter="1"></div>
+    <button data-act="entrar" style="width:100%;margin-top:6px">Entrar</button>
+    <div class="lerr" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="logo"><h1>Central de Contingência</h1><span>Meta Ads · Operação</span></div>
+  <nav class="nav">
+    <div class="nav-label">Comando</div>
+    <a class="on" href="#pg-hoje" data-go="hoje"><i class="ic">▸</i> Hoje</a>
+    <a href="#pg-painel" data-go="painel"><i class="ic">◉</i> Painel de Escala</a>
+    <a href="#pg-diagnostico" data-go="diagnostico"><i class="ic">⌬</i> Diagnóstico do Esqueleto</a>
+    <div class="nav-label">Estrutura</div>
+    <a href="#pg-malha" data-go="malha"><i class="ic">▦</i> Malha de Estruturas</a>
+    <a href="#pg-saude" data-go="saude"><i class="ic">♥</i> Health Score</a>
+    <a href="#pg-incidente" data-go="incidente"><i class="ic">⚡</i> Runbook de Incidente</a>
+    <div class="nav-label">Criativo</div>
+    <a href="#pg-linter" data-go="linter"><i class="ic">⚠</i> Validar Criativo</a>
+    <a href="#pg-biblioteca" data-go="biblioteca"><i class="ic">▤</i> Biblioteca</a>
+    <div class="nav-label">Resultado</div>
+    <a href="#pg-funil" data-go="funil"><i class="ic">⌁</i> Funil &amp; Metas</a>
+  </nav>
+  <div class="side-foot">v10 · dados locais no navegador</div>
+</aside>
+
+<main class="main">
+<div id="js-off" style="background:rgba(255,146,43,.12);border:1px solid rgba(255,146,43,.3);color:#ffd3a8;border-radius:10px;padding:13px 15px;font-size:13px;margin-bottom:16px;line-height:1.55">
+  <b>Modo estático.</b> O JavaScript não está executando neste visualizador — a navegação entre abas funciona normalmente, mas as calculadoras, o Raio-X e os cadastros ficam inativos. Se você está vendo esta faixa, me avise: é a informação que eu preciso pra corrigir.
+</div>
+
+<!-- ══════════ HOJE ══════════ -->
+<section class="page on" id="pg-hoje">
+  <div class="ph"><h2>Hoje</h2><p>O que fazer agora, em ordem. Nada de interpretar painel.</p></div>
+  <div id="hoje-topo">
+    <div class="grid g4" style="margin-bottom:16px">
+      <div class="kpi"><div class="lb">Rodando agora</div><div class="vl">R$ 0</div><div class="dt">0% da meta</div></div>
+      <div class="kpi"><div class="lb">Se aplicar hoje</div><div class="vl" style="color:var(--accent)">R$ 600</div><div class="dt">10 contas podem subir</div></div>
+      <div class="kpi"><div class="lb">Ganho do dia</div><div class="vl" style="color:var(--accent)">+R$ 600</div><div class="dt">respeitando a rampa</div></div>
+      <div class="kpi"><div class="lb">Críticos</div><div class="vl" style="color:var(--text3)">0</div><div class="dt">resolver antes de escalar</div></div>
+    </div>
+  </div>
+  <div id="hoje-lista">
+    <div class="acao escala"><div class="acao-h"><span class="bg b-gr">Escalar</span><b>10 contas em aquecimento</b></div>
+      <div class="acao-t">Subir cada uma de R$ 0 para R$ 60/dia</div>
+      <div class="acao-d">Toda a malha tem poucos dias. Esta é a primeira subida da rampa — a partir daqui, +30% por dia enquanto fechar sem rejeição.</div></div>
+    <div class="acao critico"><div class="acao-h"><span class="bg b-rd">Crítico</span><b>BM Anunciante — Rafael Vieira</b></div>
+      <div class="acao-t">Abrir uma BM anunciante por cliente</div>
+      <div class="acao-d">As 10 contas dos 4 clientes estão na mesma BM. Se ela cair, a operação inteira para junto.</div></div>
+  </div>
+</section>
+
+<!-- ══════════ PAINEL ══════════ -->
+<section class="page" id="pg-painel">
+  <div class="ph"><h2>Painel de Escala</h2>
+  <p>A pergunta que este painel responde todo dia: <b>quanto da meta está realmente rodando agora, e o que está travando o resto.</b></p></div>
+
+  <div id="painel-alertas"></div>
+
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="kpi"><div class="lb">Meta diária</div><div class="vl" id="k-meta">R$ 2.000</div><div class="dt">objetivo de investimento/dia</div></div>
+    <div class="kpi"><div class="lb">Rodando hoje</div><div class="vl" style="color:var(--accent)" id="k-cap">R$ 0</div><div class="dt" id="k-cap-dt">soma do budget das contas em produção</div></div>
+    <div class="kpi"><div class="lb">% da meta coberta</div><div class="vl" id="k-cob">0%</div><div class="dt" id="k-cob-dt">capacidade ÷ meta</div></div>
+    <div class="kpi"><div class="lb">Lacuna</div><div class="vl" style="color:var(--red)" id="k-gap">R$ 2.000</div><div class="dt">o que falta subir por dia</div></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Pipeline de estruturas</h3>
+      <div class="sub">Distribuição do inventário por estágio. Produção sem aquecimento atrás = escala com prazo de validade.</div>
+      <div id="pipeline"></div>
+    </div>
+    <div class="card">
+      <h3>Calculadora de malha</h3>
+      <div class="sub">Quantas contas você precisa manter viva pra sustentar a meta, considerando sua taxa de queima.</div>
+      <div class="row">
+        <div class="field"><label>Meta R$/dia</label><input type="number" id="c-meta" data-live="calcMalha" value="2000" ></div>
+        <div class="field"><label>R$/dia por CA madura</label><input type="number" id="c-teto" data-live="calcMalha" value="450" ></div>
+        <div class="field"><label>Queima semanal %</label><input type="number" id="c-queima" data-live="calcMalha" value="35" ></div>
+        <div class="field"><label>Aquecimento (dias)</label><input type="number" id="c-lead" data-live="calcMalha" value="14" ></div>
+      </div>
+      <div id="calc-out"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Dados do sistema</h3>
+    <div class="sub" id="modo-sub">—</div>
+    <button class="gh" data-act="carregarExemplo">Recarregar dados de exemplo</button>
+    <button class="gh" data-act="limparTudo">Limpar tudo e cadastrar a operação real</button>
+    <button class="gh" data-act="exportar">Gerar backup</button>
+    <div class="field" style="margin-top:13px">
+      <label>Backup (copie pra guardar, ou cole um backup e importe)</label>
+      <textarea id="bkp" placeholder="O backup aparece aqui quando você clicar em Gerar backup." style="min-height:70px;font-size:11px;font-family:ui-monospace,monospace"></textarea>
+    </div>
+    <button class="gh" data-act="importar">Importar backup colado</button>
+    <div class="mini">Dados salvos só neste navegador. Gere backup antes de trocar de máquina.</div>
+  </div>
+
+  <div class="card">
+    <h3>Plano de rampa até a meta</h3>
+    <div class="sub">Sua malha inteira nasceu esta semana. Isto é o máximo que ela sustenta por dia, sem reiniciar rampa.</div>
+    <div class="tw"><table><thead><tr><th>Dia</th><th>Por conta</th><th>Total 10 contas</th><th>% da meta</th><th>Regra</th></tr></thead>
+    <tbody id="plano-body"></tbody></table></div>
+    <div id="plano-nota"></div>
+  </div>
+
+  <div class="card">
+    <h3>Curva de aquecimento</h3>
+    <div class="sub">Conta nova não sai de zero pra meta. Esta é a rampa que respeita a janela de revisão da Meta — só avança se o dia anterior fechou sem rejeição.</div>
+    <div class="row" style="max-width:520px">
+      <div class="field"><label>Início R$/dia</label><input type="number" id="a-ini" data-live="rampa" value="60" ></div>
+      <div class="field"><label>Incremento %/dia</label><input type="number" id="a-inc" data-live="rampa" value="30" ></div>
+      <div class="field"><label>R$/dia hoje</label><input type="number" id="a-teto" data-live="rampa" value="450" ></div>
+    </div>
+    <div class="tw"><table><thead><tr><th>Dia</th><th>Budget</th><th>Regra de avanço</th></tr></thead><tbody id="rampa-body"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ══════════ DIAGNÓSTICO ══════════ -->
+<section class="page" id="pg-diagnostico">
+  <div class="ph"><h2>Diagnóstico do Esqueleto</h2><p>Referência rápida. O que já funciona, o que fura.</p></div>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="color:var(--accent)">Já coberto</h3>
+      <div class="kv"><span>Isolamento por expert</span><b>3 verticais</b></div>
+      <div class="kv"><span>Redundância</span><b>5 CAs por BM</b></div>
+      <div class="kv"><span>Mensuração</span><b>UTM · posição, fonte, dia, hora</b></div>
+      <div class="kv"><span>Funil</span><b>taxa por etapa</b></div>
+      <div class="kv"><span>Custódia</span><b>perfil cofre + soma de BM</b></div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--red)">Os 4 furos</h3>
+      <div class="kv"><span><b>1. Pixel cruzando BM</b><br><span style="font-size:12px">liga estruturas → 1 ban vira 3</span></span><b style="color:var(--red)">Crítico</b></div>
+      <div class="kv"><span><b>2. Volume sem vida útil</b><br><span style="font-size:12px">5 CAs multiplicam estrutura, não sobrevida</span></span><b style="color:var(--orange)">Alto</b></div>
+      <div class="kv"><span><b>3. Mede resultado, não risco</b><br><span style="font-size:12px">UTM é retrospectivo — nada dispara antes do strike</span></span><b style="color:var(--orange)">Alto</b></div>
+      <div class="kv"><span><b>4. Sem camada de página/domínio</b><br><span style="font-size:12px">metade da reprovação vem do destino</span></span><b style="color:var(--yellow)">Médio</b></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>A conta que importa</h3>
+    <div class="kv"><span>R$2k/dia a R$450 por CA madura</span><b>5 contas — você já tem</b></div>
+    <div class="kv"><span>Custo real de cada ban</span><b style="color:var(--red)">14 dias de rampa, não 1 conta</b></div>
+    <div class="kv"><span>Alavanca maior</span><b style="color:var(--accent)">queima 35% → 15% vale mais que dobrar contas</b></div>
+  </div>
+</section>
+
+<!-- ══════════ MALHA ══════════ -->
+<section class="page" id="pg-malha">
+  <div class="ph"><h2>Malha de Estruturas</h2><p>Infraestrutura no topo, clientes embaixo. Adicione BM, cliente ou conta em um clique.</p></div>
+
+  <div id="cruz-out"></div>
+
+  <div class="barra">
+    <div id="malha-filtros"></div>
+    <div style="flex:1"></div>
+    <button class="gh sm" data-act="toggleIds">Mostrar IDs</button>
+    <button class="gh sm" data-act="toggleImport">Importar planilha</button>
+    <button class="gh sm" data-act="toggleForm">Cadastro avançado</button>
+  </div>
+
+  <div class="card" id="form-ativo" style="display:none">
+    <div class="row">
+      <div class="field"><label>Vertical</label><select id="e-expert"></select></div>
+      <div class="field"><label>Tipo</label><select id="e-tipo">
+        <option>Conta de Anúncio</option><option>BM</option><option>Perfil</option><option>Pixel / Dataset</option><option>Página</option><option>Domínio</option>
+      </select></div>
+      <div class="field"><label>Nome</label><input id="e-nome" placeholder="CA3 — Samuel"></div>
+      <div class="field"><label>ID Meta</label><input id="e-idconta" placeholder="act_1234567890"></div>
+      <div class="field"><label>BM mãe</label><input id="e-bm" placeholder="BM Samuel 01"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Estágio</label><select id="e-status">
+        <option>Reserva fria</option><option>Em aquecimento</option><option>Produção</option><option>Em observação</option><option>Limitada</option><option>Em recurso</option><option>Banida</option>
+      </select></div>
+      <div class="field"><label>Criada em</label><input type="date" id="e-data"></div>
+      <div class="field"><label>R$/dia hoje</label><input type="number" id="e-teto" placeholder="450"></div>
+      <div class="field"><label>Gasto acum.</label><input type="number" id="e-gasto" placeholder="0"></div>
+      <div class="field"><label>Rej 7d</label><input type="number" id="e-rej" value="0"></div>
+    </div>
+    <button data-act="addEstrutura">Adicionar</button>
+  </div>
+
+  <div class="card" id="card-import" style="display:none">
+    <h3>Importar planilha</h3>
+    <div class="sub">Cole direto do Excel, Google Sheets ou do export do Gerenciador. Aceita tab, vírgula ou ponto e vírgula. A primeira linha tem que ser o cabeçalho.</div>
+    <div class="row" style="max-width:420px">
+      <div class="field"><label>O que está colando</label><select id="imp-tipo">
+        <option value="estruturas">Contas, BMs, pixels, domínios</option>
+        <option value="informativos">Informativos / criativos</option>
+      </select></div>
+      <div class="field"><label>&nbsp;</label><button class="gh" data-act="modelo">Ver modelo de colunas</button></div>
+    </div>
+    <div class="field"><textarea id="imp-txt" placeholder="Cole aqui" style="min-height:110px;font-size:12px;font-family:ui-monospace,monospace"></textarea></div>
+    <button data-act="previa">Analisar</button>
+    <div id="imp-out"></div>
+  </div>
+
+  <div id="board"><div class="secao">Infraestrutura</div><div class="grid g2" style="margin-bottom:18px"><div class="bmcard cofre"><div class="bmcard-h"><span class="bg b-pu">Cofre</span><b>BM Cofre — Fabricio Aliaga</b></div><div class="bmstats"><span><b>1</b> BMs</span></div></div><div class="bmcard anun"><div class="bmcard-h"><span class="bg b-bl">Anunciante</span><b>BM Anunciante — Rafael Vieira</b></div><div class="bmstats"><span><b>10</b> contas</span><span><b>4</b> cliente(s)</span></div><div class="perigo">Ponto único de falha: 4 clientes dependem desta BM</div></div></div><div class="secao">Clientes</div><div class="cli"><div class="cli-h"><div class="ini">B</div><div><b>Bruno Duarte</b><div class="mini" style="margin:0">IA Syntra</div></div><div class="cli-stats"><span><b>5</b>/5 ativas</span><span><b>R$ 0</b>/dia</span><span class="bg b-bl">score 75</span></div></div><div class="aviso">Falta preencher: R$/dia que cada conta roda hoje</div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA1 — Bruno</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA2 — Bruno</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA3 — Bruno</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA4 — Bruno</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA5 — Bruno</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div></div><div class="cli"><div class="cli-h"><div class="ini">G</div><div><b>Gabriel Garcia</b><div class="mini" style="margin:0">IA Oreon</div></div><div class="cli-stats"><span><b>3</b>/3 ativas</span><span><b>R$ 0</b>/dia</span><span class="bg b-bl">score 75</span></div></div><div class="aviso">Falta preencher: R$/dia que cada conta roda hoje</div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA1 — Gabriel</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA2 — Gabriel</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA3 — Gabriel</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div></div><div class="cli"><div class="cli-h"><div class="ini">W</div><div><b>Willy</b></div><div class="cli-stats"><span><b>1</b>/1 ativas</span><span><b>R$ 0</b>/dia</span><span class="bg b-bl">score 75</span></div></div><div class="aviso">Falta preencher: R$/dia que cada conta roda hoje</div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA1 — Willy</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div></div><div class="cli"><div class="cli-h"><div class="ini">S</div><div><b>Simas</b></div><div class="cli-stats"><span><b>1</b>/1 ativas</span><span><b>R$ 0</b>/dia</span><span class="bg b-bl">score 75</span></div></div><div class="aviso">Falta preencher: R$/dia que cada conta roda hoje</div><div class="ca"><span class="dot" style="background:#4dabf7"></span><div class="ca-n"><b>CA1 — Simas</b></div><span class="mini-sel" style="display:inline-block">BM Anunciante</span><span class="mini-sel" style="display:inline-block">Em aquecimento</span><span class="num">4d</span><span class="mini-in" style="display:inline-block">0</span><span class="num" style="min-width:70px;color:var(--text3)">seg. 130</span><span class="num" style="min-width:80px">rej 0</span><span class="bg b-bl">75</span></div></div></div>
+
+  <div class="card">
+    <h3>Ativos de suporte</h3>
+    <div class="sub">Perfis, pixels, domínios e páginas — o que liga (ou contamina) as BMs.</div>
+    <div class="tw"><table><thead><tr><th>Vertical</th><th>Tipo</th><th>Nome</th><th>Vinculado a</th><th>Estágio</th><th></th></tr></thead><tbody id="suporte-body"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ══════════ HEALTH SCORE ══════════ -->
+<section class="page" id="pg-saude">
+  <div class="ph"><h2>Health Score &amp; Kill-Switch</h2>
+  <p>O indicador que falta no seu esqueleto: risco <b>antes</b> do strike. Toda conta de anúncio recebe uma nota de 0 a 100 e uma ordem operacional.</p></div>
+
+  <div class="card">
+    <h3>Como a nota é calculada</h3>
+    <div class="sub">Fórmula aberta — ajuste os pesos conforme sua operação for gerando histórico.</div>
+    <div class="kv"><span>Base</span><b>100 pontos</b></div>
+    <div class="kv"><span>Cada rejeição nos últimos 7 dias</span><b style="color:var(--red)">−12</b></div>
+    <div class="kv"><span>Conta com menos de 14 dias</span><b style="color:var(--red)">−15</b></div>
+    <div class="kv"><span>Gasto acumulado abaixo de R$1.000</span><b style="color:var(--red)">−10</b></div>
+    <div class="kv"><span>Já passou por limitação ou recurso</span><b style="color:var(--red)">−20</b></div>
+    <div class="kv"><span>Rodando informativo com risco alto (&gt;45)</span><b style="color:var(--red)">−15</b></div>
+    <div class="kv"><span>Teto: 2 rejeições em 7d</span><b style="color:var(--yellow)">máx. 55 (Observação)</b></div>
+    <div class="kv"><span>Teto: 3+ rejeições em 7d</span><b style="color:var(--red)">máx. 39 (Crítico)</b></div>
+    <div class="kv"><span>Teto: conta limitada ou em recurso</span><b style="color:var(--red)">máx. 35 (Crítico)</b></div>
+    <div class="mini"><b>80–100 Saudável</b> — pode escalar na rampa &nbsp;·&nbsp; <b>60–79 Estável</b> — mantém budget, não sobe criativo novo &nbsp;·&nbsp; <b>40–59 Observação</b> — congela escala, só criativo já aprovado &nbsp;·&nbsp; <b>0–39 Crítico</b> — migra budget agora, antes do ban</div>
+  </div>
+
+  <div class="card">
+    <h3>Contas de anúncio por saúde</h3>
+    <div class="sub">Ordenado do mais crítico pro mais saudável. Aja de cima pra baixo.</div>
+    <div id="saude-lista"></div>
+  </div>
+
+  <div class="card">
+    <h3>O que mais te reprova</h3>
+    <div class="sub">Rejeições dos últimos 30 dias por motivo. É este relatório que diz onde reescrever antes de subir mais budget.</div>
+    <div id="motivos-out"></div>
+  </div>
+
+  <div class="card">
+    <h3>Regras de kill-switch</h3>
+    <div class="sub">Gatilhos automáticos — a decisão já está tomada antes do problema acontecer, pra ninguém decidir no susto.</div>
+    <div class="alert a-ye"><b>2 rejeições em 24h na mesma CA</b> → para de subir criativo novo nessa conta por 48h. Mantém o que já está entregando.</div>
+    <div class="alert a-or"><b>3 rejeições em 7 dias</b> → congela a escala (budget travado no patamar atual) e inicia migração pra reserva quente.</div>
+    <div class="alert a-rd"><b>Anúncio "em análise" há mais de 24h</b> → sinal de revisão manual. Não suba mais nada nessa conta e prepare a migração.</div>
+    <div class="alert a-rd"><b>Queda de entrega &gt;60% sem mudança de budget</b> → limitação silenciosa. Trate como conta perdida: migre antes do aviso formal.</div>
+    <div class="alert a-bl"><b>Qualquer rejeição</b> → o informativo envolvido vai pra quarentena na Biblioteca até ser reescrito. Nunca reciclar criativo rejeitado em conta nova.</div>
+  </div>
+</section>
+
+<!-- ══════════ LINTER ══════════ -->
+<section class="page" id="pg-linter">
+  <div class="ph"><h2>Validação de Criativo</h2>
+  <p>Peça chegou da produtora — valide <b>antes</b> de subir. Marca cada gatilho que a revisão da Meta pontua, dá o veredito e monta a devolutiva pronta pra mandar de volta.</p></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Peça avulsa</h3>
+      <div class="sub">Cole o texto do anúncio, headline, legenda e o que estiver escrito na arte ou dito na VSL.</div>
+      <div class="field"><textarea id="lt-txt" placeholder="Ex: Descubra o método que fez o Samuel faturar R$5.000 por dia operando..." data-live="analisar"></textarea></div>
+      <div class="row">
+        <div class="field"><label>Nome do informativo</label><input id="lt-nome" placeholder="INF_SAM_dor01_v3"></div>
+        <div class="field"><label>Vertical</label><select id="lt-expert"></select></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Nível de consciência</label><select id="lt-cons">
+          <option>Inconsciente</option><option>Consciente do problema</option><option>Consciente da solução</option><option>Consciente do produto</option><option>Mais consciente</option>
+        </select></div>
+        <div class="field"><label>Ângulo</label><input id="lt-ang" placeholder="ex: prova de método"></div>
+      </div>
+      <button data-act="reescreverCopy">Reescrever o que reprova</button>
+      <button class="gh" data-act="salvarInformativo">Salvar na biblioteca</button>
+      <button class="gh" data-act="limparLinter">Limpar</button>
+    </div>
+
+    <div class="card">
+      <h3>Resultado</h3>
+      <div class="sub">Quanto menor, maior a chance de passar e de a conta sobreviver.</div>
+      <div id="lt-score"></div>
+      <div id="lt-achados"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Validar lote da produtora</h3>
+    <div class="sub">Cole várias peças de uma vez, separadas por uma linha com <b>---</b> ou por linha em branco. Sai a fila ranqueada por risco e a devolutiva pronta.</div>
+    <div class="field"><textarea id="lote-txt" placeholder="Peça 1...&#10;---&#10;Peça 2...&#10;---&#10;Peça 3..." style="min-height:120px;font-size:12.5px"></textarea></div>
+    <div class="row" style="max-width:340px"><div class="field"><label>Cliente</label><select id="lote-expert"></select></div>
+    <div class="field"><label>Prefixo do nome</label><input id="lote-pref" placeholder="INF_BRU_out"></div></div>
+    <button data-act="validarLote">Validar lote</button>
+    <div id="lote-out"></div>
+  </div>
+
+  <div class="card">
+    <h3>Reescrita cirúrgica</h3>
+    <div class="sub">Troca mecânica do que a política pega. <b>Sai um rascunho, não uma copy pronta</b> — a máquina não escreve no seu lugar, ela te mostra exatamente o que tirar e por quê. A frase final é sua.</div>
+    <div id="lt-reescrita"><div class="empty">Cole a copy e clique em <b>Reescrever o que reprova</b>.</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Texto marcado</h3>
+    <div class="sub">Cada trecho destacado é um ponto que a revisão lê. Vermelho reprova quase sempre.</div>
+    <div id="lt-marcado" style="font-size:14px;line-height:2;color:var(--text2)">—</div>
+  </div>
+
+  <div class="card">
+    <h3>Regras de ouro — nicho financeiro na Meta</h3>
+    <div class="sub">O que trocar sem perder força de gancho.</div>
+    <div class="tw"><table><thead><tr><th>Não</th><th>Sim</th><th>Por quê</th></tr></thead><tbody>
+      <tr><td style="color:var(--red)">"Fature R$500/dia"</td><td style="color:var(--accent)">"Como o Samuel estrutura as operações dele"</td><td style="color:var(--text3)">resultado é do método, nunca de quem assiste</td></tr>
+      <tr><td style="color:var(--red)">"Você que está endividado"</td><td style="color:var(--accent)">"A maioria trava no mesmo ponto"</td><td style="color:var(--text3)">atributos pessoais — strike pesado</td></tr>
+      <tr><td style="color:var(--red)">"15% ao mês"</td><td style="color:var(--accent)">linguagem de processo</td><td style="color:var(--text3)">percentual = promessa financeira</td></tr>
+      <tr><td style="color:var(--red)">print de lucro, extrato, saque</td><td style="color:var(--accent)">bastidor, método, aluno falando de aprendizado</td><td style="color:var(--text3)">prova financeira reprova</td></tr>
+      <tr><td style="color:var(--red)">bitcoin, cripto, token</td><td style="color:var(--accent)">só com autorização aprovada na conta</td><td style="color:var(--text3)">reincidência derruba a estrutura</td></tr>
+      <tr><td style="color:var(--red)">opções binárias, Quotex, IQ Option</td><td style="color:var(--accent)">anuncie a formação, não o instrumento</td><td style="color:var(--text3)">proibido, não restrito</td></tr>
+      <tr><td style="color:var(--red)">VSL + botão e mais nada</td><td style="color:var(--accent)">aviso de risco, CNPJ, termos, privacidade, contato</td><td style="color:var(--text3)">a revisão pontua o destino junto</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- ══════════ BIBLIOTECA ══════════ -->
+<section class="page" id="pg-biblioteca">
+  <div class="ph"><h2>Biblioteca de Informativos</h2>
+  <p>O dado mais valioso e mais ignorado da operação: <b>qual informativo derrubou qual conta.</b> Sem isso você repõe conta pra sempre sem nunca remover a causa.</p></div>
+
+  <div class="card">
+    <h3>Acervo</h3>
+    <div class="sub">Clique em <b>+1 conta queimada</b> sempre que uma CA cair com esse informativo ativo. Três quedas = aposentar, não reescrever.</div>
+    <div id="bib-filtros"></div>
+    <div class="tw"><table><thead><tr>
+      <th>Informativo</th><th>Vertical</th><th>Consciência</th><th>Ângulo</th><th>Risco</th><th>Contas queimadas</th><th>Status</th><th></th>
+    </tr></thead><tbody id="bib-body"></tbody></table></div>
+  </div>
+
+  <div class="card">
+    <h3>Matriz de teste por consciência</h3>
+    <div class="sub">Distribuição ideal do acervo ativo. Operação de high ticket morre por excesso de topo sem meio de funil.</div>
+    <div id="bib-matriz"></div>
+  </div>
+</section>
+
+<!-- ══════════ INCIDENTE ══════════ -->
+<section class="page" id="pg-incidente">
+  <div class="ph"><h2>Runbook de Incidente</h2>
+  <p>O que fazer quando cai — com a decisão tomada <b>antes</b>. Objetivo: budget de volta no ar em menos de 60 minutos, sem contaminar o resto da malha.</p></div>
+
+  <div class="card">
+    <h3>Abrir incidente</h3>
+    <div class="row">
+      <div class="field"><label>Vertical</label><select id="in-expert"></select></div>
+      <div class="field"><label>Ativo atingido</label><input id="in-ativo" placeholder="ex: CA2 — Samuel"></div>
+      <div class="field"><label>Tipo</label><select id="in-tipo"><option>Conta banida</option><option>Conta limitada</option><option>Rejeição em massa</option><option>Página restrita</option><option>BM desativada</option><option>Domínio bloqueado</option></select></div>
+      <div class="field"><label>Informativo ativo no momento</label><input id="in-inf" placeholder="INF_SAM_dor01_v3"></div>
+    </div>
+    <button data-act="addIncidente">Registrar incidente</button>
+  </div>
+
+  <div class="card">
+    <h3>Protocolo — primeiros 15 minutos</h3>
+    <div class="sub">Nesta ordem. O erro clássico é abrir recurso primeiro e deixar a malha exposta enquanto isso.</div>
+    <div id="rb1"></div>
+  </div>
+  <div class="card">
+    <h3>15 min – 1 hora</h3>
+    <div id="rb2"></div>
+  </div>
+  <div class="card">
+    <h3>Primeiras 24h</h3>
+    <div id="rb3"></div>
+  </div>
+
+  <div class="card">
+    <h3>Histórico de incidentes</h3>
+    <div class="sub">Padrão só aparece com registro. Em 30 dias isso te diz qual vertical, qual ângulo e qual dia da semana concentram queda.</div>
+    <div class="tw"><table><thead><tr><th>Data</th><th>Vertical</th><th>Ativo</th><th>Tipo</th><th>Informativo</th><th></th></tr></thead><tbody id="inc-body"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ══════════ FUNIL ══════════ -->
+<section class="page" id="pg-funil">
+  <div class="ph"><h2>Funil &amp; Metas</h2>
+  <p>Traduz os R$2k/dia em volume por etapa — e mostra qual funil aguenta budget antes de você empurrar verba nele.</p></div>
+
+  <div class="card">
+    <h3>Calculadora de funil high ticket</h3>
+    <div class="sub">Preencha com os números reais do comercial. O sistema devolve o CPL máximo que fecha a conta.</div>
+    <div class="row">
+      <div class="field"><label>Investimento R$/dia</label><input type="number" id="f-inv" data-live="calcFunil" value="2000" ></div>
+      <div class="field"><label>CPL R$</label><input type="number" id="f-cpl" data-live="calcFunil" value="35" ></div>
+      <div class="field"><label>Lead → agendamento %</label><input type="number" id="f-ag" data-live="calcFunil" value="20" ></div>
+      <div class="field"><label>Show-up %</label><input type="number" id="f-show" data-live="calcFunil" value="55" ></div>
+      <div class="field"><label>Fechamento %</label><input type="number" id="f-fech" data-live="calcFunil" value="15" ></div>
+      <div class="field"><label>Ticket R$</label><input type="number" id="f-tk" data-live="calcFunil" value="30000" ></div>
+    </div>
+    <div id="funil-out"></div>
+  </div>
+
+  <div class="card">
+    <h3>Leitura</h3>
+    <div class="sub">O que esses números significam pra decisão de mídia.</div>
+    <div id="funil-leitura"></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ══════════ CONFIG ══════════ */
+const LOGIN_ATIVO = false;   // true quando publicar pro time; false = abre direto
+const VERSAO = 'v14 · auditado';
+const CREDENCIAIS = [
+  { usuario:'daniel', senha:'daniel123' },
+  { usuario:'gestor', senha:'trafego2026' }
+];
+let clientes = [];      // [{id,nome,produto}] — gerenciável pela tela
+let EXPERTS = [];       // derivado de clientes
+const CONSC   = ['Inconsciente','Consciente do problema','Consciente da solução','Consciente do produto','Mais consciente'];
+
+/* ══════════ STORE ══════════ */
+const S = {
+  get(k,d){ try{ return JSON.parse(localStorage.getItem('cx_'+k)) ?? d }catch(e){ return d } },
+  set(k,v){ try{ localStorage.setItem('cx_'+k, JSON.stringify(v)) }catch(e){} }
+};
+let estruturas = S.get('estruturas',[]);
+clientes = S.get('clientes',[]);
+const syncExperts = () => { EXPERTS = clientes.map(c=>c.nome) };
+let informativos = S.get('informativos',[]);
+let incidentes = S.get('incidentes',[]);
+let checks = S.get('checks',{});
+const salvaTudo = () => { S.set('estruturas',estruturas); S.set('informativos',informativos); S.set('incidentes',incidentes); S.set('checks',checks); S.set('clientes',clientes); syncExperts(); };
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc = s => String(s??'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{maximumFractionDigits:0});
+const dias = d => d ? Math.max(0, Math.floor((Date.now()-new Date(d+'T00:00:00'))/864e5)) : 0;
+
+/* ══════════ LOGIN / NAV ══════════ */
+const sess={ get(k){ try{ return sessionStorage.getItem(k) }catch(e){ return null } },
+              set(k,v){ try{ sessionStorage.setItem(k,v) }catch(e){} } };
+function abrirSistema(){
+  document.getElementById('login-screen').classList.remove('ativo');
+  try{ boot() }catch(e){ falhou(e && e.message || e) }
+}
+function falhou(msg){
+  const m=document.querySelector('.main');
+  if(m) m.insertAdjacentHTML('afterbegin','<div class="alert a-rd">Erro ao iniciar: '+esc(msg)+'</div>');
+  console.error(msg);
+}
+function entrar(){
+  const u=document.getElementById('login-user').value.trim().toLowerCase();
+  const p=document.getElementById('login-pass').value.trim();
+  if(CREDENCIAIS.find(c=>c.usuario===u&&c.senha.toLowerCase()===p.toLowerCase())){
+    sess.set('cx_auth','1'); abrirSistema();
+  } else document.getElementById('login-error').textContent='Usuário ou senha incorretos.';
+}
+function hashId(){ const h=(location.hash||'').replace('#pg-',''); return /^\w+$/.test(h)?h:'hoje' }
+function go(id){
+  const alvo=document.getElementById('pg-'+id); if(!alvo) return;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  alvo.classList.add('on');
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#pg-'+id));
+  if(id==='hoje') renderHoje();
+  if(id==='painel'){ renderPainel(); calcMalha(); rampa(); plano(); }
+  if(id==='malha') renderMalha();
+  if(id==='saude'){ renderSaude(); renderMotivos() }
+  if(id==='biblioteca') renderBiblioteca();
+  if(id==='incidente') renderIncidentes();
+  if(id==='funil') calcFunil();
+}
+
+/* ══════════ RAIO-X DO INFORMATIVO ══════════ */
+const RULES=[
+ {re:/(lucros?|ganhos?|retornos?|rendas?|rentabilidade|resultados?)\s+(garantid[oa]s?|cert[oa]s?|assegurad[oa]s?)/gi,p:25,c:'Promessa de retorno garantido',k:'cr',d:'Tire toda garantia. Fale do método e do processo, nunca de resultado assegurado.'},
+ {re:/(sem risco|risco zero|zero risco|nunca perde|não tem como perder|100% de acerto|100% assertiv[oa])/gi,p:25,c:'Negação de risco',k:'cr',d:'A Meta não aceita negação de risco financeiro. Inverta: reconheça o risco no próprio criativo — sobe aprovação e sobe credibilidade.'},
+ {re:/R\$\s?\d[\d.,]*\s*(por dia|ao dia|\/dia|por semana|por mês|ao mês|em \d+\s*(dias|semanas|meses)|todo dia|diári[oa]s?|mensais)/gi,p:25,c:'Promessa de renda com valor',k:'cr',d:'Valor absoluto + janela de tempo é o gatilho mais reprovado do nicho. Corte o número.'},
+ {re:/\d+\s?%\s*(ao mês|por mês|ao dia|por dia|de lucro|de retorno|de rentabilidade|de ganho)/gi,p:25,c:'Promessa de rentabilidade',k:'cr',d:'Percentual de retorno é promessa financeira. Substitua por linguagem de aprendizado.'},
+ {re:/(opç(ão|ões) binári[ao]s?|binárias\b|quotex|iq ?option|olymp ?trade)/gi,p:25,c:'Opções binárias / corretora proibida',k:'cr',d:'Conteúdo proibido, não apenas restrito — nenhuma contingência resolve. Anuncie a formação, sem citar o instrumento.'},
+ {re:/(fique rico|ficar rico|enriquecer|milionári[oa] em|primeiro milhão|do zero ao milhão|liberdade financeira em)/gi,p:15,c:'Enriquecimento rápido',k:'al',d:'Reposicione pro que a pessoa vai aprender, não pro patamar que ela vai atingir.'},
+ {re:/você\s+(que\s+)?(está|tá|anda|vive|se sente)?\s*(endividad[oa]|desempregad[oa]|falid[oa]|quebrad[oa]|no vermelho|sem dinheiro|dur[oa]|apertad[oa]|pobre)/gi,p:15,c:'Atributo pessoal (situação financeira)',k:'al',d:'Política de atributos pessoais — strike pesado e pouco conhecido no nicho. Troque "você está X" por afirmação geral: "a maioria trava nesse ponto".'},
+ {re:/(cansad[oa] de (ganhar pouco|ser pobre|trabalhar)|se você (ganha|recebe) (pouco|menos)|sua conta no vermelho)/gi,p:15,c:'Atributo pessoal (implicação)',k:'al',d:'Mesma política. Não caracterize a condição financeira de quem está vendo o anúncio.'},
+ {re:/(print d[oe] (lucro|ganho|saque)|extrato|banca de|saquei|meu resultado de (ontem|hoje)|comprovante de (lucro|saque))/gi,p:15,c:'Prova financeira',k:'al',d:'Troque prova de resultado por prova de método, bastidor e aluno falando de aprendizado.'},
+ {re:/(bitcoin|btc\b|cripto\w*|criptomoedas?|tokens?|airdrop|altcoin|ethereum)/gi,p:15,c:'Cripto (exige autorização prévia)',k:'al',d:'Sem autorização de cripto aprovada na conta, rejeição é certa — e reincidência derruba a estrutura.'},
+ {re:/(últim[ao]s? (vagas|chance|dia|horas)|só hoje|restam \d+|acaba em|encerra hoje)/gi,p:15,c:'Urgência artificial',k:'al',d:'Urgência tolerada é a real e verificável. Se não existe prazo de fato, tire.'},
+ {re:/(day ?trade|scalp\w*|operar (ao vivo|no gráfico)|sinais? de entrada|robô (que opera|de operação)|ia que opera|trading)/gi,p:8,c:'Linguagem operacional de mercado',k:'md',d:'Não reprova sozinho, mas soma. Prefira "análise", "leitura de mercado", "estrutura de operação".'},
+ {re:/(binance|b3\b|xp investimentos|clear\b|nubank|bybit|mercado bitcoin|bovespa)/gi,p:8,c:'Marca de terceiro',k:'md',d:'Marca sem autorização soma risco e pode gerar denúncia da própria empresa citada.'},
+ {re:/(método secreto|segredo (que|dos)|ninguém te conta|o que os bancos escondem|revolucionári[oa]|único método)/gi,p:8,c:'Sensacionalismo',k:'md',d:'Alto atrito na revisão e alto índice de denúncia do público — denúncia também derruba conta.'},
+ {re:/(urgente|atenção|cuidado|alerta)\s*[:!]/gi,p:8,c:'Clickbait de abertura',k:'md',d:'Abertura de alarme aumenta denúncia. Troque por gancho de contexto.'},
+ {re:/(renda extra|ganhar dinheiro|multiplicar (seu )?(capital|dinheiro)|investir|mercado financeiro|trader|lucro)/gi,p:3,c:'Vocabulário financeiro sensível',k:'bx',d:'Normal no nicho — monitore o acúmulo. Muitos termos leves juntos já mudam a leitura da revisão.'}
+];
+const KMAP={cr:{n:'Crítico',cls:'h-cr',b:'b-rd'},al:{n:'Alto',cls:'h-al',b:'b-or'},md:{n:'Médio',cls:'h-md',b:'b-ye'},bx:{n:'Baixo',cls:'h-bx',b:'b-bl'}};
+
+function scan(txt){
+  const hits=[];
+  RULES.forEach((r,ri)=>{ r.re.lastIndex=0; let m;
+    while((m=r.re.exec(txt))!==null){
+      if(!m[0].length){ r.re.lastIndex++; continue }
+      hits.push({i:m.index,j:m.index+m[0].length,t:m[0],r,ri});
+    }
+  });
+  hits.sort((a,b)=>a.i-b.i || (b.j-b.i)-(a.j-a.i));
+  const keep=[]; let last=-1;
+  hits.forEach(h=>{ if(h.i>=last){ keep.push(h); last=h.j } });
+  return keep;
+}
+function pontuar(hits){
+  const cont={}; let total=0;
+  hits.forEach(h=>{ cont[h.ri]=(cont[h.ri]||0)+1; if(cont[h.ri]<=2) total+=h.r.p; });
+  return Math.min(100,total);
+}
+function faixa(s){
+  if(s<=20) return {t:'Pode subir',c:'var(--accent)',b:'a-gr',m:'Risco baixo. Suba normalmente e mantenha na rampa.'};
+  if(s<=45) return {t:'Revisar antes',c:'var(--yellow)',b:'a-ye',m:'Passa às vezes. Em conta nova ou com histórico, não vale o risco — limpe os achados críticos primeiro.'};
+  if(s<=70) return {t:'Reescreva',c:'var(--orange)',b:'a-or',m:'Reprovação provável. E se passar, é o tipo de peça que derruba a conta em poucos dias por denúncia acumulada.'};
+  return {t:'Não suba',c:'var(--red)',b:'a-rd',m:'Reprovação quase certa e risco real de strike na estrutura inteira. Reescreva do zero.'};
+}
+function analisar(){
+  const txt=document.getElementById('lt-txt').value;
+  const box=document.getElementById('lt-score'), ach=document.getElementById('lt-achados'), mk=document.getElementById('lt-marcado');
+  if(!txt.trim()){ box.innerHTML='<div class="empty">Cole a copy pra analisar.</div>'; ach.innerHTML=''; mk.innerHTML='—'; return 0 }
+  const hits=scan(txt), sc=pontuar(hits), f=faixa(sc);
+  box.innerHTML='<div style="font-size:44px;font-weight:900;letter-spacing:-2px;color:'+f.c+'">'+sc+'<span style="font-size:17px;color:var(--text3)">/100</span></div>'+
+    '<div class="bg '+(sc<=20?'b-gr':sc<=45?'b-ye':sc<=70?'b-or':'b-rd')+'" style="margin-top:6px">'+f.t+'</div>'+
+    '<div class="alert '+f.b+'" style="margin-top:13px">'+f.m+'</div>';
+  const porCat={};
+  hits.forEach(h=>{ (porCat[h.r.c]=porCat[h.r.c]||{k:h.r.k,d:h.r.d,ts:new Set()}).ts.add(h.t.toLowerCase()) });
+  const ks=Object.keys(porCat);
+  ach.innerHTML = ks.length ? ks.map(c=>{
+    const o=porCat[c];
+    return '<div style="padding:12px 0;border-bottom:1px solid var(--border)">'+
+      '<div style="display:flex;gap:8px;align-items:center;margin-bottom:5px"><span class="bg '+KMAP[o.k].b+'">'+KMAP[o.k].n+'</span><b style="font-size:13.5px">'+esc(c)+'</b></div>'+
+      '<div style="font-size:12px;color:var(--text3);margin-bottom:5px">Encontrado: '+[...o.ts].map(t=>'"'+esc(t)+'"').join(' · ')+'</div>'+
+      '<div style="font-size:13px;color:var(--text2)">'+esc(o.d)+'</div></div>';
+  }).join('') : '<div class="empty">Nenhum gatilho de política encontrado.</div>';
+  let out='',cur=0;
+  hits.forEach(h=>{ out+=esc(txt.slice(cur,h.i))+'<span class="hl '+KMAP[h.r.k].cls+'">'+esc(h.t)+'</span>'; cur=h.j });
+  out+=esc(txt.slice(cur));
+  mk.innerHTML=out.replace(/\n/g,'<br>');
+  return sc;
+}
+/* ══════════ REESCRITOR ══════════ */
+// troca cirúrgica: só o que a política pega, preservando o gancho que você escreveu
+const TROCAS=[
+ [/(lucros?|ganhos?|retornos?|rendas?|rentabilidade|resultados?)\s+(garantid[oa]s?|cert[oa]s?|assegurad[oa]s?)/gi,
+  'método estruturado','promessa de resultado vira descrição de método'],
+ [/(sem risco|risco zero|zero risco|nunca perde|não tem como perder|100% de acerto|100% assertiv[oa])/gi,
+  'com gestão de risco definida','negar risco reprova; assumir o risco aprova e dá credibilidade'],
+ [/R\$\s?\d[\d.,]*\s*(por dia|ao dia|\/dia|por semana|por mês|ao mês|em \d+\s*(dias|semanas|meses)|todo dia|diári[oa]s?|mensais)/gi,
+  'com um processo definido','valor + prazo é o gatilho mais reprovado do nicho'],
+ [/\d+\s?%\s*(ao mês|por mês|ao dia|por dia|de lucro|de retorno|de rentabilidade|de ganho)/gi,
+  'com um processo definido','percentual de retorno é promessa financeira'],
+ [/(fique rico|ficar rico|enriquecer|milionári[oa] em|primeiro milhão|do zero ao milhão|liberdade financeira em)/gi,
+  'evoluir de forma consistente','enriquecimento rápido é política dura'],
+ [/você\s+(que\s+)?(está|tá|anda|vive|se sente)?\s*(endividad[oa]|desempregad[oa]|falid[oa]|quebrad[oa]|no vermelho|sem dinheiro|dur[oa]|apertad[oa]|pobre)/gi,
+  'a maior parte das pessoas','atributos pessoais: nunca caracterize quem está vendo'],
+ [/(cansad[oa] de (ganhar pouco|ser pobre|trabalhar)|se você (ganha|recebe) (pouco|menos)|sua conta no vermelho)/gi,
+  'quem quer mudar de patamar','mesma política de atributos pessoais'],
+ [/(print d[oe] (lucro|ganho|saque)|extrato|banca de|saquei|meu resultado de (ontem|hoje)|comprovante de (lucro|saque))/gi,
+  'os bastidores do método','prova de resultado vira prova de método'],
+ [/(últim[ao]s? (vagas|chance|dia|horas)|só hoje|restam \d+|acaba em|encerra hoje)/gi,
+  '','urgência sem prazo real: melhor remover'],
+ [/(método secreto|segredo (que|dos)|ninguém te conta|o que os bancos escondem|revolucionári[oa]|único método)/gi,
+  'o processo completo','sensacionalismo gera denúncia do público, que também derruba conta'],
+ [/(urgente|atenção|cuidado|alerta)\s*[:!]\s*/gi,'','abertura de alarme aumenta denúncia']
+];
+// estes não dá para trocar por sinônimo: exigem decisão sua
+const MANUAIS=[
+ [/(opç(ão|ões) binári[ao]s?|binárias\b|quotex|iq ?option|olymp ?trade)/gi,
+  'Instrumento proibido na Meta. Não existe reescrita: anuncie a formação, sem citar o instrumento nem a corretora.'],
+ [/(bitcoin|btc\b|cripto\w*|criptomoedas?|tokens?|airdrop|altcoin|ethereum)/gi,
+  'Cripto exige autorização aprovada na conta. Sem ela, remova o termo — reincidência derruba a estrutura.'],
+ [/(binance|b3\b|xp investimentos|clear\b|nubank|bybit|mercado bitcoin|bovespa)/gi,
+  'Marca de terceiro sem autorização. Troque pelo termo genérico (a corretora, a plataforma).'],
+ [/você\s+(vai|irá|consegue|pode)\s+(ganhar|faturar|lucrar|multiplicar|sacar)/gi,
+  'Promessa dirigida a quem assiste. Reescreva com o expert como sujeito: "como o {EXPERT} estrutura as operações dele".']
+];
+function reescrever(txt, expert){
+  let novo=txt; const feitas=[], pendentes=[];
+  TROCAS.forEach(([re,por,pq])=>{
+    const achados=[...novo.matchAll(new RegExp(re.source,re.flags))].map(m=>m[0]);
+    if(!achados.length) return;
+    novo=novo.replace(re,por);
+    feitas.push({de:[...new Set(achados)].join(' · '), para:por||'(removido)', pq});
+  });
+  MANUAIS.forEach(([re,nota])=>{
+    const achados=[...novo.matchAll(new RegExp(re.source,re.flags))].map(m=>m[0]);
+    if(achados.length) pendentes.push({trecho:[...new Set(achados)].join(' · '),
+      nota:nota.replace('{EXPERT}', expert&&expert!=='—'?expert.split(' ')[0]:'expert')});
+  });
+  novo=novo
+    .replace(/\b(o|a|os|as|um|uma|de|do|da)\s+\1\b/gi,'$1')      // "o o processo"
+    .replace(/\b(o|a|os|as)\s+(o|a|os|as)\b/gi,'$2')              // "o os bastidores"
+    .replace(/\bde\s+com\b/gi,'com').replace(/\bde\s+a\s+maior/gi,'da maior')
+    .replace(/\s{2,}/g,' ')
+    .replace(/\s+([,.!?;])/g,'$1')
+    .replace(/([,;])\s*([.!?])/g,'$2')      // ", !" solto
+    .replace(/([.!?])\s*\1+/g,'$1')
+    .replace(/^[\s,;.!?]+/,'')
+    .replace(/,\s*$/,'.');
+  novo=novo.charAt(0).toUpperCase()+novo.slice(1);
+  return {novo,feitas,pendentes};
+}
+/* ══════════ VALIDAÇÃO EM LOTE ══════════ */
+let lotePecas=null;
+function partirLote(txt){
+  let ps = txt.split(/^\s*-{3,}\s*$/m);
+  if(ps.length<2) ps = txt.split(/\n\s*\n/);
+  return ps.map(x=>x.trim()).filter(x=>x.length>8);
+}
+function validarLote(){
+  const box=document.getElementById('lote-out');
+  const ps=partirLote(document.getElementById('lote-txt').value);
+  if(!ps.length){ box.innerHTML='<div class="alert a-ye">Cole as peças, separadas por --- ou por linha em branco.</div>'; lotePecas=null; return }
+  const ex=(document.getElementById('lote-expert')||{}).value||'';
+  const pref=(document.getElementById('lote-pref')||{}).value.trim()||'PECA';
+  lotePecas=ps.map((txt,i)=>{
+    const hits=scan(txt), sc=pontuar(hits);
+    const cats=[...new Set(hits.map(h=>h.r.c))];
+    const criticos=[...new Set(hits.filter(h=>h.r.k==='cr').map(h=>h.t))];
+    return {n:i+1, nome:pref+'_'+String(i+1).padStart(2,'0'), txt, risco:sc, cats, criticos,
+            gancho:txt.split('\n')[0].slice(0,80), expert:ex};
+  }).sort((a,b)=>b.risco-a.risco);
+  const aprov=lotePecas.filter(p=>p.risco<=20).length;
+  const rev=lotePecas.filter(p=>p.risco>20&&p.risco<=45).length;
+  const dev=lotePecas.filter(p=>p.risco>45).length;
+  box.innerHTML=
+    '<div class="grid g4" style="margin:14px 0">'+
+      '<div class="kpi"><div class="lb">Peças no lote</div><div class="vl">'+lotePecas.length+'</div></div>'+
+      '<div class="kpi"><div class="lb">Liberadas</div><div class="vl" style="color:var(--accent)">'+aprov+'</div><div class="dt">risco até 20</div></div>'+
+      '<div class="kpi"><div class="lb">Revisar</div><div class="vl" style="color:var(--yellow)">'+rev+'</div><div class="dt">passa às vezes</div></div>'+
+      '<div class="kpi"><div class="lb">Devolver</div><div class="vl" style="color:var(--red)">'+dev+'</div><div class="dt">reprova ou derruba conta</div></div>'+
+    '</div>'+
+    '<div class="tw"><table><thead><tr><th>#</th><th>Gancho</th><th>Risco</th><th>Gatilhos</th><th>Veredito</th></tr></thead><tbody>'+
+    lotePecas.map(p=>{ const f=faixa(p.risco);
+      return '<tr><td class="mono">'+p.nome+'</td><td style="max-width:280px">'+esc(p.gancho)+'…</td>'+
+      '<td><b style="color:'+f.c+'">'+p.risco+'</b></td>'+
+      '<td style="color:var(--text3);font-size:12px">'+(p.cats.length?esc(p.cats.slice(0,3).join(' · ')):'—')+'</td>'+
+      '<td><span class="bg '+(p.risco<=20?'b-gr':p.risco<=45?'b-ye':'b-rd')+'">'+f.t+'</span></td></tr>';
+    }).join('')+'</tbody></table></div>'+
+    '<div style="margin-top:13px"><button data-act="devolutiva">Gerar devolutiva pra produtora</button> '+
+    '<button class="gh" data-act="salvarLote">Salvar as '+lotePecas.length+' na biblioteca</button></div>'+
+    '<div id="lote-dev"></div>';
+  ligar();
+}
+function devolutiva(){
+  if(!lotePecas) return;
+  const ruins=lotePecas.filter(p=>p.risco>20);
+  let t='Validação do lote — '+lotePecas.length+' peça(s)\n\n';
+  if(!ruins.length) t+='Todas passaram na validação de política. Pode subir.\n';
+  ruins.forEach(p=>{
+    const {feitas,pendentes}=reescrever(p.txt,p.expert);
+    t+=p.nome+' — risco '+p.risco+' ('+faixa(p.risco).t+')\n';
+    t+='  Gancho: '+p.gancho+'\n';
+    feitas.forEach(f=>{ t+='  • Trocar "'+f.de+'" → "'+(f.para||'remover')+'" ('+f.pq+')\n' });
+    pendentes.forEach(x=>{ t+='  • '+x.trecho+' — '+x.nota+'\n' });
+    t+='\n';
+  });
+  const liberadas=lotePecas.filter(p=>p.risco<=20);
+  if(liberadas.length) t+='Liberadas sem alteração: '+liberadas.map(p=>p.nome).join(', ')+'\n';
+  document.getElementById('lote-dev').innerHTML=
+    '<div class="field" style="margin-top:14px"><label>Devolutiva — selecione e copie</label>'+
+    '<textarea style="min-height:180px;font-size:12px;font-family:ui-monospace,monospace">'+esc(t)+'</textarea></div>';
+}
+function salvarLote(){
+  if(!lotePecas) return;
+  lotePecas.forEach(p=>{
+    if(informativos.some(i=>i.nome===p.nome)) return;
+    informativos.push({id:uid(),nome:p.nome,expert:p.expert,consc:'Consciente do problema',
+      ang:'—',risco:p.risco,queimadas:0,status:p.risco>45?'Quarentena':'Ativo',copy:p.txt});
+  });
+  salvaTudo(); boot();
+  document.getElementById('lote-dev').innerHTML='<div class="alert a-gr"><b>'+lotePecas.length+' peça(s) salvas.</b> As de risco acima de 45 entraram em quarentena. Agora, quando uma conta cair, o botão Caiu vincula a queda à peça certa.</div>';
+}
+
+function reescreverCopy(){
+  const txt=document.getElementById('lt-txt').value;
+  const box=document.getElementById('lt-reescrita');
+  if(!txt.trim()){ box.innerHTML='<div class="alert a-ye">Cole a copy primeiro.</div>'; return }
+  const ex=(document.getElementById('lt-expert')||{}).value||'';
+  const {novo,feitas,pendentes}=reescrever(txt,ex);
+  const antes=pontuar(scan(txt)), depois=pontuar(scan(novo));
+  const fa=faixa(antes), fd=faixa(depois);
+  box.innerHTML=
+    '<div class="grid g3" style="margin:13px 0">'+
+      '<div class="kpi"><div class="lb">Risco antes</div><div class="vl" style="color:'+fa.c+'">'+antes+'</div><div class="dt">'+fa.t+'</div></div>'+
+      '<div class="kpi"><div class="lb">Risco depois</div><div class="vl" style="color:'+fd.c+'">'+depois+'</div><div class="dt">'+fd.t+'</div></div>'+
+      '<div class="kpi"><div class="lb">Trocas aplicadas</div><div class="vl">'+feitas.length+'</div><div class="dt">'+pendentes.length+' pendente(s) de decisão sua</div></div>'+
+    '</div>'+
+    '<div class="alert a-ye" style="margin-bottom:11px">Rascunho: a troca é palavra por palavra, então a frase quase sempre sai dura. Use a tabela abaixo como lista do que corrigir e reescreva com a sua voz.</div>'+
+    '<div class="field"><label>Rascunho marcado</label><textarea id="lt-novo" style="min-height:96px">'+esc(novo)+'</textarea></div>'+
+    '<button class="gh" data-act="usarReescrita">Jogar o rascunho no Raio-X</button>'+
+    (feitas.length?'<div class="tw" style="margin-top:14px"><table><thead><tr><th>Estava</th><th>Ficou</th><th>Por quê</th></tr></thead><tbody>'+
+      feitas.map(f=>'<tr><td style="color:var(--red)">'+esc(f.de)+'</td><td style="color:var(--accent)">'+esc(f.para)+'</td><td style="color:var(--text3)">'+esc(f.pq)+'</td></tr>').join('')+
+      '</tbody></table></div>':'')+
+    (pendentes.length?'<div style="margin-top:13px">'+pendentes.map(x=>
+      '<div class="alert a-ye"><b>'+esc(x.trecho)+'</b> — '+esc(x.nota)+'</div>').join('')+'</div>':'')+
+    (!feitas.length&&!pendentes.length?'<div class="alert a-gr">Nada a reescrever: essa copy já passa limpa.</div>':'');
+  ligar();
+}
+function usarReescrita(){
+  const n=document.getElementById('lt-novo'); if(!n) return;
+  document.getElementById('lt-txt').value=n.value; analisar();
+  document.getElementById('lt-reescrita').innerHTML='<div class="alert a-gr">Versão aplicada. O Raio-X acima já está pontuando a copy nova.</div>';
+}
+
+function salvarInformativo(){
+  const nome=document.getElementById('lt-nome').value.trim();
+  if(!nome) return alert('Dê um nome ao informativo.');
+  informativos.push({ id:uid(), nome, expert:document.getElementById('lt-expert').value,
+    consc:document.getElementById('lt-cons').value, ang:document.getElementById('lt-ang').value.trim()||'—',
+    risco:analisar(), queimadas:0, status:'Ativo', copy:document.getElementById('lt-txt').value });
+  salvaTudo(); renderBiblioteca(); alert('Salvo na biblioteca.');
+}
+
+
+/* ══════════ DADOS DE PARTIDA ══════════ */
+const hoje=new Date();
+const dt = n => new Date(hoje.getTime()-n*864e5).toISOString().slice(0,10);
+function montarSeed(){
+  const C=[
+    {id:uid(),nome:'Bruno Duarte',  produto:'IA Syntra'},
+    {id:uid(),nome:'Gabriel Garcia',produto:'IA Oreon'},
+    {id:uid(),nome:'Willy',         produto:''},
+    {id:uid(),nome:'Simas',         produto:''}
+  ];
+  const COFRE='BM Cofre — Fabricio Aliaga', ANUN='BM Anunciante — Rafael Vieira';
+  const E=[
+    {id:uid(),tipo:'BM',papel:'Cofre',    nome:COFRE,idConta:'',bm:'—',expert:'—',status:'Produção',data:'',teto:0,gasto:0,rej:0},
+    {id:uid(),tipo:'BM',papel:'Anunciante',nome:ANUN, idConta:'',bm:COFRE,expert:'—',status:'Produção',data:'',teto:0,gasto:0,rej:0}
+  ];
+  [['Bruno Duarte',5],['Gabriel Garcia',3],['Willy',1],['Simas',1]].forEach(([cli,n])=>{
+    for(let i=1;i<=n;i++) E.push({id:uid(),tipo:'Conta de Anúncio',nome:'CA'+i+' — '+cli.split(' ')[0],
+      idConta:'',bm:ANUN,expert:cli,status:'Em aquecimento',data:dt(4),teto:0,gasto:0,rej:0});
+  });
+  return {C,E,I:[],N:[]};
+}
+function carregarExemplo(){
+  const {C,E,I,N}=montarSeed();
+  clientes=C; estruturas=E; informativos=I; incidentes=N; checks={};
+  S.set('modo','exemplo'); salvaTudo(); boot();
+}
+function limparTudo(){
+  if(!confirm('Isso apaga TODOS os dados e deixa o sistema em branco pra você cadastrar a operação real. Continuar?')) return;
+  estruturas=[]; informativos=[]; incidentes=[]; checks={};
+  S.set('modo','real'); salvaTudo(); boot();
+}
+
+/* ══════════ MALHA ══════════ */
+const ESTAGIOS={'Reserva fria':'b-gy','Em aquecimento':'b-bl','Produção':'b-gr','Em observação':'b-ye','Limitada':'b-or','Em recurso':'b-pu','Banida':'b-rd'};
+let filtroMalha='Todas';
+function addEstrutura(){
+  const nome=document.getElementById('e-nome').value.trim();
+  if(!nome) return alert('Informe o nome/ID do ativo.');
+  estruturas.push({ id:uid(), expert:document.getElementById('e-expert').value, tipo:document.getElementById('e-tipo').value,
+    nome, idConta:document.getElementById('e-idconta').value.trim(),
+    bm:document.getElementById('e-bm').value.trim()||'—', status:document.getElementById('e-status').value,
+    data:document.getElementById('e-data').value, teto:+document.getElementById('e-teto').value||0,
+    gasto:+document.getElementById('e-gasto').value||0, rej:+document.getElementById('e-rej').value||0 });
+  salvaTudo(); document.getElementById('e-nome').value=''; document.getElementById('e-idconta').value='';
+  renderMalha(); renderPainel();
+}
+function delEstrutura(id){
+  const e=estruturas.find(x=>x.id===id); if(!e) return;
+  if(e.tipo==='BM'){
+    const filhas=estruturas.filter(x=>x.bm===e.nome && x.id!==id);
+    if(filhas.length){
+      const contas=filhas.filter(x=>x.tipo==='Conta de Anúncio').length;
+      return alert('Não dá para apagar '+e.nome+'.\n\n'+
+        (contas?contas+' conta(s) de anúncio ':'')+ (filhas.length-contas?((contas?'e ':'')+(filhas.length-contas)+' outro(s) ativo(s) '):'')+
+        'ainda estão vinculados a ela.\n\nMova esses ativos para outra BM antes — senão eles ficam apontando para uma BM que não existe.');
+    }
+  }
+  if(!confirm('Remover '+e.nome+'?')) return;
+  estruturas=estruturas.filter(x=>x.id!==id); salvaTudo(); renderMalha(); renderPainel(); renderHoje();
+}
+const MOTIVOS=['Promessa de retorno','Atributos pessoais','Cripto sem autorização','Prova financeira',
+  'Enriquecimento rápido','Página de destino','Marca de terceiro','Sensacionalismo','Outro / não informado'];
+function listaRej(e){ return Array.isArray(e.rejs)?e.rejs:[] }
+function rej7(e){
+  const a=listaRej(e);
+  if(a.length) return a.filter(r=>dias(r.data)<7).length;
+  return +e.rej||0;                       // compatibilidade com dados antigos
+}
+function rejUltima(e){
+  const a=listaRej(e).slice().sort((x,y)=>x.data<y.data?1:-1);
+  return a.length?a[0]:null;
+}
+function tetoSeguro(e){
+  const d=dias(e.data);
+  if(!e.data) return null;
+  if(d<=3) return 60;
+  let v=60; for(let i=4;i<=d;i++){ v=Math.min(600, v*1.3) }
+  return Math.round(v/10)*10;
+}
+function health(e){
+  if(e.status==='Banida') return 0;
+  let s=100, teto=100;
+  const rej=rej7(e);
+  s-=rej*12;
+  if(dias(e.data)<14) s-=15;
+  if((e.gasto||0)<1000) s-=10;
+  if(['Limitada','Em recurso','Em observação'].includes(e.status)) s-=20;
+  const risco=informativos.filter(i=>i.expert===e.expert&&i.status==='Ativo').map(i=>i.risco);
+  if(risco.length && risco.reduce((a,b)=>a+b,0)/risco.length>45) s-=15;
+  // tetos que espelham as regras de kill-switch — o score nunca pode contradizer o protocolo
+  if(rej>=3) teto=Math.min(teto,39);            // 3 rejeições em 7d = congela escala
+  else if(rej===2) teto=Math.min(teto,55);      // 2 rejeições = para de subir criativo
+  if(['Limitada','Em recurso'].includes(e.status)) teto=Math.min(teto,35);
+  if(e.status==='Em observação') teto=Math.min(teto,55);
+  return Math.max(0,Math.min(teto,Math.round(s)));
+}
+function hFaixa(s){
+  if(s>=80) return {t:'Saudável',c:'var(--accent)',b:'b-gr',a:'Pode escalar seguindo a rampa.'};
+  if(s>=60) return {t:'Estável',c:'var(--blue)',b:'b-bl',a:'Mantém o budget. Não suba criativo novo aqui.'};
+  if(s>=40) return {t:'Observação',c:'var(--yellow)',b:'b-ye',a:'Congela escala. Só criativo já aprovado.'};
+  return {t:'Crítico',c:'var(--red)',b:'b-rd',a:'Migre o budget agora, antes do ban.'};
+}
+const CORES={'Reserva fria':'#606060','Em aquecimento':'#4dabf7','Produção':'#00e5a0','Em observação':'#ffd43b','Limitada':'#ff922b','Em recurso':'#b197fc','Banida':'#ff6b6b'};
+const ORDEM=['Reserva fria','Em aquecimento','Produção'];
+let quedaAberta=null;
+
+function toggleImport(){ const f=document.getElementById('card-import'); f.style.display = f.style.display==='none'?'block':'none' }
+function preencherData(cli,valor){
+  if(!valor) return;
+  estruturas.forEach(e=>{ if(e.tipo==='Conta de Anúncio'&&e.expert===cli&&!e.data) e.data=valor });
+  salvaTudo(); boot();
+}
+function toggleForm(){ const f=document.getElementById('form-ativo'); f.style.display = f.style.display==='none'?'block':'none' }
+
+let abrindo=null;   // 'bm' | 'cliente' | id do cliente (nova conta)
+let mostrarIds=false;
+function toggleIds(){ mostrarIds=!mostrarIds; renderMalha() }
+
+function bmsDe(papel){ return estruturas.filter(e=>e.tipo==='BM'&&(!papel||e.papel===papel)) }
+function contasDe(cli){ return estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&e.expert===cli) }
+function vivas(l){ return l.filter(e=>['Produção','Em observação'].includes(e.status)) }
+function abrir(o){ abrindo = abrindo===o ? null : o; renderMalha() }
+
+function renderMalha(){
+  const board=document.getElementById('board'); if(!board) return;
+  const fb=document.getElementById('malha-filtros');
+  if(fb) fb.innerHTML=['Todas',...EXPERTS].map(x=>'<span class="pill '+(filtroMalha===x?'on':'')+'" data-act="filtroMalha" data-arg="'+esc(x)+'">'+esc(x)+'</span>').join('');
+
+  /* ── infraestrutura: as BMs ── */
+  let html='<div class="secao">Infraestrutura</div><div class="grid g2" style="margin-bottom:18px">';
+  const todasBms=bmsDe();
+  html+=todasBms.map(b=>{
+    const cs=estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&e.bm===b.nome);
+    const px=estruturas.filter(e=>e.tipo==='Pixel / Dataset'&&e.bm===b.nome);
+    const filhas=estruturas.filter(e=>e.tipo==='BM'&&e.bm===b.nome);
+    const cap=vivas(cs).reduce((a,e)=>a+(e.teto||0),0);
+    const clis=[...new Set(cs.map(e=>e.expert))];
+    const risco=clis.length>1;
+    return '<div class="bmcard '+(b.papel==='Cofre'?'cofre':'anun')+'">'+
+      '<div class="bmcard-h"><span class="bg '+(b.papel==='Cofre'?'b-pu':'b-bl')+'">'+esc(b.papel||'BM')+'</span>'+
+        '<b>'+esc(b.nome)+'</b>'+
+        '<button class="gh sm" data-act="delEstrutura" data-arg="'+b.id+'" style="margin-left:auto">×</button></div>'+
+      ((mostrarIds||b.idConta)?'<input class="idin" data-edit="idConta" data-arg="'+b.id+'" value="'+esc(b.idConta||'')+'" placeholder="ID da BM (opcional)">':'')+
+      '<div class="bmstats">'+
+        (cs.length?'<span><b>'+cs.length+'</b> contas</span>':'')+
+        (filhas.length?'<span><b>'+filhas.length+'</b> BMs</span>':'')+
+        (px.length?'<span><b>'+px.length+'</b> pixels</span>':'')+
+        (cap?'<span><b>'+brl(cap)+'</b>/dia</span>':'')+
+        (clis.length?'<span><b>'+clis.length+'</b> cliente(s)</span>':'')+
+      '</div>'+
+      (risco?'<div class="perigo">Ponto único de falha: '+clis.length+' clientes dependem desta BM</div>':'')+
+    '</div>';
+  }).join('');
+  html+='</div>';
+  html+= abrindo==='bm'
+    ? '<div class="card"><div class="row"><div class="field"><label>Nome da BM</label><input id="nb-nome" placeholder="BM Anunciante — Fulano"></div>'+
+      '<div class="field"><label>Papel</label><select id="nb-papel"><option>Anunciante</option><option>Cofre</option></select></div>'+
+      '<div class="field"><label>ID</label><input id="nb-id" placeholder="opcional"></div>'+
+      '<div class="field"><label>Guardada em</label><select id="nb-pai"><option value="">— nenhuma —</option>'+todasBms.map(b=>'<option>'+esc(b.nome)+'</option>').join('')+'</select></div></div>'+
+      '<button data-act="salvarBM">Adicionar BM</button> <button class="gh" data-act="fechar">Cancelar</button></div>'
+    : '<button class="gh" data-act="abrirBM" style="margin-bottom:22px">+ Adicionar BM</button>';
+
+  /* ── clientes ── */
+  html+='<div class="secao">Clientes</div>';
+  const orfas=estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&!clientes.some(c=>c.nome===e.expert));
+  const lista=clientes.filter(c=>filtroMalha==='Todas'||c.nome===filtroMalha)
+    .concat(orfas.length?[{id:'__orfas',nome:'Sem cliente',produto:orfas.length+' conta(s) sem dono — use o × ou reatribua',orfa:true}]:[]);
+  if(!lista.length) html+='<div class="card"><div class="empty">Nenhum cliente ainda. Clique em <b>+ Adicionar cliente</b> para começar.</div></div>';
+  html+=lista.map(c=>{
+    const cs=c.orfa?orfas:contasDe(c.nome), v=vivas(cs);
+    const cap=v.reduce((a,e)=>a+(e.teto||0),0);
+    const scores=v.filter(e=>e.data).map(health);
+    const med=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
+    const at=cs.filter(e=>['Produção','Em observação'].includes(e.status));
+    const semTeto=at.filter(e=>!e.teto).length, semData=at.filter(e=>!e.data).length;
+    const pend=[]; if(semTeto) pend.push(semTeto+' sem teto (capacidade não fecha)');
+    if(semData) pend.push(semData+' sem data de criação (score e rampa não calculam)');
+    const semDataCol = semData ? '<input type="date" class="mini-in" style="width:132px" data-bulk="'+esc(c.nome)+'" title="Preencher data de criação em todas as contas deste cliente">' : '';
+    return '<div class="cli">'+
+      '<div class="cli-h">'+
+        '<div class="ini">'+esc(c.nome.slice(0,1).toUpperCase())+'</div>'+
+        '<div><b>'+esc(c.nome)+'</b>'+(c.produto?'<div class="mini" style="margin:0">'+esc(c.produto)+'</div>':'')+'</div>'+
+        '<div class="cli-stats">'+
+          '<span><b>'+v.length+'</b>/'+cs.length+' ativas</span>'+
+          '<span><b>'+brl(cap)+'</b>/dia</span>'+
+          (med!==null?'<span class="bg '+hFaixa(med).b+'">score '+med+'</span>':'<span class="bg b-gy">score —</span>')+
+          semDataCol+
+        '</div>'+
+        '<button class="gh sm" data-act="delCliente" data-arg="'+c.id+'">×</button>'+
+      '</div>'+
+      (pend.length?'<div class="aviso">Falta preencher: '+pend.join(' · ')+'</div>':'')+
+      (cs.length?cs.map(e=>linhaCA(e)).join(''):'<div class="empty" style="padding:18px">Sem conta cadastrada.</div>')+
+      (abrindo===c.id
+        ? '<div class="quick"><div class="row"><div class="field"><label>Nome</label><input id="nc-nome" placeholder="CA6 — '+esc(c.nome.split(' ')[0])+'"></div>'+
+          '<div class="field"><label>ID Meta</label><input id="nc-id" placeholder="act_..."></div>'+
+          '<div class="field"><label>BM</label><select id="nc-bm">'+bmsDe('Anunciante').concat(bmsDe('Cofre')).map(b=>'<option>'+esc(b.nome)+'</option>').join('')+'</select></div>'+
+          '<div class="field"><label>R$/dia hoje</label><input type="number" id="nc-teto" placeholder="450"></div>'+
+          '<div class="field"><label>Estágio</label><select id="nc-status">'+Object.keys(ESTAGIOS).map(x=>'<option'+(x==='Produção'?' selected':'')+'>'+x+'</option>').join('')+'</select></div></div>'+
+          '<button data-act="salvarConta" data-arg="'+c.id+'">Adicionar conta</button> <button class="gh" data-act="fechar">Cancelar</button></div>'
+        : '<div class="quick"><button class="gh sm" data-act="abrirConta" data-arg="'+c.id+'">+ conta</button></div>')+
+    '</div>';
+  }).join('');
+  html+= abrindo==='cliente'
+    ? '<div class="card"><div class="row"><div class="field"><label>Nome do cliente</label><input id="ncl-nome" placeholder="Bruno Duarte"></div>'+
+      '<div class="field"><label>Produto</label><input id="ncl-prod" placeholder="IA Syntra"></div></div>'+
+      '<button data-act="salvarCliente">Adicionar cliente</button> <button class="gh" data-act="fechar">Cancelar</button></div>'
+    : '<button class="gh" data-act="abrirCliente">+ Adicionar cliente</button>';
+
+  board.innerHTML=html;
+  renderSuporte(); renderCruz(); ligar();
+}
+
+function linhaCA(e){
+  const h=health(e), f=hFaixa(h), pode=ORDEM.indexOf(e.status)>=0 && ORDEM.indexOf(e.status)<2;
+  const fora=['Banida','Limitada'].includes(e.status);
+  const listaBm=bmsDe().map(b=>b.nome);
+  const orfa = e.bm && e.bm!=='—' && !listaBm.includes(e.bm);
+  const bmOpts=(orfa?['<option selected>'+esc(e.bm)+'</option>']:[])
+    .concat(listaBm.map(n=>'<option'+(n===e.bm?' selected':'')+'>'+esc(n)+'</option>')).join('');
+  let html='<div class="ca">'+
+    '<span class="dot" style="background:'+(CORES[e.status]||'#606060')+'"></span>'+
+    '<div class="ca-n"><b>'+esc(e.nome)+'</b>'+
+      ((mostrarIds||e.idConta)?'<input class="idin" data-edit="idConta" data-arg="'+e.id+'" value="'+esc(e.idConta||'')+'" placeholder="act_... (opcional)">':'')+'</div>'+
+    '<select class="mini-sel'+(orfa?' alerta':'')+'" data-edit="bm" data-arg="'+e.id+'" title="'+(orfa?'BM não cadastrada — recadastre ou mova a conta':'BM da conta')+'">'+bmOpts+'</select>'+
+    '<select class="mini-sel" data-edit="status" data-arg="'+e.id+'">'+
+      Object.keys(ESTAGIOS).map(x=>'<option'+(x===e.status?' selected':'')+'>'+x+'</option>').join('')+'</select>'+
+    '<span class="num">'+(e.data?dias(e.data)+'d':'—')+'</span>'+
+    '<input class="mini-in" type="number" data-edit="teto" data-arg="'+e.id+'" value="'+(e.teto||0)+'" title="Budget que esta conta roda hoje">'+
+    (function(){ const t=tetoSeguro(e);
+      if(t===null||!['Produção','Em aquecimento','Em observação'].includes(e.status)) return '<span class="num" style="min-width:70px"></span>';
+      const acima=(e.teto||0)>t*1.25;
+      return '<span class="num" style="min-width:70px;color:'+(acima?'var(--red)':'var(--text3)')+'" title="'+
+        (acima?'Acima do que a idade da conta sustenta — risco de ban':'Teto seguro para a idade da conta')+'">seg. '+t+'</span>';
+    })()+
+    (function(){ const r=rej7(e), u=rejUltima(e);
+      return '<span class="num" style="min-width:86px" title="'+(u?'Última: '+esc(u.motivo)+' em '+u.data:'Rejeições nos últimos 7 dias')+'">rej '+
+      '<button class="gh sm" data-act="rejMenos" data-arg="'+e.id+'">−</button> <b'+(r?' style="color:var(--red)"':'')+'>'+r+'</b> '+
+      '<button class="gh sm" data-act="rejMais" data-arg="'+e.id+'">+</button></span>' })()+
+    (e.status==='Reserva fria'?'<span class="bg b-gy" title="Conta parada — sem histórico">—</span>'
+      : !e.data?'<span class="bg b-gy" title="Informe a data de criação para o score valer">—</span>'
+      :'<span class="bg '+f.b+'" title="'+f.a+'">'+h+'</span>')+
+    '<div class="ca-acts">'+
+      (pode?'<button class="gh sm" data-act="promover" data-arg="'+e.id+'">↑ '+ORDEM[ORDEM.indexOf(e.status)+1]+'</button>':'')+
+      (fora?'<button class="gh sm" data-act="reativar" data-arg="'+e.id+'">Recuperada</button>'
+           :'<button class="dgr sm" data-act="caiu" data-arg="'+e.id+'">Caiu</button>')+
+      '<button class="gh sm" data-act="delEstrutura" data-arg="'+e.id+'">×</button>'+
+    '</div></div>';
+  if(rejAberta===e.id){
+    html+='<div class="queda" style="background:var(--yellow-dim);border-top-color:rgba(255,212,59,.3)">'+
+      '<b style="font-size:13px">O que a Meta reprovou?</b>'+
+      '<div class="row" style="margin-top:9px"><div class="field" style="margin:0"><select id="rj-motivo">'+
+        MOTIVOS.map(m=>'<option>'+m+'</option>').join('')+'</select></div>'+
+      '<div class="field" style="margin:0"><input type="date" id="rj-data" value="'+new Date().toISOString().slice(0,10)+'"></div></div>'+
+      '<button class="sm" data-act="confirmarRej" data-arg="'+e.id+'" style="margin-top:9px">Registrar rejeição</button> '+
+      '<button class="gh sm" data-act="cancelarRej">Cancelar</button></div>';
+  }
+  if(quedaAberta===e.id){
+    const ativos=informativos.filter(i=>i.status==='Ativo'&&i.expert===e.expert);
+    html+='<div class="queda"><b style="font-size:13px">Qual informativo estava rodando?</b>'+
+      '<div class="row" style="margin-top:9px">'+
+      '<div class="field" style="margin:0"><select id="q-inf">'+
+        (ativos.length?ativos.map(i=>'<option value="'+i.id+'">'+esc(i.nome)+' · risco '+i.risco+'</option>').join(''):'')+
+        '<option value="">Não sei / não cadastrado</option></select></div>'+
+      '<div class="field" style="margin:0"><select id="q-tipo"><option>Conta banida</option><option>Conta limitada</option><option>Rejeição em massa</option></select></div>'+
+      '</div>'+
+      '<button class="dgr sm" data-act="confirmarQueda" data-arg="'+e.id+'" style="margin-top:9px">Registrar queda</button> '+
+      '<button class="gh sm" data-act="cancelarQueda">Cancelar</button></div>';
+  }
+  return html;
+}
+
+/* ── cadastro rápido, com trava contra erro ── */
+function fechar(){ abrindo=null; renderMalha() }
+function abrirBM(){ abrir('bm') } function abrirCliente(){ abrir('cliente') }
+function abrirConta(id){ abrir(id) }
+function salvarBM(){
+  const nome=document.getElementById('nb-nome').value.trim();
+  if(!nome) return alert('Dê um nome à BM.');
+  if(estruturas.some(e=>e.tipo==='BM'&&e.nome.toLowerCase()===nome.toLowerCase())) return alert('Já existe uma BM com esse nome.');
+  estruturas.push({id:uid(),tipo:'BM',papel:document.getElementById('nb-papel').value,nome,
+    idConta:document.getElementById('nb-id').value.trim(),bm:document.getElementById('nb-pai').value||'—',
+    expert:'—',status:'Produção',data:'',teto:0,gasto:0,rej:0});
+  abrindo=null; salvaTudo(); boot();
+}
+function salvarCliente(){
+  const nome=document.getElementById('ncl-nome').value.trim();
+  if(!nome) return alert('Dê um nome ao cliente.');
+  if(clientes.some(c=>c.nome.toLowerCase()===nome.toLowerCase())) return alert('Esse cliente já existe.');
+  clientes.push({id:uid(),nome,produto:document.getElementById('ncl-prod').value.trim()});
+  abrindo=null; salvaTudo(); boot();
+}
+function delCliente(id){
+  const c=clientes.find(x=>x.id===id); if(!c) return;
+  const n=contasDe(c.nome).length;
+  if(!confirm('Remover '+c.nome+(n?' e suas '+n+' conta(s)?':'?'))) return;
+  estruturas=estruturas.filter(e=>e.expert!==c.nome);
+  clientes=clientes.filter(x=>x.id!==id);
+  salvaTudo(); boot();
+}
+function salvarConta(cliId){
+  const c=clientes.find(x=>x.id===cliId); if(!c) return;
+  const nome=document.getElementById('nc-nome').value.trim();
+  if(!nome) return alert('Dê um nome à conta.');
+  if(estruturas.some(e=>e.tipo==='Conta de Anúncio'&&e.nome.toLowerCase()===nome.toLowerCase())) return alert('Já existe uma conta com esse nome.');
+  const bm=document.getElementById('nc-bm').value;
+  if(!bm) return alert('Cadastre uma BM antes de adicionar contas.');
+  estruturas.push({id:uid(),tipo:'Conta de Anúncio',nome,idConta:document.getElementById('nc-id').value.trim(),
+    bm,expert:c.nome,status:document.getElementById('nc-status').value,
+    data:new Date().toISOString().slice(0,10),teto:+document.getElementById('nc-teto').value||0,gasto:0,rej:0});
+  abrindo=null; salvaTudo(); boot();
+}
+
+function renderSuporte(){
+  const tb=document.getElementById('suporte-body'); if(!tb) return;
+  const l=estruturas.filter(e=>!['Conta de Anúncio','BM'].includes(e.tipo));
+  tb.innerHTML = l.length ? l.map(e=>'<tr><td>'+esc(e.expert)+'</td><td style="color:var(--text2)">'+esc(e.tipo)+'</td>'+
+    '<td><b>'+esc(e.nome)+'</b></td><td class="mono">'+esc(e.bm)+'</td>'+
+    '<td><span class="bg '+(ESTAGIOS[e.status]||'b-gy')+'">'+esc(e.status)+'</span></td>'+
+    '<td><button class="gh sm" data-act="delEstrutura" data-arg="'+e.id+'">×</button></td></tr>').join('')
+    : '<tr><td colspan="6"><div class="empty">Nenhum pixel, domínio ou página cadastrado.</div></td></tr>';
+}
+
+/* ══════════ IMPORTAÇÃO ══════════ */
+const norm = t => String(t||'').trim().toLowerCase()
+  .normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+const ALIAS={
+  expert:['vertical','expert','produto','conta_expert'],
+  tipo:['tipo','tipo_de_ativo','categoria'],
+  nome:['nome','conta','nome_da_conta','ativo','nome_do_ativo','ad_account_name','account_name'],
+  idConta:['id','id_meta','id_conta','act','account_id','ad_account_id','identificador'],
+  bm:['bm','bm_mae','bm_mae_','business_manager','bm_vinculada','vinculado_a'],
+  status:['estagio','status','situacao','estado'],
+  data:['criada_em','data','criacao','data_criacao','abertura'],
+  teto:['teto','teto_dia','budget','orcamento','orcamento_dia','limite'],
+  gasto:['gasto','gasto_acum','gasto_acumulado','amount_spent','spend','valor_gasto'],
+  rej:['rej','rej_7d','rejeicoes','rejeicoes_7d','reprovacoes'],
+  consc:['consciencia','nivel_de_consciencia','nivel'],
+  ang:['angulo','ang','abordagem'],
+  risco:['risco','risk','score_risco'],
+  queimadas:['queimadas','contas_queimadas','kill_count'],
+  copy:['copy','texto','criativo','copy_do_anuncio']
+};
+function achaCol(cab){
+  const mapa={};
+  cab.forEach((c,i)=>{ const n=norm(c);
+    for(const campo in ALIAS){ if(ALIAS[campo].includes(n)){ mapa[campo]=i; break } }
+  });
+  return mapa;
+}
+function parseTab(txt){
+  const linhas=txt.trim().split(/\r?\n/).filter(l=>l.trim());
+  if(linhas.length<2) return null;
+  const sep = linhas[0].includes('\t') ? '\t' : (linhas[0].split(';').length > linhas[0].split(',').length ? ';' : ',');
+  const corta = l => l.split(sep).map(c=>c.trim().replace(/^"|"$/g,''));
+  return {cab:corta(linhas[0]), linhas:linhas.slice(1).map(corta)};
+}
+const ESTAGIO_ALIAS={ativa:'Produção',ativo:'Produção',active:'Produção',rodando:'Produção',producao:'Produção',
+  aquecimento:'Em aquecimento',aquecendo:'Em aquecimento',reserva:'Reserva fria',fria:'Reserva fria',
+  banida:'Banida',banido:'Banida',disabled:'Banida',desativada:'Banida',limitada:'Limitada',restrita:'Limitada',
+  observacao:'Em observação',recurso:'Em recurso'};
+function normEstagio(v){
+  const n=norm(v); if(!n) return 'Reserva fria';
+  for(const k in ESTAGIO_ALIAS){ if(n.includes(k)) return ESTAGIO_ALIAS[k] }
+  const exato=Object.keys(ESTAGIOS).find(e=>norm(e)===n);
+  return exato||'Reserva fria';
+}
+function normData(v){
+  const t=String(v||'').trim(); if(!t) return '';
+  let m=t.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if(m) return m[3]+'-'+m[2]+'-'+m[1];
+  m=t.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[0];
+  return '';
+}
+const numBR = v => { const t=String(v||'').replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}\b)/g,'').replace(',','.'); return +t||0 };
+
+let previaDados=null;
+function modelo(){
+  const t=document.getElementById('imp-tipo').value;
+  document.getElementById('imp-txt').value = t==='estruturas'
+   ? 'vertical\ttipo\tnome\tid_meta\tbm_mae\testagio\tcriada_em\tteto_dia\tgasto_acum\trej_7d\n'+
+     'Samuel\tConta de Anúncio\tCA1 — Samuel\tact_8832141000\tBM Samuel 01\tProdução\t01/04/2026\t600\t26800\t0\n'+
+     'Samuel\tPixel / Dataset\tPX_SAMUEL_01\t\tBM Samuel 01\tProdução\t\t\t\t'
+   : 'nome\tvertical\tconsciencia\tangulo\tqueimadas\tstatus\tcopy\n'+
+     'INF_SAM_dor01\tSamuel\tConsciente do problema\tdor de operar no escuro\t0\tAtivo\tA maioria trava no mesmo ponto: ler o gráfico sem processo.';
+  previa();
+}
+function previa(){
+  const tipo=document.getElementById('imp-tipo').value;
+  const box=document.getElementById('imp-out');
+  const d=parseTab(document.getElementById('imp-txt').value);
+  if(!d){ box.innerHTML='<div class="alert a-ye">Cole pelo menos o cabeçalho e uma linha.</div>'; previaDados=null; return }
+  const m=achaCol(d.cab);
+  const faltando=[];
+  if(tipo==='estruturas'){ if(m.nome===undefined) faltando.push('nome') }
+  else { if(m.nome===undefined) faltando.push('nome') }
+  if(faltando.length){
+    box.innerHTML='<div class="alert a-rd">Não achei a(s) coluna(s): <b>'+faltando.join(', ')+'</b>.<br>Colunas lidas: '+d.cab.map(esc).join(' · ')+'</div>';
+    previaDados=null; return;
+  }
+  const lidas=Object.keys(m).map(k=>k+' → "'+esc(d.cab[m[k]])+'"');
+  const ignoradas=d.cab.filter((c,i)=>!Object.values(m).includes(i));
+  let novos=0, atualiza=0;
+  const itens=d.linhas.map(l=>{
+    const g=k=>m[k]!==undefined?(l[m[k]]||''):'';
+    if(tipo==='estruturas'){
+      const nome=g('nome'); if(!nome) return null;
+      const expert=g('expert')||EXPERTS[0];
+      const ex=estruturas.find(e=>e.nome===nome&&e.expert===expert);
+      ex?atualiza++:novos++;
+      return {id:ex?ex.id:uid(), expert, tipo:g('tipo')||'Conta de Anúncio', nome,
+        idConta:g('idConta'), bm:g('bm')||'—', status:normEstagio(g('status')),
+        data:normData(g('data')), teto:numBR(g('teto')), gasto:numBR(g('gasto')), rej:numBR(g('rej'))};
+    } else {
+      const nome=g('nome'); if(!nome) return null;
+      const copy=g('copy'); const ex=informativos.find(i=>i.nome===nome);
+      ex?atualiza++:novos++;
+      const risco = g('risco') ? numBR(g('risco')) : (copy?pontuar(scan(copy)):0);
+      return {id:ex?ex.id:uid(), nome, expert:g('expert')||EXPERTS[0],
+        consc:g('consc')||'Consciente do problema', ang:g('ang')||'—',
+        risco, queimadas:numBR(g('queimadas')), status:g('status')||'Ativo', copy};
+    }
+  }).filter(Boolean);
+  previaDados={tipo,itens};
+  const amostra=itens.slice(0,5);
+  box.innerHTML='<div class="alert a-gr"><b>'+itens.length+' linha(s) lidas</b> — '+novos+' nova(s), '+atualiza+' atualizada(s).'+
+    (tipo==='informativos'&&!m.risco?' O risco foi calculado a partir da copy.':'')+'</div>'+
+    '<div class="mini">Colunas reconhecidas: '+lidas.join(' · ')+
+    (ignoradas.length?'<br>Ignoradas: '+ignoradas.map(esc).join(' · '):'')+'</div>'+
+    '<div class="tw" style="margin-top:11px"><table><thead><tr>'+
+      (tipo==='estruturas'?'<th>Vertical</th><th>Tipo</th><th>Nome</th><th>ID</th><th>BM</th><th>Estágio</th><th>R$/dia</th>'
+                          :'<th>Nome</th><th>Vertical</th><th>Consciência</th><th>Risco</th><th>Queimadas</th>')+
+    '</tr></thead><tbody>'+amostra.map(i=>tipo==='estruturas'
+      ?'<tr><td>'+esc(i.expert)+'</td><td>'+esc(i.tipo)+'</td><td><b>'+esc(i.nome)+'</b></td><td class="mono">'+esc(i.idConta||'—')+'</td><td class="mono">'+esc(i.bm)+'</td><td><span class="bg '+(ESTAGIOS[i.status]||'b-gy')+'">'+esc(i.status)+'</span></td><td>'+brl(i.teto)+'</td></tr>'
+      :'<tr><td><b>'+esc(i.nome)+'</b></td><td>'+esc(i.expert)+'</td><td>'+esc(i.consc)+'</td><td><b style="color:'+faixa(i.risco).c+'">'+i.risco+'</b></td><td>'+i.queimadas+'</td></tr>').join('')+
+    '</tbody></table></div>'+
+    (itens.length>5?'<div class="mini">Mostrando 5 de '+itens.length+'.</div>':'')+
+    '<button data-act="importar2" style="margin-top:11px">Importar '+itens.length+' linha(s)</button>';
+  ligar();
+}
+function importar2(){
+  if(!previaDados) return;
+  const {tipo,itens}=previaDados;
+  itens.forEach(i=>{
+    const lista = tipo==='estruturas' ? estruturas : informativos;
+    const k=lista.findIndex(x=>x.id===i.id);
+    k>=0 ? lista[k]=Object.assign(lista[k],i) : lista.push(i);
+  });
+  S.set('modo','real'); salvaTudo();
+  document.getElementById('imp-txt').value=''; previaDados=null;
+  boot();
+  const box=document.getElementById('imp-out');
+  if(box) box.innerHTML='<div class="alert a-gr"><b>'+itens.length+' linha(s) importadas.</b> A malha e o painel já refletem os números.</div>';
+}
+
+/* ── fluxo de queda: um clique dispara 6 operações ── */
+function caiu(id){ quedaAberta=id; renderMalha(); }
+function cancelarQueda(){ quedaAberta=null; renderMalha(); }
+function confirmarQueda(id){
+  const e=estruturas.find(x=>x.id===id); if(!e) return;
+  const infId=(document.getElementById('q-inf')||{}).value||'';
+  const tipo=(document.getElementById('q-tipo')||{}).value||'Conta banida';
+  const inf=informativos.find(i=>i.id===infId);
+  e.status = tipo==='Conta limitada' ? 'Limitada' : 'Banida';
+  const tetoPerdido=e.teto||0; e.teto=0;
+  if(inf){ inf.queimadas++; inf.status = inf.queimadas>=3 ? 'Aposentado' : 'Quarentena' }
+  incidentes.unshift({id:uid(),data:new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}),
+    expert:e.expert,ativo:e.nome,tipo,inf:inf?inf.nome:'—'});
+  checks={};
+  quedaAberta=null; salvaTudo();
+  const sub=substituta(e);
+  boot();
+  location.hash='#pg-malha';
+  const box=document.getElementById('cruz-out');
+  if(box) box.insertAdjacentHTML('afterbegin','<div class="alert a-rd"><b>'+esc(e.nome)+' marcada como '+esc(e.status)+'.</b> '+
+    (inf?'Informativo <b>'+esc(inf.nome)+'</b> agora tem '+inf.queimadas+' conta(s) queimada(s)'+(inf.status==='Aposentado'?' — <b>aposentado</b>.':' — em quarentena.'):'Nenhum informativo vinculado.')+
+    '<br>Incidente aberto e checklist do runbook zerado.'+
+    (sub?'<br><b>Migre '+brl(tetoPerdido)+'/dia para '+esc(sub.nome)+'</b> ('+esc(sub.status).toLowerCase()+', score '+health(sub)+') — mas entre pela rampa, não com o budget cheio.'
+        :'<br><b style="color:var(--yellow)">Sem reserva disponível nesta vertical.</b> Promova uma conta fria pra aquecimento hoje.')+'</div>');
+}
+function substituta(caida){
+  const cand=estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&e.expert===caida.expert&&e.id!==caida.id
+    &&['Em aquecimento','Reserva fria','Produção'].includes(e.status));
+  cand.sort((a,b)=>{
+    const pri=x=>x.status==='Em aquecimento'?0:x.status==='Reserva fria'?1:2;
+    return pri(a)-pri(b) || health(b)-health(a);
+  });
+  return cand[0]||null;
+}
+function promover(id){
+  const e=estruturas.find(x=>x.id===id); if(!e) return;
+  const i=ORDEM.indexOf(e.status); if(i<0||i>=2) return;
+  e.status=ORDEM[i+1];
+  if(e.status==='Em aquecimento'){ e.data=new Date().toISOString().slice(0,10); e.teto=e.teto||60 }
+  salvaTudo(); boot();
+}
+function reativar(id){
+  const e=estruturas.find(x=>x.id===id); if(!e) return;
+  e.status='Em observação'; e.rej=0; e.teto=e.teto||60;
+  salvaTudo(); boot();
+}
+function editar(id,campo,valor){
+  const e=estruturas.find(x=>x.id===id); if(!e) return;
+  e[campo]= campo==='teto' ? (+valor||0) : valor;
+  salvaTudo(); renderMalha(); renderSaude(); renderPainel();
+}
+let rejAberta=null;
+function rejMais(id){ rejAberta=id; renderMalha() }
+function cancelarRej(){ rejAberta=null; renderMalha() }
+function confirmarRej(id){
+  const e=estruturas.find(x=>x.id===id); if(!e) return;
+  if(!Array.isArray(e.rejs)){ e.rejs=[];
+    for(let i=0;i<(+e.rej||0);i++) e.rejs.push({data:new Date().toISOString().slice(0,10),motivo:'Outro / não informado'});
+  }
+  e.rejs.push({data:(document.getElementById('rj-data')||{}).value||new Date().toISOString().slice(0,10),
+               motivo:(document.getElementById('rj-motivo')||{}).value||'Outro / não informado'});
+  e.rej=rej7(e); rejAberta=null; salvaTudo(); boot();
+}
+function rejMenos(id){
+  const e=estruturas.find(x=>x.id===id); if(!e) return;
+  if(Array.isArray(e.rejs)&&e.rejs.length){ e.rejs.sort((a,b)=>a.data<b.data?1:-1); e.rejs.shift() }
+  else e.rej=Math.max(0,(+e.rej||0)-1);
+  e.rej=rej7(e); salvaTudo(); boot();
+}
+
+/* ── detector de cruzamento: pixel/domínio/página servindo mais de uma BM ou vertical ── */
+function cruzamentos(){
+  const achados=[];
+  bmsDe().forEach(b=>{
+    const clis=[...new Set(estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&e.bm===b.nome).map(e=>e.expert))];
+    if(clis.length>1) achados.push({g:'critico',tipo:'BM',nome:b.nome,
+      txt:'concentra as contas de '+clis.length+' clientes ('+clis.join(' · ')+')',
+      fix:'Ponto único de falha: se esta BM cair, os '+clis.length+' clientes param no mesmo minuto. Abra uma BM anunciante por cliente e migre as contas antes de subir budget.'});
+  });
+  const compart=['Pixel / Dataset','Domínio','Página'];
+  estruturas.filter(e=>compart.includes(e.tipo)).forEach(e=>{
+    const bms=String(e.bm||'').split(',').map(x=>x.trim()).filter(x=>x&&x!=='—');
+    if(bms.length>1) achados.push({g:'alto',tipo:e.tipo,nome:e.nome,
+      txt:'atende '+bms.length+' BMs ('+bms.join(' · ')+') dentro da vertical '+e.expert,
+      fix:'Separe: um dataset/domínio por BM. Perde-se aprendizado de conversão, ganha-se sobrevivência.'});
+  });
+  const porNome={};
+  estruturas.filter(e=>compart.includes(e.tipo)).forEach(e=>{ (porNome[e.nome]=porNome[e.nome]||new Set()).add(e.expert) });
+  Object.keys(porNome).forEach(n=>{
+    if(porNome[n].size>1) achados.push({g:'critico',tipo:'Ativo compartilhado',nome:n,
+      txt:'usado por '+porNome[n].size+' verticais diferentes ('+[...porNome[n]].join(' · ')+')',
+      fix:'Este é o pior caso: um strike numa vertical arrasta a outra junto. Duplique o ativo por vertical antes de subir mais budget.'});
+  });
+  return achados;
+}
+function renderCruz(){
+  const box=document.getElementById('cruz-out'); if(!box) return;
+  const a=cruzamentos();
+  box.innerHTML = a.length ? a.map(x=>
+    '<div class="alert '+(x.g==='critico'?'a-rd':'a-ye')+'"><b>'+esc(x.nome)+'</b> — '+esc(x.txt)+
+    '<div style="margin-top:6px;font-size:12.5px;opacity:.85">'+esc(x.fix)+'</div></div>').join('')
+    : '<div class="alert a-gr">Nenhuma concentração de risco: cada BM atende um cliente e nenhum pixel, domínio ou página cruza estrutura.</div>';
+}
+function renderMotivos(){
+  const box=document.getElementById('motivos-out'); if(!box) return;
+  const cont={}; let tot=0;
+  estruturas.forEach(e=>listaRej(e).forEach(r=>{ if(dias(r.data)<30){ cont[r.motivo]=(cont[r.motivo]||0)+1; tot++ } }));
+  const chaves=Object.keys(cont).sort((a,b)=>cont[b]-cont[a]);
+  if(!tot){ box.innerHTML='<div class="empty">Nenhuma rejeição registrada ainda. Use o <b>+</b> ao lado de "rej" na Malha sempre que a Meta reprovar — em duas semanas este relatório vira o mapa do que reescrever.</div>'; return }
+  box.innerHTML=chaves.map(m=>{
+    const pct=Math.round(cont[m]/tot*100);
+    return '<div style="padding:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px">'+
+    '<span>'+esc(m)+'</span><b>'+cont[m]+' <span style="color:var(--text3)">('+pct+'%)</span></b></div>'+
+    '<div class="bar"><i style="width:'+pct+'%;background:'+(pct>=40?'var(--red)':pct>=20?'var(--orange)':'var(--yellow)')+'"></i></div></div>';
+  }).join('')+'<div class="mini">'+tot+' rejeição(ões) em 30 dias. O motivo do topo é onde está o dinheiro: corrigir ele derruba a taxa de queima mais que qualquer outra ação.</div>';
+}
+function renderSaude(){
+  const cas=estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&e.status!=='Reserva fria').map(e=>({e,h:health(e)})).sort((a,b)=>a.h-b.h);
+  const box=document.getElementById('saude-lista');
+  if(!cas.length){ box.innerHTML='<div class="empty">Cadastre as contas de anúncio na Malha pra ver o score.</div>'; return }
+  box.innerHTML=cas.map(({e,h})=>{ const f=hFaixa(h);
+    return '<div style="padding:14px 0;border-bottom:1px solid var(--border)">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">'+
+    '<div><b style="font-size:14px">'+esc(e.nome)+'</b> <span style="color:var(--text3);font-size:12px">· '+esc(e.expert)+' · '+esc(e.bm)+'</span></div>'+
+    '<div style="display:flex;gap:9px;align-items:center"><span class="bg '+f.b+'">'+f.t+'</span><b style="font-size:19px;color:'+f.c+'">'+h+'</b></div></div>'+
+    '<div class="bar"><i style="width:'+h+'%;background:'+f.c+'"></i></div>'+
+    '<div class="mini"><b style="color:'+f.c+'">Ordem: </b>'+f.a+' &nbsp;·&nbsp; '+(e.rej||0)+' rejeição(ões) em 7d · '+(e.data?dias(e.data)+' dias de idade':'idade não informada')+' · gasto '+brl(e.gasto)+'</div></div>';
+  }).join('');
+}
+
+/* ══════════ BIBLIOTECA ══════════ */
+let filtroBib='Todas';
+function queimou(id){ const i=informativos.find(x=>x.id===id); if(!i)return; i.queimadas++; if(i.queimadas>=3) i.status='Aposentado'; else if(i.queimadas>=1) i.status='Quarentena'; salvaTudo(); renderBiblioteca(); }
+function delInf(id){ if(!confirm('Remover informativo?'))return; informativos=informativos.filter(i=>i.id!==id); salvaTudo(); renderBiblioteca(); }
+function renderBiblioteca(){
+  document.getElementById('bib-filtros').innerHTML=['Todas',...EXPERTS].map(x=>'<span class="pill '+(filtroBib===x?'on':'')+'" data-act="filtroBib" data-arg="'+x+'">'+x+'</span>').join('');
+  const lista=informativos.filter(i=>filtroBib==='Todas'||i.expert===filtroBib);
+  const tb=document.getElementById('bib-body');
+  tb.innerHTML = lista.length ? lista.map(i=>{
+    const f=faixa(i.risco), st=i.status==='Ativo'?'b-gr':i.status==='Quarentena'?'b-ye':'b-rd';
+    return '<tr><td><b>'+esc(i.nome)+'</b></td><td style="color:var(--text2)">'+esc(i.expert)+'</td><td style="color:var(--text3);font-size:12px">'+esc(i.consc)+'</td><td style="color:var(--text3)">'+esc(i.ang)+'</td>'+
+    '<td><b style="color:'+f.c+'">'+i.risco+'</b></td>'+
+    '<td'+(i.queimadas?' style="color:var(--red);font-weight:700"':'')+'>'+i.queimadas+'</td>'+
+    '<td><span class="bg '+st+'">'+esc(i.status)+'</span></td>'+
+    '<td style="white-space:nowrap"><button class="gh sm" data-act="queimou" data-arg="'+i.id+'">+1 queimada</button> <button class="gh sm" data-act="delInf" data-arg="'+i.id+'">×</button></td></tr>';
+  }).join('') : '<tr><td colspan="8"><div class="empty">Nenhum informativo salvo. Analise no Raio-X e salve aqui.</div></td></tr>';
+  const mx=document.getElementById('bib-matriz'), ideal={'Inconsciente':20,'Consciente do problema':30,'Consciente da solução':25,'Consciente do produto':15,'Mais consciente':10};
+  const ativos=informativos.filter(i=>i.status==='Ativo');
+  mx.innerHTML=CONSC.map(c=>{
+    const n=ativos.filter(i=>i.consc===c).length, pct=ativos.length?Math.round(n/ativos.length*100):0;
+    const dif=pct-ideal[c], cor=Math.abs(dif)<=10?'var(--accent)':Math.abs(dif)<=20?'var(--yellow)':'var(--red)';
+    return '<div style="padding:9px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+c+'</span>'+
+    '<span><b style="color:'+cor+'">'+pct+'%</b> <span style="color:var(--text3)">/ ideal '+ideal[c]+'% · '+n+' peça(s)</span></span></div>'+
+    '<div class="bar"><i style="width:'+pct+'%;background:'+cor+'"></i></div></div>';
+  }).join('')+'<div class="mini">Excesso de topo = lead frio e agendamento despencando. Ajuste o ideal com seu show-up real.</div>';
+}
+
+/* ══════════ INCIDENTES ══════════ */
+const RB={rb1:[
+  ['Congelar upload nas CAs irmãs da mesma BM','Pare de SUBIR, não de entregar. Rejeição vem em cascata.'],
+  ['Identificar o informativo ativo na queda','Sem esse dado você repõe conta pra sempre sem remover a causa.'],
+  ['Marcar o informativo em quarentena','Na terceira queda, aposenta — não reescreve.'],
+  ['Migrar budget pra reserva da MESMA vertical','Cruzar vertical é como 1 ban vira 3.'],
+  ['NÃO abrir recurso ainda','Recurso no calor pede revisão manual da BM inteira.']
+],rb2:[
+  ['Varrer ativos compartilhados','Pixel, página ou domínio dividido com a caída: desvincule agora.'],
+  ['Checar página e domínio','Se sinalizados, troque antes de reativar.'],
+  ['Reescrever o informativo até risco < 25','Ou aposentar. Reciclar criativo rejeitado é o erro mais caro.'],
+  ['Religar pela RAMPA','Nunca com o budget que a conta caída tinha.']
+],rb3:[
+  ['Abrir o recurso','Agora sim — com a conta já sem criativo de risco ativo.'],
+  ['Repor o pipeline','Promova 1 reserva fria. Pipeline vazio hoje = meta furada em 14 dias.'],
+  ['Conferir kill count e taxa de queima','Transforma incidente isolado em padrão visível.'],
+  ['2ª queda da vertical em 7 dias?','Pausa upload por 72h e revisa a página inteira.']
+]};
+function renderRB(){
+  ['rb1','rb2','rb3'].forEach(k=>{
+    document.getElementById(k).innerHTML=RB[k].map((s,i)=>{
+      const id=k+'_'+i, on=checks[id];
+      return '<div class="step '+(on?'done':'')+'"><input type="checkbox" class="chk" '+(on?'checked':'')+' data-chk="'+id+'">'+
+      '<div class="n">'+(i+1)+'</div><div class="tx"><b>'+esc(s[0])+'</b><span>'+esc(s[1])+'</span></div></div>';
+    }).join('');
+  });
+}
+function addIncidente(){
+  const a=document.getElementById('in-ativo').value.trim();
+  if(!a) return alert('Informe o ativo atingido.');
+  incidentes.unshift({ id:uid(), data:new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}),
+    expert:document.getElementById('in-expert').value, ativo:a, tipo:document.getElementById('in-tipo').value,
+    inf:document.getElementById('in-inf').value.trim()||'—' });
+  checks={}; salvaTudo(); document.getElementById('in-ativo').value=''; renderIncidentes();
+}
+function delInc(id){ incidentes=incidentes.filter(i=>i.id!==id); salvaTudo(); renderIncidentes(); }
+function renderIncidentes(){
+  renderRB();
+  const tb=document.getElementById('inc-body');
+  tb.innerHTML = incidentes.length ? incidentes.map(i=>'<tr><td style="white-space:nowrap;color:var(--text3)">'+esc(i.data)+'</td><td>'+esc(i.expert)+'</td><td><b>'+esc(i.ativo)+'</b></td><td><span class="bg b-rd">'+esc(i.tipo)+'</span></td><td style="color:var(--text2)">'+esc(i.inf)+'</td><td><button class="gh sm" data-act="delInc" data-arg="'+i.id+'">×</button></td></tr>').join('')
+    : '<tr><td colspan="6"><div class="empty">Nenhum incidente registrado.</div></td></tr>';
+}
+
+/* ══════════ HOJE ══════════ */
+const HOJE = () => new Date().toISOString().slice(0,10);
+function acoes(){
+  const out=[];
+  estruturas.filter(e=>e.tipo==='Conta de Anúncio').forEach(e=>{
+    const r=rej7(e), t=tetoSeguro(e), b=e.teto||0;
+    const sub=()=>substituta(e);
+    if(e.status==='Banida'){
+      const temInc=incidentes.some(i=>i.ativo===e.nome);
+      if(!temInc) out.push({p:1,e,tipo:'critico',t:'Registrar a queda',
+        d:'Conta banida sem incidente aberto. Use o botão Caiu na Malha para vincular o informativo e liberar a substituta.',ir:'malha'});
+      return;
+    }
+    if(['Limitada','Em recurso'].includes(e.status)){
+      const s2=sub();
+      out.push({p:1,e,tipo:'critico',t:'Migrar o budget desta conta',
+        d:'Conta '+e.status.toLowerCase()+'. '+(s2?'Passe os '+brl(b)+'/dia para '+s2.nome+' — entrando pela rampa, não com o valor cheio.':'Sem substituta nesta vertical: promova uma reserva hoje.'),ir:'malha'});
+      return;
+    }
+    if(r>=3){ out.push({p:1,e,tipo:'critico',t:'Congelar escala — '+r+' rejeições em 7 dias',
+      d:'Kill-switch disparado. Não suba budget nem criativo. Prepare a migração antes que vire ban.',ir:'saude'}); return }
+    if(r===2){ out.push({p:2,e,tipo:'bloqueio',t:'Segurar — 2 rejeições em 7 dias',
+      d:'Mantenha o budget onde está e não suba criativo novo por 48h. Subir agora é o caminho mais curto pro ban.',ir:'saude'}); return }
+    if(!e.data){ out.push({p:3,e,tipo:'pendencia',t:'Informar a data de criação',
+      d:'Sem ela não dá para calcular rampa nem saber quanto esta conta aguenta.',ir:'malha'}); return }
+    if(e.status==='Reserva fria'){
+      const emAq=estruturas.filter(x=>x.tipo==='Conta de Anúncio'&&x.expert===e.expert&&x.status==='Em aquecimento').length;
+      if(emAq<2) out.push({p:3,e,tipo:'pipeline',t:'Promover para aquecimento',
+        d:'A vertical tem só '+emAq+' conta aquecendo. Pipeline vazio hoje é meta furada em 14 dias.',ir:'malha'});
+      return;
+    }
+    if(t===null) return;
+    if(b>t*1.25){ out.push({p:2,e,tipo:'risco',t:'Reduzir para '+brl(t),
+      d:'Rodando '+brl(b)+'/dia com '+dias(e.data)+' dias de idade. Está '+Math.round((b/t-1)*100)+'% acima do que a conta sustenta.',ir:'malha'}); return }
+    if(e.ultimaSubida===HOJE()){ out.push({p:4,e,tipo:'ok',t:'Já subiu hoje — não mexer',
+      d:'Budget em '+brl(b)+'/dia. Próxima subida só amanhã, com o dia fechando sem rejeição.',ir:null}); return }
+    if(b<t){
+      const novo=Math.min(t, b?Math.round(b*1.3/10)*10:60);
+      if(novo>b) out.push({p:2,e,tipo:'escala',t:'Subir de '+brl(b)+' para '+brl(novo),
+        d:'Sem rejeição e com '+dias(e.data)+' dias de idade. Teto seguro hoje: '+brl(t)+'.',ganho:novo-b,novo,ir:null});
+      return;
+    }
+    out.push({p:4,e,tipo:'ok',t:'No teto da idade — manter',
+      d:'Rodando '+brl(b)+'/dia. Só cresce com o tempo de conta ou abrindo estrutura nova.',ir:null});
+  });
+  return out.sort((a,b)=>a.p-b.p);
+}
+const ICO={critico:['b-rd','Crítico'],bloqueio:['b-or','Segurar'],risco:['b-or','Risco'],
+  escala:['b-gr','Escalar'],pipeline:['b-bl','Pipeline'],pendencia:['b-ye','Cadastro'],ok:['b-gy','Ok']};
+function renderHoje(){
+  const topo=document.getElementById('hoje-topo'), lista=document.getElementById('hoje-lista');
+  if(!topo) return;
+  const a=acoes();
+  const subidas=a.filter(x=>x.tipo==='escala');
+  const ganho=subidas.reduce((s,x)=>s+x.ganho,0);
+  const atual=estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&['Produção','Em aquecimento','Em observação'].includes(e.status))
+    .reduce((s,e)=>s+(e.teto||0),0);
+  const meta=+((document.getElementById('c-meta')||{}).value)||2000;
+  const criticos=a.filter(x=>x.p===1).length;
+  topo.innerHTML=
+    '<div class="grid g4" style="margin-bottom:16px">'+
+    '<div class="kpi"><div class="lb">Rodando agora</div><div class="vl">'+brl(atual)+'</div><div class="dt">'+Math.round(atual/meta*100)+'% da meta</div></div>'+
+    '<div class="kpi"><div class="lb">Se aplicar hoje</div><div class="vl" style="color:var(--accent)">'+brl(atual+ganho)+'</div><div class="dt">'+subidas.length+' conta(s) podem subir</div></div>'+
+    '<div class="kpi"><div class="lb">Ganho do dia</div><div class="vl" style="color:var(--accent)">+'+brl(ganho)+'</div><div class="dt">respeitando a rampa</div></div>'+
+    '<div class="kpi"><div class="lb">Críticos</div><div class="vl" style="color:'+(criticos?'var(--red)':'var(--text3)')+'">'+criticos+'</div><div class="dt">resolver antes de escalar</div></div>'+
+    '</div>'+
+    (subidas.length?'<button data-act="aplicarSubidas">Aplicar as '+subidas.length+' subidas (+'+brl(ganho)+'/dia)</button>':'');
+  lista.innerHTML = a.length ? a.map(x=>
+    '<div class="acao '+x.tipo+'">'+
+      '<div class="acao-h"><span class="bg '+ICO[x.tipo][0]+'">'+ICO[x.tipo][1]+'</span>'+
+      '<b>'+esc(x.e.nome)+'</b><span class="mini" style="margin:0">'+esc(x.e.expert)+'</span>'+
+      (x.ir?'<a class="gh sm" href="#pg-'+x.ir+'" style="margin-left:auto;text-decoration:none;padding:5px 10px;border:1px solid var(--border2);border-radius:7px;color:var(--text2);font-size:12px">abrir</a>':'')+
+      '</div>'+
+      '<div class="acao-t">'+esc(x.t)+'</div>'+
+      '<div class="acao-d">'+esc(x.d)+'</div>'+
+    '</div>').join('') : '<div class="card"><div class="empty">Nada a fazer. Cadastre as contas na Malha.</div></div>';
+  ligar();
+}
+function aplicarSubidas(){
+  const s2=acoes().filter(x=>x.tipo==='escala');
+  if(!s2.length) return;
+  if(!confirm('Subir o budget de '+s2.length+' conta(s) para o teto seguro da idade delas?\n\nIsso altera o sistema — lembre de replicar no Gerenciador.')) return;
+  s2.forEach(x=>{ const e=estruturas.find(y=>y.id===x.e.id); if(e){ e.teto=x.novo; e.ultimaSubida=HOJE() } });
+  salvaTudo(); boot();
+}
+
+/* ══════════ PAINEL / CÁLCULOS ══════════ */
+function renderPainel(){
+  const meta=+document.getElementById('c-meta').value||2000;
+  const cas=estruturas.filter(e=>e.tipo==='Conta de Anúncio');
+  const prod=cas.filter(e=>e.status==='Produção');
+  const cap=prod.reduce((s,e)=>s+(e.teto||0),0);
+  const cob=meta?Math.round(cap/meta*100):0;
+  document.getElementById('k-meta').textContent=brl(meta);
+  document.getElementById('k-cap').textContent=brl(cap);
+  document.getElementById('k-cap-dt').textContent=prod.length+' conta(s) em produção';
+  document.getElementById('k-cob').textContent=cob+'%';
+  document.getElementById('k-cob').style.color = cob>=100?'var(--accent)':cob>=60?'var(--yellow)':'var(--red)';
+  document.getElementById('k-gap').textContent=brl(Math.max(0,meta-cap));
+
+  const est=['Reserva fria','Em aquecimento','Produção','Em observação','Limitada','Em recurso','Banida'];
+  const tot=cas.length||1;
+  document.getElementById('pipeline').innerHTML = cas.length ? est.map(s=>{
+    const n=cas.filter(e=>e.status===s).length, pct=Math.round(n/tot*100);
+    return '<div style="padding:7px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span class="bg '+ESTAGIOS[s]+'">'+s+'</span><b>'+n+'</b></div><div class="bar"><i style="width:'+pct+'%;background:var(--accent)"></i></div></div>';
+  }).join('') : '<div class="empty">Cadastre as contas na Malha.</div>';
+
+  const al=[]; 
+  const criticas=cas.filter(e=>e.status!=='Banida'&&health(e)<40);
+  if(criticas.length) al.push(['a-rd','<b>'+criticas.length+' conta(s) em estado crítico.</b> Migre o budget agora — na página Health Score, de cima pra baixo.']);
+  if(cap<meta && cas.length) al.push(['a-ye','<b>Capacidade abaixo da meta em '+brl(meta-cap)+'/dia.</b> Isso não se resolve subindo budget: é rampa. Veja quantas contas faltam na calculadora de malha.']);
+  const semAquec=cas.filter(e=>e.status==='Em aquecimento').length;
+  if(cas.length && semAquec===0) al.push(['a-ye','<b>Nenhuma conta em aquecimento.</b> Pipeline vazio hoje = meta furada daqui a 14 dias. Promova reservas agora.']);
+  const conc=bmsDe().map(b=>({b,clis:[...new Set(estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&e.bm===b.nome).map(e=>e.expert))]}))
+    .filter(x=>x.clis.length>1);
+  conc.forEach(x=>al.push(['a-rd','<b>Ponto único de falha: '+esc(x.b.nome)+'.</b> '+x.clis.length+
+    ' clientes ('+x.clis.map(esc).join(', ')+') dependem da mesma BM. Se ela cair, a operação inteira para junto — não só uma vertical.']));
+  const cz=cruzamentos();
+  if(cz.length) al.push(['a-rd','<b>'+cz.length+' cruzamento(s) de ativo na malha.</b> Pixel, domínio ou página servindo mais de uma BM ou vertical — é o caminho que faz um ban derrubar estruturas vizinhas. Detalhe em <b>Malha de Estruturas</b>.']);
+  const infRisco=informativos.filter(i=>i.status==='Ativo'&&i.risco>45);
+  if(infRisco.length) al.push(['a-rd','<b>'+infRisco.length+' informativo(s) ativo(s) com risco acima de 45.</b> São os que estão derrubando conta. Reescreva no Raio-X antes de subir mais budget.']);
+  if(!cas.length) al.push(['a-bl','Comece cadastrando as contas de anúncio das 3 verticais na <b>Malha de Estruturas</b> — o painel inteiro se alimenta daí.']);
+  if(!al.length) al.push(['a-gr','<b>Malha saudável e capacidade cobrindo a meta.</b> Mantenha a rampa e o pipeline de aquecimento girando.']);
+  document.getElementById('painel-alertas').innerHTML=al.map(a=>'<div class="alert '+a[0]+'">'+a[1]+'</div>').join('');
+}
+function calcMalha(){
+  const meta=+document.getElementById('c-meta').value||0, teto=+document.getElementById('c-teto').value||1;
+  const q=(+document.getElementById('c-queima').value||0)/100, lead=+document.getElementById('c-lead').value||14;
+  const prod=Math.ceil(meta/teto);
+  const perdaSem=prod*q;
+  const aquec=Math.ceil(perdaSem*(lead/7));
+  const reserva=Math.ceil(aquec*1.5);
+  document.getElementById('calc-out').innerHTML=
+   '<div class="kv"><span>Contas em produção necessárias</span><b style="color:var(--accent)">'+prod+'</b></div>'+
+   '<div class="kv"><span>Contas perdidas por semana</span><b style="color:var(--red)">'+perdaSem.toFixed(1)+'</b></div>'+
+   '<div class="kv"><span>Em aquecimento (pipeline)</span><b style="color:var(--blue)">'+aquec+'</b></div>'+
+   '<div class="kv"><span>Reserva fria mínima</span><b>'+reserva+'</b></div>'+
+   '<div class="kv"><span>Malha total a manter</span><b>'+(prod+aquec+reserva)+' contas</b></div>'+
+   '<div class="mini">Queima 35% → 15% economiza mais estrutura que comprar conta nova.</div>';
+  renderPainel();
+}
+function plano(){
+  const tb=document.getElementById('plano-body'); if(!tb) return;
+  const cas=estruturas.filter(e=>e.tipo==='Conta de Anúncio'&&e.status!=='Banida');
+  const n=cas.length||1;
+  const idades=cas.filter(e=>e.data).map(e=>dias(e.data));
+  const d0=idades.length?Math.min(...idades):0;
+  const meta=+((document.getElementById('c-meta')||{}).value)||2000;
+  let out='', bateu=null;
+  for(let k=0;k<=18;k+=2){
+    const d=d0+k;
+    let v=60; for(let i=4;i<=d;i++) v=Math.min(600,v*1.3);
+    v=Math.round(v/10)*10;
+    const tot=v*n, pct=Math.round(tot/meta*100);
+    if(bateu===null&&tot>=meta) bateu=d;
+    const regra = d<=3?'Não mexer' : (v>=600?'Teto por conta atingido — só cresce abrindo conta nova':'Sobe 30% se ontem fechou sem rejeição');
+    out+='<tr><td><b>D'+d+'</b>'+(k===0?' <span class="bg b-bl">hoje</span>':'')+'</td><td>'+brl(v)+'</td>'+
+      '<td><b style="color:'+(tot>=meta?'var(--accent)':'var(--text)')+'">'+brl(tot)+'</b></td>'+
+      '<td>'+pct+'%</td><td style="color:var(--text3)">'+regra+'</td></tr>';
+  }
+  tb.innerHTML=out;
+  const nota=document.getElementById('plano-nota');
+  if(nota) nota.innerHTML = bateu!==null
+    ? '<div class="alert a-gr"><b>A meta é alcançável em '+Math.max(0,bateu-d0)+' dias</b> com as '+n+' contas que você já tem — sem comprar nem abrir nada. A condição é uma só: <b>zero rejeição</b>. Cada rejeição devolve a conta pro começo da rampa, e é isso que empurra a meta pra frente.</div>'
+    : '<div class="alert a-ye"><b>'+n+' contas não chegam à meta nem no teto da rampa.</b> Faltam cerca de '+Math.ceil((meta-600*n)/600)+' conta(s). Comece o aquecimento delas hoje — leva 14 dias.</div>';
+}
+function rampa(){
+  const ini=+document.getElementById('a-ini').value||60, inc=(+document.getElementById('a-inc').value||30)/100, teto=+document.getElementById('a-teto').value||450;
+  let v=ini, out='', d=1;
+  while(d<=16){
+    const regra = d<=3 ? 'Não mexer. Zero criativo novo.' : (v>=teto ? 'Teto atingido — estabilize por 7 dias antes de pensar em subir.' : 'Avança só se ontem fechou com 0 rejeição e sem anúncio em análise >24h.');
+    out+='<tr><td><b>D'+d+'</b></td><td style="color:'+(v>=teto?'var(--accent)':'var(--text)')+'">'+brl(Math.round(v))+'</td><td style="color:var(--text3)">'+regra+'</td></tr>';
+    if(v>=teto) break;
+    v=Math.min(teto, d<=3? ini : v*(1+inc)); d++;
+  }
+  document.getElementById('rampa-body').innerHTML=out;
+}
+function calcFunil(){
+  const inv=+document.getElementById('f-inv').value||0, cpl=+document.getElementById('f-cpl').value||1;
+  const ag=(+document.getElementById('f-ag').value||0)/100, sh=(+document.getElementById('f-show').value||0)/100;
+  const fe=(+document.getElementById('f-fech').value||0)/100, tk=+document.getElementById('f-tk').value||0;
+  const leads=inv/cpl, agend=leads*ag, shows=agend*sh, vendas=shows*fe;
+  const receita=vendas*tk, roas=inv?receita/inv:0, cac=vendas?inv/vendas:0;
+  const cplBreak=tk*ag*sh*fe, cplRoas3=cplBreak/3;
+  document.getElementById('funil-out').innerHTML=
+   '<div class="grid g4" style="margin:14px 0">'+
+   ['Leads/dia',Math.round(leads),'Agendamentos/dia',agend.toFixed(1),'Calls realizadas/dia',shows.toFixed(1),'Vendas/dia',vendas.toFixed(2)]
+     .reduce((a,v,i,arr)=>i%2?a:a+'<div class="kpi"><div class="lb">'+v+'</div><div class="vl">'+arr[i+1]+'</div></div>','')+'</div>'+
+   '<div class="kv"><span>Vendas por mês</span><b>'+(vendas*30).toFixed(1)+'</b></div>'+
+   '<div class="kv"><span>Receita/mês</span><b style="color:var(--accent)">'+brl(receita*30)+'</b></div>'+
+   '<div class="kv"><span>ROAS</span><b style="color:'+(roas>=3?'var(--accent)':roas>=1?'var(--yellow)':'var(--red)')+'">'+roas.toFixed(2)+'x</b></div>'+
+   '<div class="kv"><span>CAC</span><b>'+brl(cac)+'</b></div>'+
+   '<div class="kv"><span>CPL de breakeven (ROAS 1)</span><b>'+brl(cplBreak)+'</b></div>'+
+   '<div class="kv"><span>CPL máximo para ROAS 3</span><b style="color:var(--accent)">'+brl(cplRoas3)+'</b></div>';
+  const l=[];
+  if(cpl>cplBreak) l.push(['a-rd','<b>Seu CPL está acima do breakeven.</b> Nesse cenário escalar aumenta prejuízo. O problema não é mídia — é taxa de fechamento ou ticket.']);
+  else if(cpl>cplRoas3) l.push(['a-ye','<b>O funil paga, mas não com folga.</b> Você tem margem de '+brl(cplBreak-cpl)+' por lead antes do prejuízo. Dá pra escalar com atenção.']);
+  else l.push(['a-gr','<b>Folga confortável.</b> Seu CPL está '+brl(cplRoas3-cpl)+' abaixo do teto pra ROAS 3 — este funil aguenta budget.']);
+  l.push(['a-bl','Pra sustentar '+brl(inv)+'/dia o comercial precisa absorver <b>'+Math.round(agend)+' agendamento(s)/dia</b> ('+Math.round(agend*30)+'/mês). Se a equipe não dá conta desse volume, o gargalo migra de tráfego pra atendimento — e o lead esfria antes da call. Valide isso com os gerentes antes de subir budget.']);
+  l.push(['a-bl','Com ticket de '+brl(tk)+', <b>uma venda paga '+(tk/inv).toFixed(1)+' dia(s) de mídia</b>. Isso muda a leitura de risco: em high ticket, dias sem venda são estatística normal, não sinal de campanha ruim. Julgue por janela de 7 dias, nunca por dia isolado.']);
+  document.getElementById('funil-leitura').innerHTML=l.map(a=>'<div class="alert '+a[0]+'">'+a[1]+'</div>').join('');
+}
+
+/* ══════════ EVENTOS (delegação — funciona sob CSP restrita) ══════════ */
+const ACTIONS={
+  entrar, addEstrutura, salvarInformativo, addIncidente,
+  delEstrutura, delInf, delInc, queimou,
+  rejMais, rejMenos, carregarExemplo, limparTudo,
+  toggleForm, toggleImport, toggleIds, caiu, confirmarRej, cancelarRej, aplicarSubidas, cancelarQueda, confirmarQueda, promover, reativar,
+  modelo, previa, importar2, reescreverCopy, usarReescrita, validarLote, devolutiva, salvarLote,
+  abrirBM, abrirCliente, abrirConta, fechar, salvarBM, salvarCliente, salvarConta, delCliente,
+  exportar(){ document.getElementById('bkp').value=JSON.stringify({estruturas,informativos,incidentes,checks}) },
+  importar(){
+    try{
+      const d=JSON.parse(document.getElementById('bkp').value);
+      estruturas=d.estruturas||[]; informativos=d.informativos||[]; incidentes=d.incidentes||[]; checks=d.checks||{};
+      S.set('modo','real'); salvaTudo(); boot(); alert('Backup importado.');
+    }catch(e){ alert('Não consegui ler esse backup. Cole o texto completo gerado pelo botão Gerar backup.') }
+  },
+  limparLinter(){ document.getElementById('lt-txt').value=''; analisar() },
+  filtroMalha(v){ filtroMalha=v; renderMalha() },
+  filtroBib(v){ filtroBib=v; renderBiblioteca() }
+};
+const LIVE={ calcMalha(){ calcMalha(); plano() }, rampa, calcFunil, analisar };
+
+function disparar(el){
+  if(el.dataset.act){ const fn=ACTIONS[el.dataset.act]; if(fn) fn(el.dataset.arg, el) }
+}
+// ligação direta em cada elemento — não depende de o evento subir até o document
+function ligar(raiz){
+  (raiz||document).querySelectorAll('[data-act],[data-live],[data-chk],[data-edit],[data-bulk]').forEach(el=>{
+    if(el.__lig) return; el.__lig=1;
+    if(el.dataset.act)  el.addEventListener('click', ()=>disparar(el));
+    if(el.dataset.live) el.addEventListener('input', ()=>{ const f=LIVE[el.dataset.live]; if(f) f() });
+    if(el.dataset.chk)  el.addEventListener('change', ()=>{ checks[el.dataset.chk]=el.checked; salvaTudo(); renderRB() });
+    if(el.dataset.edit) el.addEventListener('change', ()=>editar(el.dataset.arg, el.dataset.edit, el.value));
+    if(el.dataset.bulk) el.addEventListener('change', ()=>preencherData(el.dataset.bulk, el.value));
+  });
+}
+// delegação como segunda rede, caso a ligação direta perca algo recém-criado
+document.addEventListener('click', ev=>{
+  const el=ev.target.closest && ev.target.closest('[data-act]');
+  if(el && !el.__lig) disparar(el);
+});
+document.addEventListener('input', ev=>{
+  const el=ev.target.closest && ev.target.closest('[data-live]');
+  if(el && !el.__lig && LIVE[el.dataset.live]) LIVE[el.dataset.live]();
+});
+// religa automaticamente tudo que for criado por innerHTML
+if(window.MutationObserver){
+  new MutationObserver(()=>ligar()).observe(document.body,{childList:true,subtree:true});
+}
+window.addEventListener('hashchange', ()=>go(hashId()));
+document.addEventListener('keydown', ev=>{
+  if(ev.key==='Enter' && ev.target.closest('[data-enter]')) entrar();
+});
+window.addEventListener('error', ev=>{
+  const box=document.getElementById('login-error');
+  if(box && !box.textContent) box.textContent='Erro ao carregar: '+ev.message;
+});
+
+/* ══════════ MIGRAÇÃO ══════════ */
+const SEED_V=2;
+function migrar(){
+  let mudou=false;
+  // exemplo antigo: troca pelo seed atual sem tocar em dado real
+  if(S.get('modo','exemplo')==='exemplo' && S.get('seedv',0)<SEED_V && estruturas.length){
+    const {C,E,I,N}=montarSeed();
+    clientes=C; estruturas=E; informativos=I; incidentes=N; checks={};
+    S.set('seedv',SEED_V); salvaTudo(); return;
+  }
+  S.set('seedv',SEED_V);
+  // toda conta precisa de um cliente que exista
+  const nomes=new Set(clientes.map(c=>c.nome));
+  estruturas.filter(e=>e.tipo==='Conta de Anúncio').forEach(e=>{
+    const n=String(e.expert||'').trim();
+    if(n && n!=='—' && !nomes.has(n)){ clientes.push({id:uid(),nome:n,produto:''}); nomes.add(n); mudou=true }
+  });
+  // BM antiga sem papel: quem hospeda conta é anunciante
+  estruturas.filter(e=>e.tipo==='BM'&&!e.papel).forEach(b=>{
+    b.papel = estruturas.some(e=>e.tipo==='Conta de Anúncio'&&e.bm===b.nome) ? 'Anunciante' : 'Cofre';
+    mudou=true;
+  });
+  // BM citada por uma conta mas não cadastrada: cria
+  const bmNomes=new Set(estruturas.filter(e=>e.tipo==='BM').map(e=>e.nome));
+  const faltando=new Set();
+  estruturas.filter(e=>e.tipo==='Conta de Anúncio').forEach(e=>{
+    const n=String(e.bm||'').trim();
+    if(n && n!=='—' && !bmNomes.has(n)) faltando.add(n);
+  });
+  faltando.forEach(n=>{ estruturas.push({id:uid(),tipo:'BM',papel:'Anunciante',nome:n,idConta:'',bm:'—',
+    expert:'—',status:'Produção',data:'',teto:0,gasto:0,rej:0}); mudou=true });
+  if(mudou) salvaTudo();
+}
+
+/* ══════════ BOOT ══════════ */
+function boot(){
+  const dEl=document.getElementById('e-data'); if(dEl) dEl.value=new Date().toISOString().slice(0,10);
+  const faixa=document.getElementById('js-off'); if(faixa) faixa.remove();
+  migrar();
+  if(!estruturas.length && S.get('modo',null)!=='real'){
+    const {C,E,I,N}=montarSeed(); clientes=C; estruturas=E; informativos=I; incidentes=N;
+    S.set('modo','exemplo'); salvaTudo();
+  }
+  syncExperts();
+  ['e-expert','lt-expert','in-expert','lote-expert'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=(EXPERTS.length?EXPERTS:['—']).map(x=>'<option>'+esc(x)+'</option>').join('');
+  });
+  const ms=document.getElementById('modo-sub');
+  if(ms) ms.innerHTML = S.get('modo','exemplo')==='exemplo'
+    ? 'Rodando com <b>dados de exemplo</b> — uma operação de 3 verticais montada pra você ver cada tela funcionando. Quando for cadastrar a sua malha real, limpe tudo primeiro.'
+    : 'Rodando com os <b>seus dados</b>.';
+  renderMalha(); renderSaude(); renderMotivos(); renderBiblioteca(); renderIncidentes();
+  calcMalha(); rampa(); plano(); calcFunil(); analisar(); renderPainel(); renderHoje();
+  ligar();
+  go(hashId());
+}
+(function start(){
+  const f=document.querySelector('.side-foot'); if(f) f.textContent=VERSAO+' · dados locais no navegador';
+  const lg=document.querySelector('.logo span'); if(lg) lg.textContent='Meta Ads · '+VERSAO;
+  if(!LOGIN_ATIVO || sess.get('cx_auth')==='1'){ abrirSistema(); return }
+  document.getElementById('login-screen').classList.add('ativo');
+})();
+</script>
+</body>
+</html>
