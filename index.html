@@ -173,8 +173,63 @@
   .kv span{color:var(--text2)}.kv b{font-weight:700}
 
   /* LOGIN */
-  #login-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
-  #login-screen.ativo{display:flex}
+  /* trancado por padrão — o script destranca. Sem JS, o conteúdo não aparece. */
+  .sidebar,.main{display:none}
+  body.liberado .sidebar{display:flex}
+  body.liberado .main{display:block}
+  body.liberado #login-screen{display:none}
+
+  #login-screen{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;padding:24px;
+    background:
+      radial-gradient(900px 520px at 50% -10%, rgba(0,229,160,.09), transparent 62%),
+      radial-gradient(600px 400px at 85% 110%, rgba(77,171,247,.06), transparent 60%),
+      #080a09;}
+  #login-screen::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+    background-size:52px 52px;
+    mask-image:radial-gradient(700px 460px at 50% 40%,#000 20%,transparent 78%);
+    -webkit-mask-image:radial-gradient(700px 460px at 50% 40%,#000 20%,transparent 78%)}
+  .lbox{position:relative;width:100%;max-width:392px;background:linear-gradient(180deg,#171817,#121312);
+    border:1px solid #262a27;border-radius:18px;padding:34px 32px 28px;
+    box-shadow:0 30px 70px -30px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.02) inset;
+    animation:entra .5s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes entra{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+  .lbox.erro{animation:treme .38s cubic-bezier(.36,.07,.19,.97) both}
+  @keyframes treme{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}
+                   30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
+  .leyebrow{display:flex;align-items:center;gap:8px;font-family:ui-monospace,Menlo,monospace;
+    font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:20px}
+  .lpulse{width:6px;height:6px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 0 rgba(0,229,160,.55);animation:pulsa 2.4s infinite}
+  @keyframes pulsa{0%{box-shadow:0 0 0 0 rgba(0,229,160,.5)}70%{box-shadow:0 0 0 9px rgba(0,229,160,0)}100%{box-shadow:0 0 0 0 rgba(0,229,160,0)}}
+  .lbox h1{font-size:23px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
+  .lbox .lsub{font-size:13px;color:var(--text3);margin-top:7px;margin-bottom:26px;line-height:1.5}
+  .lfield{margin-bottom:15px;position:relative}
+  .lfield label{display:block;font-size:10px;letter-spacing:.9px;text-transform:uppercase;
+    font-weight:700;color:var(--text3);margin-bottom:7px}
+  .lfield input{width:100%;background:#0e100f;border:1px solid #272b28;border-radius:10px;
+    padding:12px 14px;color:var(--text);font-family:inherit;font-size:14.5px;outline:none;transition:.16s}
+  .lfield input::placeholder{color:#4a504c}
+  .lfield input:focus{border-color:var(--accent);background:#0b0d0c;
+    box-shadow:0 0 0 3px rgba(0,229,160,.11)}
+  .lolho{position:absolute;right:5px;bottom:5px;width:38px;height:38px;background:none;border:none;
+    color:var(--text3);cursor:pointer;font-size:15px;padding:0;line-height:1}
+  .lolho:hover{color:var(--accent);background:none;filter:none}
+  .lbtn{width:100%;margin-top:9px;padding:13px;border-radius:10px;font-size:14.5px;font-weight:800;
+    letter-spacing:.2px;background:linear-gradient(180deg,#00f5ab,#00c98c);color:#04231a;
+    border:none;cursor:pointer;transition:.16s}
+  .lbtn:hover{transform:translateY(-1px);box-shadow:0 10px 26px -10px rgba(0,229,160,.6);filter:none}
+  .lbtn:active{transform:translateY(0)}
+  .lcaps{font-size:11.5px;color:var(--yellow);margin-top:9px;display:none}
+  .lcaps.on{display:block}
+  .lfoot{margin-top:22px;padding-top:16px;border-top:1px solid #212421;display:flex;
+    justify-content:space-between;font-size:10.5px;color:#4a504c;
+    font-family:ui-monospace,Menlo,monospace;letter-spacing:.4px}
+  .lerr{color:var(--red);font-size:12.5px;margin-top:11px;min-height:18px;font-weight:600}
+  .sair{background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0;
+    text-decoration:underline;text-underline-offset:3px}
+  .sair:hover{color:var(--red);background:none;filter:none}
   .lbox{width:100%;max-width:370px;background:var(--card);border:1px solid var(--border);border-radius:15px;padding:32px}
   .lbox h1{font-size:19px;font-weight:800;margin-bottom:4px}
   .lbox p{font-size:13px;color:var(--text3);margin-bottom:22px}
@@ -202,13 +257,28 @@
 
 <!-- ══ LOGIN ══ -->
 <div id="login-screen">
-  <div class="lbox">
+  <div class="lbox" id="lbox">
+    <div class="leyebrow"><span class="lpulse"></span> acesso restrito</div>
     <h1>Central de Contingência</h1>
-    <p>Operação de tráfego — Meta Ads</p>
-    <div class="field"><label>Usuário</label><input type="text" id="login-user" placeholder="usuário" data-enter="1"></div>
-    <div class="field"><label>Senha</label><input type="password" id="login-pass" placeholder="senha" data-enter="1"></div>
-    <button data-act="entrar" style="width:100%;margin-top:6px">Entrar</button>
+    <div class="lsub">Malha de estruturas, escala e prevenção de strike.<br>Meta Ads.</div>
+
+    <div class="lfield">
+      <label for="login-user">Usuário</label>
+      <input type="text" id="login-user" placeholder="seu usuário" data-enter="1"
+             autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="lfield">
+      <label for="login-pass">Senha</label>
+      <input type="password" id="login-pass" placeholder="sua senha" data-enter="1"
+             autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="lolho" data-act="verSenha" type="button" title="Mostrar senha" aria-label="Mostrar senha">◉</button>
+    </div>
+    <div class="lcaps" id="login-caps">Caps Lock ligado — a senha diferencia maiúsculas.</div>
+
+    <button class="lbtn" data-act="entrar">Entrar</button>
     <div class="lerr" id="login-error"></div>
+
+    <div class="lfoot"><span id="login-ver">v16</span><span>dados locais no navegador</span></div>
   </div>
 </div>
 
@@ -627,11 +697,10 @@ try{
 // ATENÇÃO: esta tela é um porteiro, não segurança — as credenciais ficam em texto
 // no arquivo publicado. Para publicar de verdade, proteja pela hospedagem
 // (ex.: Password Protection do Vercel).
-const LOGIN_ATIVO = false;   // true quando publicar pro time; false = abre direto
-const VERSAO = 'v16 · pronto pra deploy';
+const LOGIN_ATIVO = true;
+const VERSAO = 'v17 · com acesso';
 const CREDENCIAIS = [
-  { usuario:'daniel', senha:'daniel123' },
-  { usuario:'gestor', senha:'trafego2026' }
+  { usuario:'ultra2026', senha:'contingencia26' }
 ];
 let clientes = [];      // [{id,nome,produto}] — gerenciável pela tela
 let EXPERTS = [];       // derivado de clientes
@@ -658,7 +727,7 @@ const dias = d => d ? Math.max(0, Math.floor((Date.now()-new Date(d+'T00:00:00')
 const sess={ get(k){ try{ return sessionStorage.getItem(k) }catch(e){ return null } },
               set(k,v){ try{ sessionStorage.setItem(k,v) }catch(e){} } };
 function abrirSistema(){
-  document.getElementById('login-screen').classList.remove('ativo');
+  document.body.classList.add('liberado');
   try{ boot() }catch(e){ falhou(e && e.message || e) }
 }
 function falhou(msg){
@@ -669,10 +738,23 @@ function falhou(msg){
 function entrar(){
   const u=document.getElementById('login-user').value.trim().toLowerCase();
   const p=document.getElementById('login-pass').value.trim();
+  const err=document.getElementById('login-error'), box=document.getElementById('lbox');
   if(CREDENCIAIS.find(c=>c.usuario===u&&c.senha===p)){
-    sess.set('cx_auth','1'); abrirSistema();
-  } else document.getElementById('login-error').textContent='Usuário ou senha incorretos.';
+    err.textContent=''; sess.set('cx_auth','1'); abrirSistema(); return;
+  }
+  err.textContent = !u||!p ? 'Preencha usuário e senha.' : 'Usuário ou senha incorretos.';
+  if(box){ box.classList.remove('erro'); void box.offsetWidth; box.classList.add('erro') }
+  const campo=document.getElementById('login-pass'); campo.value=''; campo.focus();
 }
+function verSenha(){
+  const c=document.getElementById('login-pass'), b=document.querySelector('.lolho');
+  const mostrando = c.type==='text';
+  c.type = mostrando ? 'password' : 'text';
+  b.textContent = mostrando ? '◉' : '◎';
+  b.title = mostrando ? 'Mostrar senha' : 'Ocultar senha';
+  c.focus();
+}
+function sair(){ try{ sessionStorage.removeItem('cx_auth') }catch(e){} location.reload() }
 function hashId(){ const h=(location.hash||'').replace('#pg-',''); return /^\w+$/.test(h)?h:'hoje' }
 function go(id){
   const alvo=document.getElementById('pg-'+id); if(!alvo) return;
@@ -1819,7 +1901,7 @@ const ACTIONS={
   entrar, addEstrutura, salvarInformativo, addIncidente,
   delEstrutura, delInf, delInc, queimou,
   rejMais, rejMenos, carregarExemplo, limparTudo,
-  toggleForm, toggleImport, toggleIds, caiu, confirmarRej, cancelarRej, aplicarSubidas, cancelarQueda, confirmarQueda, promover, reativar,
+  toggleForm, toggleImport, toggleIds, caiu, verSenha, sair, confirmarRej, cancelarRej, aplicarSubidas, cancelarQueda, confirmarQueda, promover, reativar,
   modelo, previa, importar2, reescreverCopy, usarReescrita, validarLote, devolutiva, salvarLote,
   abrirBM, abrirCliente, abrirConta, fechar, salvarBM, salvarCliente, salvarConta, delCliente,
   exportar(){ document.getElementById('bkp').value=JSON.stringify({clientes,estruturas,informativos,incidentes,checks}) },
@@ -1930,11 +2012,19 @@ function boot(){
   ligar();
   go(hashId());
 }
+document.addEventListener('keydown', ev=>{
+  const aviso=document.getElementById('login-caps');
+  if(!aviso || !ev.getModifierState) return;
+  if(ev.target && (ev.target.id==='login-pass'||ev.target.id==='login-user'))
+    aviso.classList.toggle('on', ev.getModifierState('CapsLock'));
+});
 (function start(){
-  const f=document.querySelector('.side-foot'); if(f) f.textContent=VERSAO+' · dados locais no navegador';
+  const f=document.querySelector('.side-foot');
+  if(f) f.innerHTML=esc(VERSAO)+' · dados locais<br><button class="sair" data-act="sair">sair</button>';
   const lg=document.querySelector('.logo span'); if(lg) lg.textContent='Meta Ads · '+VERSAO;
+  const lv=document.getElementById('login-ver'); if(lv) lv.textContent=VERSAO;
   if(!LOGIN_ATIVO || sess.get('cx_auth')==='1'){ abrirSistema(); return }
-  document.getElementById('login-screen').classList.add('ativo');
+  const u=document.getElementById('login-user'); if(u) setTimeout(()=>u.focus(),120);
 })();
 </script>
 </body>
