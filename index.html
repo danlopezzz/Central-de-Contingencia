@@ -146,6 +146,7 @@
   .a-rd{background:var(--red-dim);border-color:rgba(255,107,107,.3);color:#ffb3b3}
   .a-ye{background:var(--yellow-dim);border-color:rgba(255,212,59,.3);color:#ffe27a}
   .a-gr{background:var(--accent-dim);border-color:var(--accent-border);color:#7fffd4}
+  .a-or{background:var(--orange-dim);border-color:rgba(255,146,43,.3);color:#ffd3a8}
   .a-bl{background:var(--blue-dim);border-color:rgba(77,171,247,.3);color:#a8d6ff}
 
   .hl{border-radius:4px;padding:1px 3px;font-weight:700}
@@ -615,8 +616,11 @@
 
 <script>
 /* ══════════ CONFIG ══════════ */
+// ATENÇÃO: esta tela é um porteiro, não segurança — as credenciais ficam em texto
+// no arquivo publicado. Para publicar de verdade, proteja pela hospedagem
+// (ex.: Password Protection do Vercel).
 const LOGIN_ATIVO = false;   // true quando publicar pro time; false = abre direto
-const VERSAO = 'v14 · auditado';
+const VERSAO = 'v15 · pós-revisão';
 const CREDENCIAIS = [
   { usuario:'daniel', senha:'daniel123' },
   { usuario:'gestor', senha:'trafego2026' }
@@ -657,7 +661,7 @@ function falhou(msg){
 function entrar(){
   const u=document.getElementById('login-user').value.trim().toLowerCase();
   const p=document.getElementById('login-pass').value.trim();
-  if(CREDENCIAIS.find(c=>c.usuario===u&&c.senha.toLowerCase()===p.toLowerCase())){
+  if(CREDENCIAIS.find(c=>c.usuario===u&&c.senha===p)){
     sess.set('cx_auth','1'); abrirSistema();
   } else document.getElementById('login-error').textContent='Usuário ou senha incorretos.';
 }
@@ -942,6 +946,8 @@ function montarSeed(){
   return {C,E,I:[],N:[]};
 }
 function carregarExemplo(){
+  if(estruturas.length && S.get('modo','exemplo')==='real'
+     && !confirm('Isso substitui os SEUS dados pelos de exemplo. Gere um backup antes se quiser voltar.\n\nContinuar?')) return;
   const {C,E,I,N}=montarSeed();
   clientes=C; estruturas=E; informativos=I; incidentes=N; checks={};
   S.set('modo','exemplo'); salvaTudo(); boot();
@@ -993,8 +999,9 @@ function rejUltima(e){
   return a.length?a[0]:null;
 }
 function tetoSeguro(e){
-  const d=dias(e.data);
-  if(!e.data) return null;
+  const ref=e.inicioRampa||e.data;
+  if(!ref) return null;
+  const d=dias(ref);
   if(d<=3) return 60;
   let v=60; for(let i=4;i<=d;i++){ v=Math.min(600, v*1.3) }
   return Math.round(v/10)*10;
@@ -1007,8 +1014,7 @@ function health(e){
   if(dias(e.data)<14) s-=15;
   if((e.gasto||0)<1000) s-=10;
   if(['Limitada','Em recurso','Em observação'].includes(e.status)) s-=20;
-  const risco=informativos.filter(i=>i.expert===e.expert&&i.status==='Ativo').map(i=>i.risco);
-  if(risco.length && risco.reduce((a,b)=>a+b,0)/risco.length>45) s-=15;
+  if(informativos.some(i=>i.expert===e.expert&&i.status==='Ativo'&&i.risco>45)) s-=15;
   // tetos que espelham as regras de kill-switch — o score nunca pode contradizer o protocolo
   if(rej>=3) teto=Math.min(teto,39);            // 3 rejeições em 7d = congela escala
   else if(rej===2) teto=Math.min(teto,55);      // 2 rejeições = para de subir criativo
@@ -1045,6 +1051,7 @@ function abrir(o){ abrindo = abrindo===o ? null : o; renderMalha() }
 
 function renderMalha(){
   const board=document.getElementById('board'); if(!board) return;
+  if(filtroMalha!=='Todas' && !clientes.some(c=>c.nome===filtroMalha)) filtroMalha='Todas';
   const fb=document.getElementById('malha-filtros');
   if(fb) fb.innerHTML=['Todas',...EXPERTS].map(x=>'<span class="pill '+(filtroMalha===x?'on':'')+'" data-act="filtroMalha" data-arg="'+esc(x)+'">'+esc(x)+'</span>').join('');
 
@@ -1213,8 +1220,12 @@ function salvarCliente(){
 }
 function delCliente(id){
   const c=clientes.find(x=>x.id===id); if(!c) return;
-  const n=contasDe(c.nome).length;
-  if(!confirm('Remover '+c.nome+(n?' e suas '+n+' conta(s)?':'?'))) return;
+  const tudo=estruturas.filter(e=>e.expert===c.nome);
+  const nc=tudo.filter(e=>e.tipo==='Conta de Anúncio').length, outros=tudo.length-nc;
+  if(tudo.length){ if(!confirm('Remover '+c.nome+' apaga junto:\n\n'+
+      (nc?'• '+nc+' conta(s) de anúncio\n':'')+(outros?'• '+outros+' outro(s) ativo(s): pixel, domínio, página ou perfil\n':'')+
+      '\nContinuar?')) return; }
+  else if(!confirm('Remover '+c.nome+'?')) return;
   estruturas=estruturas.filter(e=>e.expert!==c.nome);
   clientes=clientes.filter(x=>x.id!==id);
   salvaTudo(); boot();
@@ -1321,31 +1332,42 @@ function previa(){
   const lidas=Object.keys(m).map(k=>k+' → "'+esc(d.cab[m[k]])+'"');
   const ignoradas=d.cab.filter((c,i)=>!Object.values(m).includes(i));
   let novos=0, atualiza=0;
+  const tem=k=>m[k]!==undefined;
   const itens=d.linhas.map(l=>{
-    const g=k=>m[k]!==undefined?(l[m[k]]||''):'';
+    const g=k=>tem(k)?(l[m[k]]||''):'';
+    const nome=g('nome'); if(!nome) return null;
+    const patch={};
+    const poe=(campo,valor)=>{ if(tem(campo)) patch[campo]=valor };
     if(tipo==='estruturas'){
-      const nome=g('nome'); if(!nome) return null;
-      const expert=g('expert')||EXPERTS[0];
-      const ex=estruturas.find(e=>e.nome===nome&&e.expert===expert);
+      const ex = tem('expert')
+        ? estruturas.find(e=>e.nome===nome&&e.expert===g('expert'))
+        : estruturas.find(e=>e.nome===nome);
       ex?atualiza++:novos++;
-      return {id:ex?ex.id:uid(), expert, tipo:g('tipo')||'Conta de Anúncio', nome,
-        idConta:g('idConta'), bm:g('bm')||'—', status:normEstagio(g('status')),
-        data:normData(g('data')), teto:numBR(g('teto')), gasto:numBR(g('gasto')), rej:numBR(g('rej'))};
+      poe('expert',g('expert')); poe('tipo',g('tipo')); poe('idConta',g('idConta'));
+      poe('bm',g('bm')); poe('status',normEstagio(g('status'))); poe('data',normData(g('data')));
+      poe('teto',numBR(g('teto'))); poe('gasto',numBR(g('gasto'))); poe('rej',numBR(g('rej')));
+      const base = ex || {id:uid(), expert:g('expert')||EXPERTS[0]||'—', tipo:'Conta de Anúncio',
+        nome, idConta:'', bm:'—', status:'Reserva fria', data:'', teto:0, gasto:0, rej:0};
+      return {id:base.id, novo:!ex, nome, patch, preview:Object.assign({},base,patch,{nome})};
     } else {
-      const nome=g('nome'); if(!nome) return null;
-      const copy=g('copy'); const ex=informativos.find(i=>i.nome===nome);
+      const copy=g('copy'), ex=informativos.find(i=>i.nome===nome);
       ex?atualiza++:novos++;
-      const risco = g('risco') ? numBR(g('risco')) : (copy?pontuar(scan(copy)):0);
-      return {id:ex?ex.id:uid(), nome, expert:g('expert')||EXPERTS[0],
-        consc:g('consc')||'Consciente do problema', ang:g('ang')||'—',
-        risco, queimadas:numBR(g('queimadas')), status:g('status')||'Ativo', copy};
+      poe('expert',g('expert')); poe('consc',g('consc')); poe('ang',g('ang'));
+      poe('queimadas',numBR(g('queimadas'))); poe('status',g('status'));
+      if(tem('copy')) patch.copy=copy;
+      if(tem('risco')) patch.risco=numBR(g('risco'));
+      else if(tem('copy')) patch.risco=pontuar(scan(copy));
+      const base = ex || {id:uid(), nome, expert:g('expert')||EXPERTS[0]||'—',
+        consc:'Consciente do problema', ang:'—', risco:0, queimadas:0, status:'Ativo', copy:''};
+      return {id:base.id, novo:!ex, nome, patch, preview:Object.assign({},base,patch,{nome})};
     }
   }).filter(Boolean);
   previaDados={tipo,itens};
-  const amostra=itens.slice(0,5);
+  const amostra=itens.map(i=>i.preview).slice(0,5);
   box.innerHTML='<div class="alert a-gr"><b>'+itens.length+' linha(s) lidas</b> — '+novos+' nova(s), '+atualiza+' atualizada(s).'+
-    (tipo==='informativos'&&!m.risco?' O risco foi calculado a partir da copy.':'')+'</div>'+
-    '<div class="mini">Colunas reconhecidas: '+lidas.join(' · ')+
+    (tipo==='informativos'&&!tem('risco')&&tem('copy')?' O risco foi calculado a partir da copy.':'')+
+    (tipo==='estruturas'&&!tem('expert')?' Sem coluna de cliente: casei pelo nome e mantive o cliente já cadastrado.':'')+'</div>'+
+    '<div class="mini">Só as colunas abaixo são alteradas — o que não veio na planilha fica como está.<br>Colunas reconhecidas: '+lidas.join(' · ')+
     (ignoradas.length?'<br>Ignoradas: '+ignoradas.map(esc).join(' · '):'')+'</div>'+
     '<div class="tw" style="margin-top:11px"><table><thead><tr>'+
       (tipo==='estruturas'?'<th>Vertical</th><th>Tipo</th><th>Nome</th><th>ID</th><th>BM</th><th>Estágio</th><th>R$/dia</th>'
@@ -1364,7 +1386,8 @@ function importar2(){
   itens.forEach(i=>{
     const lista = tipo==='estruturas' ? estruturas : informativos;
     const k=lista.findIndex(x=>x.id===i.id);
-    k>=0 ? lista[k]=Object.assign(lista[k],i) : lista.push(i);
+    if(k>=0) Object.assign(lista[k], i.patch);
+    else lista.push(Object.assign({}, i.preview, {id:i.id}));
   });
   S.set('modo','real'); salvaTudo();
   document.getElementById('imp-txt').value=''; previaDados=null;
@@ -1411,12 +1434,16 @@ function promover(id){
   const e=estruturas.find(x=>x.id===id); if(!e) return;
   const i=ORDEM.indexOf(e.status); if(i<0||i>=2) return;
   e.status=ORDEM[i+1];
-  if(e.status==='Em aquecimento'){ e.data=new Date().toISOString().slice(0,10); e.teto=e.teto||60 }
+  if(e.status==='Em aquecimento'){
+    e.inicioRampa=new Date().toISOString().slice(0,10);
+    if(!e.data) e.data=e.inicioRampa;
+    e.teto=e.teto||60;
+  }
   salvaTudo(); boot();
 }
 function reativar(id){
   const e=estruturas.find(x=>x.id===id); if(!e) return;
-  e.status='Em observação'; e.rej=0; e.teto=e.teto||60;
+  e.status='Em observação'; e.rej=0; e.rejs=[]; e.teto=e.teto||60;
   salvaTudo(); boot();
 }
 function editar(id,campo,valor){
@@ -1499,7 +1526,7 @@ function renderSaude(){
     '<div><b style="font-size:14px">'+esc(e.nome)+'</b> <span style="color:var(--text3);font-size:12px">· '+esc(e.expert)+' · '+esc(e.bm)+'</span></div>'+
     '<div style="display:flex;gap:9px;align-items:center"><span class="bg '+f.b+'">'+f.t+'</span><b style="font-size:19px;color:'+f.c+'">'+h+'</b></div></div>'+
     '<div class="bar"><i style="width:'+h+'%;background:'+f.c+'"></i></div>'+
-    '<div class="mini"><b style="color:'+f.c+'">Ordem: </b>'+f.a+' &nbsp;·&nbsp; '+(e.rej||0)+' rejeição(ões) em 7d · '+(e.data?dias(e.data)+' dias de idade':'idade não informada')+' · gasto '+brl(e.gasto)+'</div></div>';
+    '<div class="mini"><b style="color:'+f.c+'">Ordem: </b>'+f.a+' &nbsp;·&nbsp; '+rej7(e)+' rejeição(ões) em 7d · '+(e.data?dias(e.data)+' dias de idade':'idade não informada')+' · gasto '+brl(e.gasto)+'</div></div>';
   }).join('');
 }
 
@@ -1508,7 +1535,8 @@ let filtroBib='Todas';
 function queimou(id){ const i=informativos.find(x=>x.id===id); if(!i)return; i.queimadas++; if(i.queimadas>=3) i.status='Aposentado'; else if(i.queimadas>=1) i.status='Quarentena'; salvaTudo(); renderBiblioteca(); }
 function delInf(id){ if(!confirm('Remover informativo?'))return; informativos=informativos.filter(i=>i.id!==id); salvaTudo(); renderBiblioteca(); }
 function renderBiblioteca(){
-  document.getElementById('bib-filtros').innerHTML=['Todas',...EXPERTS].map(x=>'<span class="pill '+(filtroBib===x?'on':'')+'" data-act="filtroBib" data-arg="'+x+'">'+x+'</span>').join('');
+  if(filtroBib!=='Todas' && !clientes.some(c=>c.nome===filtroBib)) filtroBib='Todas';
+  document.getElementById('bib-filtros').innerHTML=['Todas',...EXPERTS].map(x=>'<span class="pill '+(filtroBib===x?'on':'')+'" data-act="filtroBib" data-arg="'+esc(x)+'">'+esc(x)+'</span>').join('');
   const lista=informativos.filter(i=>filtroBib==='Todas'||i.expert===filtroBib);
   const tb=document.getElementById('bib-body');
   tb.innerHTML = lista.length ? lista.map(i=>{
@@ -1594,6 +1622,8 @@ function acoes(){
     }
     if(r>=3){ out.push({p:1,e,tipo:'critico',t:'Congelar escala — '+r+' rejeições em 7 dias',
       d:'Kill-switch disparado. Não suba budget nem criativo. Prepare a migração antes que vire ban.',ir:'saude'}); return }
+    if(e.status==='Em observação'){ out.push({p:2,e,tipo:'bloqueio',t:'Segurar — conta em observação',
+      d:'Mantenha o budget onde está e não suba criativo novo. Só volte a escalar depois de tirar a conta de observação.',ir:'saude'}); return }
     if(r===2){ out.push({p:2,e,tipo:'bloqueio',t:'Segurar — 2 rejeições em 7 dias',
       d:'Mantenha o budget onde está e não suba criativo novo por 48h. Subir agora é o caminho mais curto pro ban.',ir:'saude'}); return }
     if(!e.data){ out.push({p:3,e,tipo:'pendencia',t:'Informar a data de criação',
@@ -1784,11 +1814,12 @@ const ACTIONS={
   toggleForm, toggleImport, toggleIds, caiu, confirmarRej, cancelarRej, aplicarSubidas, cancelarQueda, confirmarQueda, promover, reativar,
   modelo, previa, importar2, reescreverCopy, usarReescrita, validarLote, devolutiva, salvarLote,
   abrirBM, abrirCliente, abrirConta, fechar, salvarBM, salvarCliente, salvarConta, delCliente,
-  exportar(){ document.getElementById('bkp').value=JSON.stringify({estruturas,informativos,incidentes,checks}) },
+  exportar(){ document.getElementById('bkp').value=JSON.stringify({clientes,estruturas,informativos,incidentes,checks}) },
   importar(){
     try{
       const d=JSON.parse(document.getElementById('bkp').value);
-      estruturas=d.estruturas||[]; informativos=d.informativos||[]; incidentes=d.incidentes||[]; checks=d.checks||{};
+      clientes=d.clientes||clientes; estruturas=d.estruturas||[]; informativos=d.informativos||[];
+      incidentes=d.incidentes||[]; checks=d.checks||{};
       S.set('modo','real'); salvaTudo(); boot(); alert('Backup importado.');
     }catch(e){ alert('Não consegui ler esse backup. Cole o texto completo gerado pelo botão Gerar backup.') }
   },
