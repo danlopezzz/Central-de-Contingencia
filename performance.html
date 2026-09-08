@@ -148,6 +148,23 @@ tr:last-child td{border-bottom:none}
 .kv:last-child{border-bottom:none}
 .kv span{color:var(--text2)} .kv b{font-weight:700}
 
+/* ── GRADE / BARRA ── */
+.barra-topo{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:14px;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 13px}
+.seg{display:inline-flex;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;overflow:hidden}
+.seg button{background:none;border:none;color:var(--text2);padding:7px 13px;font-size:12.5px;font-weight:700;cursor:pointer}
+.seg button:hover{color:var(--text);background:var(--bg2)}
+.seg button.on{background:var(--accent-dim);color:var(--accent)}
+table.grade td{padding:5px 6px}
+table.grade th{padding:10px 8px}
+table.grade input{padding:7px 8px;font-size:13px;border-radius:7px;background:var(--bg2);border:1px solid transparent;text-align:right}
+table.grade input:hover{border-color:var(--border2)}
+table.grade input:focus{border-color:var(--accent-bd);background:var(--bg3)}
+table.grade input.nome{text-align:left;font-weight:600}
+table.grade tr.tem input{background:var(--bg3)}
+.chip-cli{font-size:10.5px;color:var(--text3);display:block;margin-top:2px}
+.cpl-live{font-size:12px;font-weight:800;white-space:nowrap}
+
 /* ── ELOS ── */
 .elo{display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:11px;background:var(--bg3);
   border:1px solid var(--border);border-left:3px solid var(--border2);margin-bottom:8px}
@@ -164,6 +181,30 @@ tr:last-child td{border-bottom:none}
 .elo-bar{flex:1;min-width:70px}
 .barra{height:6px;background:#212321;border-radius:4px;overflow:hidden}
 .barra>i{display:block;height:100%;border-radius:4px;transition:.5s}
+
+/* ── CADEIA COMPACTA ── */
+.cadeia{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.celo{background:var(--bg3);border:1px solid var(--border);border-top:3px solid var(--c);
+  border-radius:9px;padding:10px 9px;text-align:center;min-width:0}
+.celo.garg{background:linear-gradient(180deg,rgba(255,107,107,.09),transparent)}
+.celo-n{display:block;font-size:10.5px;color:var(--text3);font-weight:700;text-transform:uppercase;
+  letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.celo b{display:block;font-size:16px;font-weight:800;letter-spacing:-.4px;margin:4px 0 2px}
+.celo-m{display:block;font-size:10.5px;color:var(--text3)}
+.celo-t{display:block;font-size:10.5px;font-weight:700;margin-top:3px;min-height:14px}
+@media(max-width:900px){.cadeia{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:560px){.cadeia{grid-template-columns:repeat(2,1fr)}}
+.passo{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.passo:last-of-type{border-bottom:none}
+.passo-n{width:25px;height:25px;border-radius:8px;background:var(--accent-dim);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.det{margin-top:8px}
+.det summary{cursor:pointer;font-size:12px;color:var(--text3);font-weight:700;list-style:none;
+  display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid var(--border2);border-radius:7px}
+.det summary::-webkit-details-marker{display:none}
+.det summary:hover{color:var(--accent);border-color:var(--accent-bd)}
+.det[open] summary{margin-bottom:9px}
+.acao-sub{font-size:12px;color:var(--text3);margin-top:2px}
 
 /* ── AÇÃO ── */
 .acao{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--border2);
@@ -259,13 +300,36 @@ tr:last-child td{border-bottom:none}
 <!-- ══════ DIÁRIO ══════ -->
 <section class="page" id="pg-diario">
   <div class="ph"><h2>Lançar Números</h2>
-  <p>Cole o export do Gerenciador ou lance à mão. O sistema só precisa do que você tem — quanto mais colunas, mais fundo o diagnóstico vai.</p></div>
+  <p>Uma linha por campanha. Tab pula pro próximo campo, <b>Salvar dia</b> grava tudo de uma vez.</p></div>
 
-  <div class="card">
+  <div class="barra-topo">
+    <div class="seg" id="gr-navdia"></div>
+    <input type="date" id="gr-data" style="max-width:170px">
+    <div style="flex:1"></div>
+    <button class="gh sm" data-act="copiarOntem">Repetir ontem</button>
+    <button class="gh sm" data-act="abrirColar">Colar do Gerenciador</button>
+    <button class="b sm" data-act="salvarDia">Salvar dia</button>
+  </div>
+  <div id="gr-status"></div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="tw"><table class="grade"><thead><tr>
+      <th style="min-width:200px">Campanha</th>
+      <th class="num">Gasto R$</th><th class="num">Impressões</th><th class="num">Cliques</th>
+      <th class="num">Visitas</th><th class="num">Leads</th><th class="num">Agend.</th>
+      <th class="num">Calls</th><th class="num">Vendas</th><th class="num">Freq.</th><th></th>
+    </tr></thead><tbody id="gr-body"></tbody></table></div>
+    <div style="padding:13px 16px;border-top:1px solid var(--border);display:flex;gap:9px;flex-wrap:wrap;align-items:center">
+      <button class="gh sm" data-act="novaLinha">+ Campanha</button>
+      <span class="mini" style="margin:0" id="gr-resumo">—</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-colar" style="display:none">
     <h3>Colar do Gerenciador</h3>
-    <div class="sub">Exporte por campanha com as colunas de gasto, impressões, cliques no link e resultados. Cabeçalho em português ou inglês, separado por tab, vírgula ou ponto e vírgula.</div>
+    <div class="sub">Exporte por campanha. Cabeçalho em português ou inglês; tab, vírgula ou ponto e vírgula.</div>
     <div class="row" style="max-width:420px">
-      <div class="field"><label>Dia dos dados</label><input type="date" id="im-data"></div>
+      <div class="field"><label>Dia</label><input type="date" id="im-data"></div>
       <div class="field"><label>Cliente</label><select id="im-cliente"></select></div>
     </div>
     <div class="field"><textarea id="im-txt" placeholder="Campanha	Valor gasto	Impressões	Cliques no link	Resultados"></textarea></div>
@@ -275,36 +339,11 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div class="card">
-    <h3>Lançamento manual</h3>
-    <div class="sub">Uma linha por campanha por dia. Só gasto e leads já geram diagnóstico; as demais colunas destravam elos mais fundos da cadeia.</div>
-    <div class="row">
-      <div class="field"><label>Dia</label><input type="date" id="l-data"></div>
-      <div class="field"><label>Cliente</label><select id="l-cliente"></select></div>
-      <div class="field"><label>Campanha</label><input id="l-campanha" placeholder="CBO — Aula 12/09"></div>
-      <div class="field"><label>Gasto R$</label><input type="number" step="0.01" id="l-gasto" placeholder="450"></div>
-      <div class="field"><label>Impressões</label><input type="number" id="l-imp" placeholder="38000"></div>
-    </div>
-    <div class="row">
-      <div class="field"><label>Cliques no link</label><input type="number" id="l-cliques" placeholder="620"></div>
-      <div class="field"><label>Visitas na página</label><input type="number" id="l-lpv" placeholder="500"></div>
-      <div class="field"><label>Leads</label><input type="number" id="l-leads" placeholder="42"></div>
-      <div class="field"><label>Agendamentos</label><input type="number" id="l-agend" placeholder="9"></div>
-      <div class="field"><label>Calls realizadas</label><input type="number" id="l-calls" placeholder="5"></div>
-    </div>
-    <div class="row">
-      <div class="field"><label>Vendas</label><input type="number" id="l-vendas" placeholder="1"></div>
-      <div class="field"><label>Receita R$</label><input type="number" step="0.01" id="l-receita" placeholder="30000"></div>
-      <div class="field"><label>Frequência</label><input type="number" step="0.01" id="l-freq" placeholder="1.8"></div>
-    </div>
-    <button class="b" data-act="lancar">Lançar</button>
-  </div>
-
-  <div class="card">
-    <h3>Lançamentos</h3>
+    <h3>Histórico</h3>
     <div class="sub" id="lc-sub">—</div>
     <div class="tw"><table><thead><tr>
-      <th>Dia</th><th>Cliente</th><th>Campanha</th><th class="num">Gasto</th><th class="num">Impr.</th>
-      <th class="num">Cliques</th><th class="num">Leads</th><th class="num">CPL</th><th class="num">Vendas</th><th class="num">ROAS</th><th></th>
+      <th>Dia</th><th>Cliente</th><th>Campanha</th><th class="num">Gasto</th>
+      <th class="num">Leads</th><th class="num">CPL</th><th class="num">Vendas</th><th class="num">ROAS</th><th></th>
     </tr></thead><tbody id="lc-body"></tbody></table></div>
   </div>
 </section>
@@ -503,7 +542,7 @@ const ELOS=[
  {id:'pagina',   n:4,nome:'Página',       met:'cvrLp',    rot:'CVR da página',  dir:'maior',bench:()=>cfg.cvr,  fmt:pct, causa:'Quantas visitas viram lead. É oferta e página, não mídia.'},
  {id:'qualific', n:5,nome:'Qualificação', met:'agendRate',rot:'Agend. por lead',dir:'maior',bench:()=>cfg.agend,fmt:pct, causa:'Quantos leads agendam. Baixo = lead frio ou promessa desalinhada com a call.'},
  {id:'comercial',n:6,nome:'Comercial',    met:'showFech', rot:'Show × fecham.', dir:'maior',bench:()=>cfg.show*cfg.fech/100, fmt:pct, causa:'Eficiência do time. Fora do seu controle de mídia, dentro do resultado.'},
- {id:'economia', n:7,nome:'Economia',     met:'cpa',      rot:'CPA',            dir:'menor',bench:()=>cpaAlvo(),fmt:brl0,causa:'O placar final. Se este está bom, os anteriores estão pagos.'}
+ {id:'economia', n:7,nome:'Economia',     met:'cpa',      rot:'CPA 7 dias',     dir:'menor',bench:()=>cpaAlvo(),fmt:brl0,causa:'O placar final, acumulado em 7 dias — venda de high ticket é rara demais para julgar por dia.'}
 ];
 function valorElo(a,id){
   if(id==='comercial') return (a.showRate!=null&&a.fechRate!=null)? a.showRate*a.fechRate/100 : null;
@@ -559,9 +598,10 @@ function diasAteFurar(val,bench,pct7,dir){
   const n=Math.log(bench/val)/Math.log(1+diario); return n>0&&n<120?Math.ceil(n):null;
 }
 /* Diagnóstico completo: estado de cada elo, tendência contra a base, e o custo do gargalo */
-function diagnostica(a, base){
+function diagnostica(a, base, acum){
+  const fonte = k => (k==='economia' && acum) ? acum : a;
   const linha=ELOS.map(e=>{
-    const val=valorElo(a,e.id), bench=e.bench();
+    const val=valorElo(fonte(e.id),e.id), bench=e.bench();
     const st=statusElo(val,bench,e.dir);
     const vBase=base?valorElo(base,e.id):null;
     let tend=null;
@@ -782,7 +822,14 @@ function renderRelatorio(){
   const topo=document.getElementById('rp-topo'), corpo=document.getElementById('rp-corpo');
   const dia=(document.getElementById('rp-dia')||{}).value;
   const cli=(document.getElementById('rp-esc')||{}).value||'Todos';
-  if(!dia){ topo.innerHTML=''; corpo.innerHTML='<div class="card"><div class="vazio">Nenhum número lançado ainda.<br>Vá em <b>Lançar Números</b> — ou carregue a demonstração em Metas &amp; Benchmarks para ver o motor rodando.</div></div>'; return }
+  if(!dia){ topo.innerHTML='';
+    corpo.innerHTML='<div class="card"><h3>Comece por aqui</h3><div class="sub">Três passos, uma vez só. Depois é um minuto por dia.</div>'+
+      '<div class="passo"><span class="passo-n">1</span><div><b>Confira a economia</b><div class="mini">Ticket, ROAS alvo e as taxas do comercial em <b>Metas &amp; Benchmarks</b>. Todo diagnóstico sai desses números.</div></div></div>'+
+      '<div class="passo"><span class="passo-n">2</span><div><b>Cadastre seus clientes</b><div class="mini">Na mesma tela, embaixo.</div></div></div>'+
+      '<div class="passo"><span class="passo-n">3</span><div><b>Lance o dia</b><div class="mini">Em <b>Lançar Números</b>, uma linha por campanha — ou cole o export do Gerenciador.</div></div></div>'+
+      '<div style="margin-top:16px;display:flex;gap:9px;flex-wrap:wrap">'+
+      '<button class="b" data-act="demo">Ver funcionando com dados de exemplo</button>'+
+      '<a class="gh" href="#pg-config" style="text-decoration:none;display:inline-block">Configurar agora</a></div></div>'; return }
   const hojeL=filtra(cli,dia,dia);
   const a=agrega(hojeL);
   const base=agrega(filtra(cli,somaDias(dia,-7),somaDias(dia,-1)));
@@ -790,7 +837,9 @@ function renderRelatorio(){
   const baseDia=deriva(Object.assign({},base,{gasto:base.gasto/baseDias,imp:base.imp/baseDias,
     cliques:base.cliques/baseDias,lpv:base.lpv/baseDias,leads:base.leads/baseDias,
     agend:base.agend/baseDias,calls:base.calls/baseDias,vendas:base.vendas/baseDias,receita:base.receita/baseDias}));
-  const dg=diagnostica(a, base.n?base:null);
+  /* venda de high ticket é evento raro: ROAS e CPA só fazem sentido acumulados */
+  const j7=agrega(filtra(cli,somaDias(dia,-6),dia));
+  const dg=diagnostica(a, base.n?base:null, j7);
 
   const delta=(v,b,maiorMelhor)=>{
     if(v==null||b==null||!isFinite(b)||b===0) return '';
@@ -801,10 +850,10 @@ function renderRelatorio(){
   };
   topo.innerHTML='<div class="grid g5" style="margin-bottom:18px">'+
     '<div class="kpi"><div class="lb">Investido</div><div class="vl">'+brl0(a.gasto)+'</div><div class="dt">'+delta(a.gasto,baseDia.gasto,true)+' vs média 7d</div></div>'+
-    '<div class="kpi"><div class="lb">Leads</div><div class="vl">'+int(a.leads)+'</div><div class="dt">'+delta(a.leads,baseDia.leads,true)+'</div></div>'+
-    '<div class="kpi"><div class="lb">CPL</div><div class="vl" style="color:'+(a.cpl!=null&&cplAlvo(a)&&a.cpl<=cplAlvo(a)?'var(--bom)':'var(--serio)')+'">'+brl(a.cpl)+'</div><div class="dt">'+delta(a.cpl,baseDia.cpl,false)+'</div></div>'+
-    '<div class="kpi"><div class="lb">Vendas</div><div class="vl">'+int(a.vendas)+'</div><div class="dt">'+(a.cpa!=null?'CPA '+brl0(a.cpa):'sem venda no dia')+'</div></div>'+
-    '<div class="kpi"><div class="lb">ROAS</div><div class="vl" style="color:'+(a.roas!=null&&a.roas>=cfg.roas?'var(--bom)':a.roas!=null?'var(--serio)':'var(--text3)')+'">'+(a.roas!=null?dec(a.roas,2)+'x':'—')+'</div><div class="dt">alvo '+dec(cfg.roas,1)+'x</div></div>'+
+    '<div class="kpi"><div class="lb">Leads no dia</div><div class="vl">'+int(a.leads)+'</div><div class="dt">'+delta(a.leads,baseDia.leads,true)+'</div></div>'+
+    '<div class="kpi"><div class="lb">CPL do dia</div><div class="vl" style="color:'+(a.cpl!=null&&cplAlvo(a)&&a.cpl<=cplAlvo(a)?'var(--bom)':'var(--serio)')+'">'+brl(a.cpl)+'</div><div class="dt">'+delta(a.cpl,baseDia.cpl,false)+'</div></div>'+
+    '<div class="kpi"><div class="lb">Vendas no dia</div><div class="vl">'+int(a.vendas)+'</div><div class="dt">'+int(j7.vendas)+' em 7 dias</div></div>'+
+    '<div class="kpi"><div class="lb">ROAS 7 dias</div><div class="vl" style="color:'+(j7.roas!=null&&j7.roas>=cfg.roas?'var(--bom)':j7.roas!=null?'var(--serio)':'var(--text3)')+'">'+(j7.roas!=null?dec(j7.roas,2)+'x':'—')+'</div><div class="dt">alvo '+dec(cfg.roas,1)+'x'+(j7.cpa!=null?' · CPA '+brl0(j7.cpa):'')+'</div></div>'+
   '</div>';
 
   let h='';
@@ -855,57 +904,168 @@ function renderRelatorio(){
     h+='</div>';
   }
 
-  /* cadeia */
-  h+='<div class="card"><h3>Cadeia de Escala</h3><div class="sub">Sete elos entre o dinheiro e a venda. O resultado é o produto de todos — o mais fraco define o teto.</div>';
+  /* cadeia — faixa compacta, detalhe só no que precisa de olho */
+  h+='<div class="card"><h3>Cadeia de Escala</h3><div class="sub">O resultado é o produto dos sete elos. Verde está pago; o que não está aparece aberto embaixo.</div>'+
+     '<div class="cadeia">';
   dg.linha.forEach(x=>{
-    const cls=x.st.k==='nd'?'':x.st.k==='ok'?'ok':x.st.k;
     const garg = dg.gargalo && dg.gargalo.e.id===x.e.id;
-    const cor=x.st.k==='ok'?'var(--bom)':x.st.k==='at'?'var(--atencao)':x.st.k==='se'?'var(--serio)':x.st.k==='cr'?'var(--critico)':'var(--text3)';
-    const larg=x.st.r!=null?Math.max(3,Math.min(100,x.st.r*100)):0;
-    h+='<div class="elo '+(garg?'gargalo':cls)+'">'+
-      '<div class="elo-n">'+x.e.n+'</div>'+
-      '<div class="elo-nome"><b>'+x.e.nome+'</b><span>'+x.e.rot+'</span></div>'+
-      '<div class="elo-val"><b style="color:'+cor+'">'+(x.val!=null?x.e.fmt(x.val):'—')+'</b><span>meta '+x.e.fmt(x.bench)+'</span></div>'+
-      '<div class="elo-bar"><div class="barra"><i style="width:'+larg+'%;background:'+cor+'"></i></div>'+
-        (x.tend?'<div style="font-size:11px;margin-top:5px;color:'+(x.tend.bom?'var(--bom)':'var(--critico)')+'">'+
-          (x.tend.pct>0?'▲':'▼')+' '+pct(Math.abs(x.tend.pct))+' vs 7 dias</div>':'')+'</div>'+
-      '<div style="min-width:96px;text-align:right">'+(x.custo>0?'<span class="tag t-cr">−'+brl0(x.custo)+'/dia</span>':
-        x.caindo?'<span class="tag t-se">caindo</span>':
-        x.st.k==='ok'?'<span class="tag t-bom">ok</span>':x.st.k==='nd'?'<span class="tag t-gy">sem dado</span>':'<span class="tag t-at">atenção</span>')+'</div>'+
-    '</div>';
+    const cor=x.st.k==='ok'?(x.caindo?'var(--serio)':'var(--bom)'):x.st.k==='at'?'var(--atencao)':
+              x.st.k==='se'?'var(--serio)':x.st.k==='cr'?'var(--critico)':'var(--text3)';
+    h+='<div class="celo'+(garg?' garg':'')+'" style="--c:'+cor+'" title="'+esc(x.e.nome+' — '+x.e.rot)+'">'+
+       '<span class="celo-n">'+x.e.nome+'</span>'+
+       '<b style="color:'+cor+'">'+(x.val!=null?x.e.fmt(x.val):'—')+'</b>'+
+       '<span class="celo-m">meta '+x.e.fmt(x.bench)+'</span>'+
+       (x.tend?'<span class="celo-t" style="color:'+(x.tend.bom?'var(--bom)':'var(--critico)')+'">'+
+         (x.tend.pct>0?'▲':'▼')+pct(Math.abs(x.tend.pct))+'</span>':'<span class="celo-t"></span>')+
+       '</div>';
   });
-  h+='<div class="mini">Elos sem dado não são julgados — lance as colunas que faltam para o motor enxergar mais fundo.</div></div>';
+  h+='</div>';
+  const foco=dg.linha.filter(x=>x.custo>0||x.caindo||['at','se','cr'].includes(x.st.k));
+  if(foco.length) h+='<div style="margin-top:14px">'+foco.map(x=>{
+    const cor=x.custo>0?'var(--critico)':x.caindo?'var(--serio)':'var(--atencao)';
+    return '<div class="elo" style="border-left-color:'+cor+'">'+
+      '<div class="elo-n">'+x.e.n+'</div>'+
+      '<div style="flex:1"><b style="font-size:13.5px">'+x.e.nome+'</b> '+
+        '<span class="mini" style="margin:0">'+x.e.rot+' '+x.e.fmt(x.val)+' · meta '+x.e.fmt(x.bench)+'</span>'+
+        '<div class="mini" style="margin-top:3px">'+esc(x.e.causa)+'</div></div>'+
+      '<div style="text-align:right;min-width:104px">'+(x.custo>0?'<span class="tag t-cr">−'+brl0(x.custo)+'/dia</span>':
+        x.caindo?'<span class="tag t-se">caindo</span>':'<span class="tag t-at">atenção</span>')+'</div></div>';
+  }).join('')+'</div>';
+  else h+='<div class="aviso a-bom" style="margin-top:14px">Nenhum elo pedindo atenção hoje.</div>';
+  h+='</div>';
 
   /* ações */
   const camps=porCampanha(cli,somaDias(dia,-2),dia).map(c=>Object.assign(c,{d:decideCampanha(c)}));
   const ordem={cortar:0,otimizar:1,escalar:2,manter:3,aguardar:4};
   camps.sort((x,y)=>ordem[x.d.k]-ordem[y.d.k]);
   h+='<div class="card"><h3>Ações por campanha</h3><div class="sub">Últimos 3 dias acumulados. Ordem de execução: primeiro o que sangra, depois o que escala.</div>';
-  h+= camps.length? camps.map(c=>{
-    const cor={cortar:'cr',otimizar:'se',escalar:'bom',manter:'in',aguardar:''}[c.d.k];
-    const tg={cortar:'t-cr',otimizar:'t-se',escalar:'t-bom',manter:'t-in',aguardar:'t-gy'}[c.d.k];
-    return '<div class="acao '+cor+'"><div class="acao-h"><span class="tag '+tg+'">'+c.d.tag+'</span>'+
-      '<b>'+esc(c.campanha)+'</b><span class="mini" style="margin:0">'+esc(c.cliente)+'</span></div>'+
-      '<div class="acao-t">'+c.d.t+'</div><div class="acao-d">'+c.d.d+'</div>'+
-      (c.d.porque?'<div class="porque">'+esc(c.d.porque)+'</div>':'')+'</div>';
-  }).join('') : '<div class="vazio">Sem campanha lançada nos últimos 3 dias.</div>';
+  h+= camps.length? camps.map(c=>cardAcao(c)).join('') : '<div class="vazio">Sem campanha lançada nos últimos dias.</div>';
   h+='</div>';
   corpo.innerHTML=h;
 }
 
+/* ═════════ GRADE DE LANÇAMENTO ═════════ */
+let gradeLinhas=[];
+function campanhasConhecidas(){
+  const vistas={};
+  [...lanc].sort((a,b)=>a.data<b.data?1:-1).forEach(l=>{
+    const k=l.cliente+'||'+l.campanha; if(!vistas[k]) vistas[k]={cliente:l.cliente,campanha:l.campanha,ult:l.data};
+  });
+  return Object.values(vistas).slice(0,40);
+}
+function montaGrade(){
+  const dia=(document.getElementById('gr-data')||{}).value||hoje();
+  const doDia=lanc.filter(l=>l.data===dia);
+  const base=campanhasConhecidas();
+  const chaves=new Set();
+  gradeLinhas=[];
+  doDia.forEach(l=>{ chaves.add(l.cliente+'||'+l.campanha); gradeLinhas.push(Object.assign({},l)) });
+  base.forEach(c=>{ const k=c.cliente+'||'+c.campanha; if(chaves.has(k)) return; chaves.add(k);
+    gradeLinhas.push({id:null,data:dia,cliente:c.cliente,campanha:c.campanha,
+      gasto:'',imp:'',cliques:'',lpv:'',leads:'',agend:'',calls:'',vendas:'',freq:''}) });
+  if(!gradeLinhas.length) novaLinha(true);
+}
+function novaLinha(mudo){
+  const dia=(document.getElementById('gr-data')||{}).value||hoje();
+  gradeLinhas.push({id:null,data:dia,cliente:(clientes[0]||{}).nome||'—',campanha:'',
+    gasto:'',imp:'',cliques:'',lpv:'',leads:'',agend:'',calls:'',vendas:'',freq:''});
+  if(!mudo) renderGrade();
+}
+function renderGrade(){
+  const tb=document.getElementById('gr-body'); if(!tb) return;
+  const nomes=clientes.map(c=>c.nome);
+  tb.innerHTML=gradeLinhas.map((l,i)=>{
+    const preenchida=l.gasto!==''&&l.gasto!=null;
+    const cpl=(+l.gasto&&+l.leads)?(+l.gasto)/(+l.leads):null;
+    const alvo=cpaAlvo()*cfg.agend*cfg.show*cfg.fech/1e6;
+    const cor=cpl==null?'var(--text3)':cpl<=alvo*0.8?'var(--bom)':cpl<=alvo*1.2?'var(--info)':cpl<=alvo*1.5?'var(--serio)':'var(--critico)';
+    const campo=(k,ph)=>'<td><input type="number" step="any" data-g="'+i+'" data-k="'+k+'" value="'+(l[k]??'')+'" placeholder="'+(ph||'')+'"></td>';
+    return '<tr class="'+(preenchida?'tem':'')+'">'+
+      '<td><input class="nome" data-g="'+i+'" data-k="campanha" value="'+esc(l.campanha)+'" placeholder="nome da campanha">'+
+        '<select class="chip-cli" data-g="'+i+'" data-k="cliente" style="background:none;border:none;padding:0;font-size:10.5px;color:var(--text3);width:auto">'+
+        (nomes.length?nomes:['—']).map(n=>'<option'+(n===l.cliente?' selected':'')+'>'+esc(n)+'</option>').join('')+'</select></td>'+
+      campo('gasto')+campo('imp')+campo('cliques')+campo('lpv')+campo('leads')+campo('agend')+campo('calls')+campo('vendas')+campo('freq')+
+      '<td><span class="cpl-live" style="color:'+cor+'">'+(cpl!=null?brl(cpl):'')+'</span></td></tr>';
+  }).join('');
+  tb.querySelectorAll('input,select').forEach(el=>{
+    el.addEventListener('input',()=>{ gradeLinhas[+el.dataset.g][el.dataset.k]=el.value; atualizaResumo() });
+    el.addEventListener('change',()=>{ gradeLinhas[+el.dataset.g][el.dataset.k]=el.value;
+      if(['gasto','leads'].includes(el.dataset.k)) renderGrade(); });
+  });
+  atualizaResumo();
+}
+function atualizaResumo(){
+  const r=document.getElementById('gr-resumo'); if(!r) return;
+  const p=gradeLinhas.filter(l=>l.campanha&&(+l.gasto));
+  const g=p.reduce((t,l)=>t+(+l.gasto||0),0), ld=p.reduce((t,l)=>t+(+l.leads||0),0);
+  r.innerHTML=p.length? p.length+' campanha(s) preenchida(s) · <b>'+brl0(g)+'</b> · '+int(ld)+' lead(s)'+
+    (ld?' · CPL médio <b>'+brl(g/ld)+'</b>':'') : 'Preencha ao menos o gasto de uma campanha.';
+}
+function salvarDia(){
+  const dia=document.getElementById('gr-data').value||hoje();
+  const validas=gradeLinhas.filter(l=>l.campanha&&(+l.gasto||+l.leads));
+  if(!validas.length) return alert('Preencha ao menos uma campanha com gasto ou leads.');
+  validas.forEach(l=>{
+    const n={data:dia,cliente:l.cliente,campanha:l.campanha.trim(),
+      gasto:+l.gasto||0,imp:+l.imp||0,cliques:+l.cliques||0,lpv:+l.lpv||0,leads:+l.leads||0,
+      agend:+l.agend||0,calls:+l.calls||0,vendas:+l.vendas||0,receita:(+l.vendas||0)*cfg.ticket,freq:+l.freq||0};
+    const i=lanc.findIndex(x=>x.data===dia&&x.cliente===n.cliente&&x.campanha===n.campanha);
+    if(i>=0) Object.assign(lanc[i],n); else lanc.push(Object.assign({id:uid()},n));
+  });
+  salvar();
+  document.getElementById('gr-status').innerHTML='<div class="aviso a-bom"><b>'+validas.length+
+    ' campanha(s) salvas em '+diaBR(dia)+'.</b> O relatório do dia já está atualizado.</div>';
+  boot(); montaGrade(); renderGrade();
+}
+function copiarOntem(){
+  const dia=document.getElementById('gr-data').value||hoje();
+  const ont=lanc.filter(l=>l.data===somaDias(dia,-1));
+  if(!ont.length) return alert('Não há lançamento no dia anterior para repetir.');
+  gradeLinhas.forEach(l=>{
+    const o=ont.find(x=>x.cliente===l.cliente&&x.campanha===l.campanha);
+    if(o&&!(+l.gasto)) ['gasto','imp','cliques','lpv','leads','agend','calls','freq'].forEach(k=>l[k]=o[k]||'');
+  });
+  renderGrade();
+  document.getElementById('gr-status').innerHTML='<div class="aviso a-in">Números de ontem copiados como ponto de partida. <b>Ajuste antes de salvar</b> — repetir o dia anterior sem conferir polui o histórico e estraga o diagnóstico.</div>';
+}
+function abrirColar(){ const c=document.getElementById('card-colar'); c.style.display=c.style.display==='none'?'block':'none' }
+function navDia(n){
+  const el=document.getElementById('gr-data');
+  el.value = n==='hoje' ? hoje() : somaDias(el.value||hoje(), n==='ant'?-1:1);
+  montaGrade(); renderGrade(); marcaNav();
+}
+function marcaNav(){
+  const el=document.getElementById('gr-navdia'); if(!el) return;
+  const d=(document.getElementById('gr-data')||{}).value;
+  el.innerHTML='<button data-act="navDia" data-arg="ant">‹</button>'+
+    '<button data-act="navDia" data-arg="hoje" class="'+(d===hoje()?'on':'')+'">hoje</button>'+
+    '<button data-act="navDia" data-arg="prox">›</button>';
+}
+
+function cardAcao(c){
+  const cor={cortar:'cr',otimizar:'se',escalar:'bom',manter:'in',aguardar:''}[c.d.k];
+  const tg={cortar:'t-cr',otimizar:'t-se',escalar:'t-bom',manter:'t-in',aguardar:'t-gy'}[c.d.k];
+  return '<div class="acao '+cor+'">'+
+    '<div class="acao-h"><span class="tag '+tg+'">'+c.d.tag+'</span>'+
+      '<b class="acao-t" style="margin:0">'+c.d.t+'</b></div>'+
+    '<div class="acao-sub">'+esc(c.campanha)+' · '+esc(c.cliente)+' · '+brl0(c.d.gastoDia)+'/dia · '+int(c.a.leads)+' leads</div>'+
+    '<details class="det"><summary>por quê</summary><div class="acao-d">'+c.d.d+'</div>'+
+      (c.d.porque?'<div class="porque">'+esc(c.d.porque)+'</div>':'')+'</details></div>';
+}
+
 /* ═════════ DIÁRIO ═════════ */
 function renderDiario(){
+  montaGrade(); renderGrade(); marcaNav();
   const tb=document.getElementById('lc-body'); if(!tb) return;
   const l=[...lanc].sort((a,b)=>b.data===a.data?(a.cliente>b.cliente?1:-1):(a.data<b.data?1:-1)).slice(0,120);
   document.getElementById('lc-sub').textContent=lanc.length+' lançamento(s) · '+
     [...new Set(lanc.map(x=>x.data))].length+' dia(s) · '+[...new Set(lanc.map(x=>x.campanha))].length+' campanha(s)';
   tb.innerHTML=l.length? l.map(x=>{const a=deriva(x);
     return '<tr><td class="mono">'+diaBR(x.data)+'</td><td>'+esc(x.cliente)+'</td><td>'+esc(x.campanha)+'</td>'+
-    '<td class="num">'+brl0(x.gasto)+'</td><td class="num">'+int(x.imp)+'</td><td class="num">'+int(x.cliques)+'</td>'+
-    '<td class="num">'+int(x.leads)+'</td><td class="num">'+brl(a.cpl)+'</td><td class="num">'+int(x.vendas)+'</td>'+
-    '<td class="num">'+(a.roas!=null?dec(a.roas,1)+'x':'—')+'</td>'+
+    '<td class="num">'+brl0(x.gasto)+'</td><td class="num">'+int(x.leads)+'</td><td class="num">'+brl(a.cpl)+'</td>'+
+    '<td class="num">'+int(x.vendas)+'</td><td class="num">'+(a.roas!=null?dec(a.roas,1)+'x':'—')+'</td>'+
     '<td><button class="gh sm" data-act="delLanc" data-arg="'+x.id+'">×</button></td></tr>'}).join('')
-    : '<tr><td colspan="11"><div class="vazio">Nada lançado ainda.</div></td></tr>';
+    : '<tr><td colspan="9"><div class="vazio">Nada lançado ainda.</div></td></tr>';
 }
 /* ═════════ MÉTRICAS ═════════ */
 const METRICAS=[{k:'cpl',n:'CPL',f:brl,c:'var(--s1)',mm:false},{k:'gasto',n:'Investimento',f:brl0,c:'var(--s1)',mm:true},
@@ -960,12 +1120,7 @@ function renderEscala(){
   const ordem={cortar:0,otimizar:1,escalar:2,manter:3,aguardar:4};
   lista.innerHTML='<div class="card"><h3>Decisão por campanha</h3><div class="sub">Base: últimos 3 dias. Cada decisão mostra a conta.</div>'+
     (camps.length? camps.sort((x,y)=>ordem[x.d.k]-ordem[y.d.k]).map(c=>{
-      const cor={cortar:'cr',otimizar:'se',escalar:'bom',manter:'in',aguardar:''}[c.d.k];
-      const tg={cortar:'t-cr',otimizar:'t-se',escalar:'t-bom',manter:'t-in',aguardar:'t-gy'}[c.d.k];
-      return '<div class="acao '+cor+'"><div class="acao-h"><span class="tag '+tg+'">'+c.d.tag+'</span><b>'+esc(c.campanha)+'</b>'+
-        '<span class="mini" style="margin:0">'+esc(c.cliente)+' · '+brl0(c.d.gastoDia)+'/dia · '+int(c.a.leads)+' leads</span></div>'+
-        '<div class="acao-t">'+c.d.t+'</div><div class="acao-d">'+c.d.d+'</div>'+
-        (c.d.porque?'<div class="porque">'+esc(c.d.porque)+'</div>':'')+'</div>';
+      return cardAcao(c);
     }).join('') : '<div class="vazio">Sem campanhas nos últimos 3 dias.</div>')+'</div>';
   renderSim();
 }
@@ -1065,21 +1220,6 @@ function confirmarImport(){
   document.getElementById('im-out').innerHTML='<div class="aviso a-bom">Lançado. O relatório do dia já reflete os números.</div>';
 }
 /* ═════════ AÇÕES ═════════ */
-function lancar(){
-  const v=id=>document.getElementById(id).value;
-  const camp=v('l-campanha').trim();
-  if(!camp) return alert('Informe a campanha.');
-  if(!clientes.length) return alert('Cadastre um cliente antes, em Metas & Benchmarks.');
-  const n={id:uid(),data:v('l-data')||hoje(),cliente:v('l-cliente'),campanha:camp,
-    gasto:+v('l-gasto')||0,imp:+v('l-imp')||0,cliques:+v('l-cliques')||0,lpv:+v('l-lpv')||0,
-    leads:+v('l-leads')||0,agend:+v('l-agend')||0,calls:+v('l-calls')||0,
-    vendas:+v('l-vendas')||0,receita:+v('l-receita')||0,freq:+v('l-freq')||0};
-  const i=lanc.findIndex(x=>x.data===n.data&&x.cliente===n.cliente&&x.campanha===n.campanha);
-  if(i>=0){ if(!confirm('Já existe lançamento dessa campanha nesse dia. Substituir?')) return; lanc[i]=Object.assign(lanc[i],n,{id:lanc[i].id}) }
-  else lanc.push(n);
-  salvar(); ['l-campanha','l-gasto','l-imp','l-cliques','l-lpv','l-leads','l-agend','l-calls','l-vendas','l-receita','l-freq']
-    .forEach(id=>document.getElementById(id).value=''); boot();
-}
 function delLanc(id){ if(!confirm('Remover lançamento?'))return; lanc=lanc.filter(x=>x.id!==id); salvar(); boot() }
 function addCliente(){
   const n=document.getElementById('c-nome').value.trim(); if(!n) return alert('Informe o nome.');
@@ -1161,7 +1301,8 @@ function go(id){
   if(id==='escala') renderEscala();
   if(id==='config') renderConfig();
 }
-const ACOES={entrar,sair,lancar,delLanc,addCliente,delCliente,limpar,demo,modelo,previa,confirmarImport,
+const ACOES={entrar,sair,delLanc,addCliente,delCliente,limpar,demo,modelo,previa,confirmarImport,
+  salvarDia,copiarOntem,abrirColar,novaLinha,navDia,
   exportar(){document.getElementById('bkp').value=JSON.stringify({lanc,clientes,cfg})},
   importarBkp(){try{const d=JSON.parse(document.getElementById('bkp').value);
       lanc=d.lanc||[];clientes=d.clientes||[];cfg=Object.assign(cfg,d.cfg||{});salvar();boot();alert('Backup importado.')}
@@ -1183,7 +1324,7 @@ if(window.MutationObserver) new MutationObserver(()=>ligar()).observe(document.b
 function opts(el,arr,sel){ if(!el) return; el.innerHTML=arr.map(x=>'<option'+(x===sel?' selected':'')+'>'+esc(x)+'</option>').join('') }
 function boot(){
   const nomes=clientes.map(c=>c.nome);
-  ['l-cliente','im-cliente'].forEach(id=>opts(document.getElementById(id),nomes.length?nomes:['—']));
+  opts(document.getElementById('im-cliente'),nomes.length?nomes:['—']);
   ['rp-esc','mt-cliente','sim-cliente'].forEach(id=>{
     const el=document.getElementById(id); const atual=el&&el.value;
     opts(el,['Todos',...nomes],atual);
@@ -1193,7 +1334,9 @@ function boot(){
   if(sd) sd.innerHTML=ds.map(d=>'<option value="'+d+'"'+(d===atualD?' selected':'')+'>'+diaBR(d)+'</option>').join('');
   const mm=document.getElementById('mt-met'), atualM=mm&&mm.value;
   if(mm) mm.innerHTML=METRICAS.map(m=>'<option value="'+m.k+'"'+(m.k===atualM?' selected':'')+'>'+m.n+'</option>').join('');
-  ['l-data','im-data'].forEach(id=>{const e=document.getElementById(id); if(e&&!e.value) e.value=hoje()});
+  ['gr-data','im-data'].forEach(id=>{const e=document.getElementById(id); if(e&&!e.value) e.value=hoje()});
+  const gd=document.getElementById('gr-data');
+  if(gd&&!gd.__c){gd.__c=1; gd.addEventListener('change',()=>{montaGrade();renderGrade();marcaNav()})}
   [['c-ticket','ticket'],['c-roas','roas'],['c-meta','meta'],['b-cpm','cpm'],['b-ctr','ctr'],['b-conn','conn'],
    ['b-cvr','cvr'],['b-agend','agend'],['b-show','show'],['b-fech','fech'],['b-freq','freq'],['b-minleads','minleads']]
    .forEach(([id,k])=>{const e=document.getElementById(id); if(e){ e.value=cfg[k];
