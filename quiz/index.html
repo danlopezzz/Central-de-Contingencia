@@ -876,17 +876,19 @@ h1 .hl{
   /* ---------- Pergunta 4: fixa, decide o destino do lead ---------- */
   var PERGUNTA_CAPITAL = {
     indice:'Pergunta 04 — última', icone:'#ico-bolt',
-    titulo:'Quanto de capital você pretende investir?',
+    titulo:'Quanto de capital você tem investido?',
     dica:'Isso define qual estrutura faz sentido para você agora.',
     opcoes:[
-      { valor:'100-200', pontos:18, destino:'whats', titulo:'R$ 100 a R$ 200', sub:'Primeiro passo estruturado',
-        recap:'Com <b>R$ 100 a R$ 200</b> dá para validar o processo antes de aumentar o risco.' },
-      { valor:'201-500', pontos:24, destino:'whats', titulo:'R$ 201 a R$ 500', sub:'Margem real para gerir risco',
-        recap:'Com <b>R$ 201 a R$ 500</b> você tem margem para operar com gestão de risco de verdade.' },
-      { valor:'501-1000', pontos:30, destino:'whats', titulo:'R$ 501 a R$ 1.000', sub:'Pronto para acelerar',
-        recap:'Com <b>R$ 501 a R$ 1.000</b> você já opera em uma faixa onde a consistência aparece bem mais rápido.' },
-      { valor:'sem-capital', pontos:10, destino:'comunidade', titulo:'Não tenho capital para investir agora', sub:'Quero aprender primeiro',
-        recap:'Sem capital agora, o passo certo é <b>construir base</b> — aprender primeiro, capitalizar depois.' }
+      { valor:'1k-5k', pontos:20, destino:'whats', titulo:'R$ 1.000 a R$ 5.000', sub:'Primeira faixa de capital',
+        recap:'Com <b>R$ 1.000 a R$ 5.000</b> investidos, você já tem base para operar com gestão de risco de verdade.' },
+      { valor:'5k-20k', pontos:25, destino:'whats', titulo:'R$ 5.000 a R$ 20.000', sub:'Capital consolidado',
+        recap:'Com <b>R$ 5.000 a R$ 20.000</b> investidos, cada ponto de eficiência a mais já pesa no resultado do mês.' },
+      { valor:'20k-100k', pontos:30, destino:'whats', titulo:'R$ 20.000 a R$ 100.000', sub:'Patrimônio relevante',
+        recap:'Com <b>R$ 20.000 a R$ 100.000</b> investidos, proteger o que já existe pesa tanto quanto buscar retorno.' },
+      { valor:'mais-100k', pontos:34, destino:'whats', titulo:'Mais de R$ 100.000', sub:'Alto patrimônio',
+        recap:'Com <b>mais de R$ 100.000</b> investidos, o jogo deixa de ser acertar mais e passa a ser errar menos.' },
+      { valor:'sem-capital', pontos:10, destino:'comunidade', titulo:'Não tenho capital investido', sub:'Quero aprender primeiro',
+        recap:'Sem capital investido hoje, o passo certo é <b>construir base</b> — aprender o processo primeiro, capitalizar depois.' }
     ]
   };
 
@@ -1164,7 +1166,7 @@ h1 .hl{
 
   /* ========================= RESULTADO ========================= */
   // soma máxima possível da trilha mais "cara" (usada só para normalizar o score)
-  var PONTOS_MAX = 90;
+  var PONTOS_MAX = 94;
 
   function calcularScore(){
     var bruto = 0;
@@ -1186,7 +1188,7 @@ h1 .hl{
 
     var fecho = temCapital
       ? '<br><br>Com o capital que você indicou, o próximo passo é <strong>montar sua estrutura junto com um especialista</strong> — no seu ritmo e com o seu tempo disponível.'
-      : '<br><br>Como você ainda não tem capital para investir, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
+      : '<br><br>Como você ainda não tem capital investido, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
     $('#profileText').innerHTML = perfil.resumo + fecho;
 
     // contador animado

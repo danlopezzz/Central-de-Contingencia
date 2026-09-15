@@ -32,7 +32,7 @@ São sempre 4 perguntas, mas só duas são iguais para todo mundo:
 | 1 | O que mais te chamou atenção no anúncio? | Fixa — é ela que define a trilha |
 | 2 | Aprofunda o desejo que trouxe a pessoa | **Muda conforme a trilha** |
 | 3 | Mede o contexto real (tempo, experiência, meta…) | **Muda conforme a trilha** |
-| 4 | Quanto de capital você pretende investir? | Fixa — é ela que decide o destino |
+| 4 | Quanto de capital você tem investido? | Fixa — é ela que decide o destino |
 
 A pergunta 1 não pergunta a dor: pergunta o **desejo que fez a pessoa clicar**.
 Por isso ela funciona para qualquer público que o anúncio traga, do leigo ao
@@ -50,18 +50,19 @@ As 4 trilhas, conforme a resposta da pergunta 1:
 
 Cada alternativa das perguntas 2 e 3 carrega o próprio texto de resultado, então o
 diagnóstico final é montado com as palavras da trilha que a pessoa percorreu — não
-com um texto genérico. São **64 combinações de diagnóstico** (4 trilhas × 4 × 4).
+com um texto genérico. São **80 combinações de diagnóstico** (4 trilhas × 4 × 4 × as 5 faixas de capital no fecho).
 
 ## Regra de roteamento do lead
 
 O destino é decidido **exclusivamente pela pergunta 4** (capital):
 
-| Resposta na pergunta 4        | Destino    |
-| ----------------------------- | ---------- |
-| A — R$ 100 a R$ 200           | WhatsApp   |
-| B — R$ 201 a R$ 500           | WhatsApp   |
-| C — R$ 501 a R$ 1.000         | WhatsApp   |
-| D — Não tenho capital         | Comunidade |
+| Resposta na pergunta 4          | Destino    |
+| ------------------------------- | ---------- |
+| A — R$ 1.000 a R$ 5.000         | WhatsApp   |
+| B — R$ 5.000 a R$ 20.000        | WhatsApp   |
+| C — R$ 20.000 a R$ 100.000      | WhatsApp   |
+| D — Mais de R$ 100.000          | WhatsApp   |
+| E — Não tenho capital investido | Comunidade |
 
 Nenhuma outra pergunta muda o destino: elas alimentam o score e personalizam o
 resultado, para o lead chegar no CTA já tendo recebido um diagnóstico.
