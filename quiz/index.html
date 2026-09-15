@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#050A06" />
+<title>Descubra seu Perfil de Trader</title>
+<meta name="description" content="Responda 4 perguntas rápidas e descubra o caminho mais curto para operar com consistência." />
+<meta name="robots" content="noindex, nofollow" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Descubra seu Perfil de Trader" />
+<meta property="og:description" content="4 perguntas. Menos de 60 segundos. Descubra o caminho mais curto para operar com consistência." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='26' fill='%23070D08'/><path d='M16 100 L44 64 L62 86 L104 26' stroke='%237CD61A' stroke-width='18' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>" />
+
+<style>
+/* ========== TOKENS ========== */
+:root{
+  --green:#7CD61A;
+  --green-bright:#A6F23C;
+  --green-deep:#4E9A08;
+  --green-glow:rgba(124,214,26,.45);
+
+  --bg:#050A06;
+  --bg-2:#070D08;
+  --surface:rgba(13,21,13,.66);
+  --surface-2:rgba(19,31,18,.82);
+  --stroke:rgba(255,255,255,.09);
+  --stroke-strong:rgba(124,214,26,.35);
+
+  --text:#EDF5EA;
+  --text-2:#9BAA96;
+  --text-3:#68775F;
+
+  --radius:18px;
+  --radius-lg:26px;
+  --shadow-glow:0 0 0 1px rgba(124,214,26,.28), 0 18px 50px -12px rgba(124,214,26,.35);
+
+  --font-display:'Sora',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+html,body{height:100%;}
+
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  position:relative;
+  min-height:100dvh;
+}
+
+/* ========== FUNDO ========== */
+#bg-canvas{
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:0;opacity:.34;pointer-events:none;
+}
+.bg-grid{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(124,214,26,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,214,26,.045) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 20%,transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 20%,transparent 78%);
+}
+.bg-glow{
+  position:fixed;z-index:0;pointer-events:none;border-radius:50%;
+  filter:blur(90px);will-change:transform;
+}
+.bg-glow.a{
+  width:min(620px,110vw);height:min(620px,110vw);
+  top:-22%;left:50%;translate:-50% 0;
+  background:radial-gradient(circle,rgba(124,214,26,.20),transparent 68%);
+  animation:breathe 9s var(--ease) infinite;
+}
+.bg-glow.b{
+  width:min(480px,90vw);height:min(480px,90vw);
+  bottom:-20%;right:-14%;
+  background:radial-gradient(circle,rgba(78,154,8,.16),transparent 70%);
+  animation:breathe 11s var(--ease) infinite reverse;
+}
+.bg-vignette{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 100% 80% at 50% 50%,transparent 35%,rgba(3,6,3,.75) 100%);
+}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.14);opacity:1}}
+
+/* ========== LAYOUT ========== */
+.shell{
+  position:relative;z-index:2;
+  min-height:100dvh;
+  display:flex;flex-direction:column;
+  padding:0 16px env(safe-area-inset-bottom);
+  max-width:640px;margin:0 auto;width:100%;
+}
+
+/* ---- topo ---- */
+.topbar{
+  padding:22px 0 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  animation:fadeDown .7s var(--ease) both;
+}
+.brand{display:flex;align-items:center;gap:11px;}
+.brand svg{width:38px;height:38px;filter:drop-shadow(0 0 14px var(--green-glow));}
+.brand-text{display:flex;flex-direction:column;line-height:1.1;}
+.brand-text b{font-family:var(--font-display);font-weight:800;font-size:15px;letter-spacing:-.3px;}
+.brand-text span{font-size:10px;color:var(--text-3);letter-spacing:2.4px;text-transform:uppercase;font-weight:600;}
+
+.step-chip{
+  font-family:var(--font-display);
+  font-size:11px;font-weight:700;letter-spacing:.6px;
+  color:var(--green-bright);
+  background:rgba(124,214,26,.09);
+  border:1px solid rgba(124,214,26,.22);
+  padding:7px 12px;border-radius:999px;
+  white-space:nowrap;
+  transition:opacity .4s var(--ease),transform .4s var(--ease);
+}
+.step-chip[hidden]{display:none;}
+
+/* ---- progresso ---- */
+.progress-wrap{padding-bottom:26px;opacity:0;transform:translateY(-6px);transition:opacity .5s var(--ease),transform .5s var(--ease);}
+.progress-wrap.on{opacity:1;transform:none;}
+.progress-track{
+  height:5px;border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;position:relative;
+}
+.progress-bar{
+  height:100%;width:0%;border-radius:999px;
+  background:linear-gradient(90deg,var(--green-deep),var(--green),var(--green-bright));
+  box-shadow:0 0 18px var(--green-glow);
+  transition:width .65s var(--ease);
+  position:relative;
+}
+.progress-bar::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
+  animation:shimmer 1.9s linear infinite;
+}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* ---- área principal ---- */
+.stage{
+  flex:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding-bottom:34px;
+  position:relative;
+}
+.screen{display:none;}
+.screen.active{display:block;}
+.screen.leaving{animation:slideOut .28s var(--ease) both;}
+.screen.entering{animation:slideIn .5s var(--ease) both;}
+
+@keyframes slideIn{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes slideOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-16px) scale(.985)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+.stagger>*{opacity:0;animation:fadeUp .6s var(--ease) both;}
+.stagger>*:nth-child(1){animation-delay:.05s}
+.stagger>*:nth-child(2){animation-delay:.12s}
+.stagger>*:nth-child(3){animation-delay:.19s}
+.stagger>*:nth-child(4){animation-delay:.26s}
+.stagger>*:nth-child(5){animation-delay:.33s}
+.stagger>*:nth-child(6){animation-delay:.40s}
+.stagger>*:nth-child(7){animation-delay:.47s}
+.stagger>*:nth-child(8){animation-delay:.54s}
+
+/* ---- capa ---- */
+.hero-logo{
+  width:96px;height:96px;margin:0 auto 26px;display:block;
+  filter:drop-shadow(0 0 34px var(--green-glow));
+  animation:logoIn 1s var(--ease-back) both, float 5s ease-in-out 1s infinite;
+}
+@keyframes logoIn{from{opacity:0;transform:scale(.6) rotate(-12deg)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--green-bright);
+  background:rgba(124,214,26,.08);
+  border:1px solid rgba(124,214,26,.2);
+  padding:8px 14px;border-radius:999px;margin-bottom:20px;
+}
+.pulse-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 0 0 var(--green-glow);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(124,214,26,.6)}
+  70%{box-shadow:0 0 0 9px rgba(124,214,26,0)}
+  100%{box-shadow:0 0 0 0 rgba(124,214,26,0)}
+}
+
+h1{
+  font-family:var(--font-display);
+  font-size:clamp(28px,7.4vw,42px);
+  font-weight:800;line-height:1.1;letter-spacing:-1.2px;
+  margin-bottom:16px;
+}
+h1 .hl{
+  background:linear-gradient(120deg,var(--green),var(--green-bright));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  position:relative;
+}
+.lede{
+  font-size:clamp(15px,3.8vw,17px);
+  color:var(--text-2);line-height:1.6;margin-bottom:30px;max-width:30rem;
+}
+.lede strong{color:var(--text);font-weight:600;}
+
+.meta-row{
+  display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px;
+}
+.meta-pill{
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:500;color:var(--text-2);
+  background:var(--surface);border:1px solid var(--stroke);
+  padding:9px 13px;border-radius:12px;
+}
+.meta-pill svg{width:14px;height:14px;stroke:var(--green);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+
+/* ---- perguntas ---- */
+.q-index{
+  font-family:var(--font-display);
+  font-size:12px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;
+  color:var(--green);margin-bottom:12px;display:block;
+}
+.q-title{
+  font-family:var(--font-display);
+  font-size:clamp(22px,5.6vw,30px);
+  font-weight:700;line-height:1.22;letter-spacing:-.7px;
+  margin-bottom:8px;
+}
+.q-hint{font-size:14px;color:var(--text-3);margin-bottom:24px;}
+
+.options{display:flex;flex-direction:column;gap:11px;}
+.options.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+
+.opt{
+  position:relative;
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  display:flex;align-items:center;gap:14px;
+  width:100%;text-align:left;
+  background:var(--surface);
+  border:1.5px solid var(--stroke);
+  border-radius:var(--radius);
+  padding:17px 16px;
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:15.5px;font-weight:500;line-height:1.35;
+  cursor:pointer;
+  overflow:hidden;
+  transition:border-color .3s var(--ease),background .3s var(--ease),transform .25s var(--ease-back),box-shadow .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.opt::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,rgba(124,214,26,.14),rgba(124,214,26,0) 62%);
+  opacity:0;transition:opacity .35s var(--ease);
+}
+.opt>*{position:relative;z-index:1;}
+
+@media(hover:hover){
+  .opt:hover{
+    border-color:var(--stroke-strong);
+    background:var(--surface-2);
+    transform:translateY(-2px);
+    box-shadow:0 12px 30px -14px rgba(124,214,26,.5);
+  }
+  .opt:hover::before{opacity:1;}
+  .opt:hover .opt-key{background:rgba(124,214,26,.18);border-color:rgba(124,214,26,.45);color:var(--green-bright);}
+}
+.opt:active{transform:scale(.985);}
+.opt:focus-visible{outline:2px solid var(--green);outline-offset:3px;}
+
+.opt-key{
+  flex:none;
+  width:36px;height:36px;border-radius:11px;
+  display:grid;place-items:center;
+  font-family:var(--font-display);font-weight:700;font-size:14px;
+  color:var(--text-2);
+  background:rgba(255,255,255,.05);
+  border:1.5px solid var(--stroke);
+  transition:all .3s var(--ease);
+}
+.opt-label{flex:1;}
+.opt-label small{
+  display:block;margin-top:3px;
+  font-size:12.5px;color:var(--text-3);font-weight:400;
+}
+.opt-check{
+  flex:none;width:22px;height:22px;
+  opacity:0;transform:scale(.4);
+  transition:all .35s var(--ease-back);
+}
+.opt-check svg{width:100%;height:100%;stroke:var(--bg);stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.opt-check{background:var(--green);border-radius:50%;display:grid;place-items:center;padding:4px;}
+
+.opt.selected{
+  border-color:var(--green);
+  background:rgba(124,214,26,.10);
+  box-shadow:var(--shadow-glow);
+  animation:pick .45s var(--ease-back);
+}
+.opt.selected::before{opacity:1;}
+.opt.selected .opt-key{background:var(--green);border-color:var(--green);color:#071005;}
+.opt.selected .opt-check{opacity:1;transform:scale(1);}
+.opt.dimmed{opacity:.35;transform:scale(.99);}
+@keyframes pick{0%{transform:scale(1)}45%{transform:scale(1.025)}100%{transform:scale(1)}}
+
+/* opções largas (pergunta 3) */
+.options.tall .opt{padding:16px;font-size:15px;}
+
+/* ---- botões ---- */
+.btn{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;
+  font-family:var(--font-display);
+  font-size:16px;font-weight:700;letter-spacing:-.2px;
+  padding:18px 22px;border:none;border-radius:16px;
+  cursor:pointer;overflow:hidden;
+  text-decoration:none;
+  color:#06120A;
+  background:linear-gradient(120deg,var(--green-deep),var(--green) 45%,var(--green-bright));
+  box-shadow:0 14px 34px -12px rgba(124,214,26,.65),inset 0 1px 0 rgba(255,255,255,.28);
+  transition:transform .25s var(--ease-back),box-shadow .3s var(--ease),filter .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.btn::after{
+  content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:skewX(-20deg);
+  animation:sweep 3.4s var(--ease) infinite;
+}
+@keyframes sweep{0%{left:-60%}55%,100%{left:130%}}
+.btn:hover{transform:translateY(-2px);box-shadow:0 20px 44px -12px rgba(124,214,26,.8),inset 0 1px 0 rgba(255,255,255,.3);}
+.btn:active{transform:scale(.98);}
+.btn:focus-visible{outline:2px solid var(--green-bright);outline-offset:4px;}
+.btn svg{width:19px;height:19px;flex:none;position:relative;z-index:1;}
+.btn span{position:relative;z-index:1;}
+
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:7px;
+  background:none;border:none;cursor:pointer;
+  color:var(--text-3);font-family:var(--font-body);
+  font-size:13.5px;font-weight:500;
+  padding:12px 4px;margin-top:6px;
+  transition:color .25s var(--ease),transform .25s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-ghost:hover{color:var(--text);transform:translateX(-3px);}
+.btn-ghost svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;}
+.btn-ghost[hidden]{display:none;}
+
+.note{
+  text-align:center;font-size:12px;color:var(--text-3);
+  margin-top:14px;line-height:1.5;
+}
+
+/* ---- análise ---- */
+.analyzer{text-align:center;padding:10px 0;}
+.radar{
+  width:150px;height:150px;margin:0 auto 30px;position:relative;
+}
+.radar-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(124,214,26,.22);
+  animation:radarPulse 2.4s var(--ease) infinite;
+}
+.radar-ring:nth-child(2){animation-delay:.8s;}
+.radar-ring:nth-child(3){animation-delay:1.6s;}
+@keyframes radarPulse{
+  0%{transform:scale(.45);opacity:0}
+  35%{opacity:1}
+  100%{transform:scale(1);opacity:0}
+}
+.radar-core{
+  position:absolute;inset:0;display:grid;place-items:center;
+}
+.radar-core svg{width:56px;height:56px;filter:drop-shadow(0 0 22px var(--green-glow));animation:float 3s ease-in-out infinite;}
+.radar-sweep{
+  position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0deg,rgba(124,214,26,.28) 55deg,transparent 90deg);
+  animation:spin 1.8s linear infinite;
+  mask-image:radial-gradient(circle,transparent 26%,#000 28%);
+  -webkit-mask-image:radial-gradient(circle,transparent 26%,#000 28%);
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.analyzer h2{
+  font-family:var(--font-display);font-size:23px;font-weight:700;
+  letter-spacing:-.5px;margin-bottom:8px;
+}
+.analyzer p{font-size:14.5px;color:var(--text-2);margin-bottom:28px;}
+
+.checklist{display:flex;flex-direction:column;gap:11px;text-align:left;max-width:23rem;margin:0 auto;}
+.check-item{
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  display:flex;align-items:center;gap:12px;
+  font-size:14px;color:var(--text-3);
+  background:var(--surface);border:1px solid var(--stroke);
+  padding:13px 15px;border-radius:14px;
+  opacity:.35;transform:translateX(-8px);
+  transition:all .5s var(--ease);
+}
+.check-item.on{opacity:1;transform:none;border-color:rgba(124,214,26,.3);color:var(--text);}
+.check-box{
+  flex:none;width:21px;height:21px;border-radius:50%;
+  border:2px solid var(--stroke);
+  display:grid;place-items:center;
+  transition:all .4s var(--ease-back);
+}
+.check-item.on .check-box{background:var(--green);border-color:var(--green);transform:scale(1.08);}
+.check-box svg{width:11px;height:11px;stroke:#06120A;stroke-width:3.6;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .3s .12s var(--ease);}
+.check-item.on .check-box svg{opacity:1;}
+.spin-mini{
+  width:13px;height:13px;border-radius:50%;
+  border:2px solid rgba(124,214,26,.25);border-top-color:var(--green);
+  animation:spin .7s linear infinite;
+}
+
+/* ---- resultado ---- */
+.result-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:#06120A;background:linear-gradient(120deg,var(--green),var(--green-bright));
+  padding:8px 14px;border-radius:999px;margin-bottom:18px;
+  box-shadow:0 8px 24px -8px var(--green-glow);
+}
+.profile-name{margin-top:6px;}
+.result-badge svg{width:13px;height:13px;stroke:#06120A;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;}
+
+.profile-name{
+  font-family:var(--font-display);
+  font-size:clamp(25px,6.4vw,35px);font-weight:800;
+  line-height:1.12;letter-spacing:-1px;margin-bottom:14px;
+}
+.profile-name em{
+  font-style:normal;
+  background:linear-gradient(120deg,var(--green),var(--green-bright));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.profile-text{font-size:15.5px;line-height:1.65;color:var(--text-2);margin-bottom:22px;}
+.profile-text strong{color:var(--text);font-weight:600;}
+
+.score-card{
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  background:linear-gradient(160deg,rgba(124,214,26,.09),rgba(255,255,255,.02));
+  border:1px solid rgba(124,214,26,.25);
+  border-radius:var(--radius-lg);
+  padding:20px;margin-bottom:20px;
+}
+.score-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;gap:12px;}
+.score-head span{font-size:12px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);}
+.score-value{font-family:var(--font-display);font-size:30px;font-weight:800;color:var(--green-bright);letter-spacing:-1px;line-height:1;}
+.score-value sub{font-size:14px;color:var(--text-3);font-weight:600;vertical-align:baseline;}
+.score-track{height:9px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;}
+.score-fill{
+  height:100%;width:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--green-deep),var(--green-bright));
+  box-shadow:0 0 16px var(--green-glow);
+  transition:width 1.3s var(--ease) .35s;
+}
+
+.recap{display:flex;flex-direction:column;gap:9px;margin-bottom:24px;}
+.recap-row{
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  display:flex;align-items:flex-start;gap:11px;
+  font-size:13.8px;line-height:1.45;color:var(--text-2);
+  background:var(--surface);border:1px solid var(--stroke);
+  border-radius:13px;padding:12px 14px;
+}
+.recap-row svg{width:16px;height:16px;flex:none;margin-top:1px;stroke:var(--green);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.recap-row b{color:var(--text);font-weight:600;}
+
+.cta-wrap{position:relative;}
+.cta-wrap::before{
+  content:'';position:absolute;inset:-14px;border-radius:26px;
+  background:radial-gradient(ellipse at center,var(--green-glow),transparent 70%);
+  filter:blur(18px);opacity:.5;
+  animation:ctaGlow 2.6s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes ctaGlow{0%,100%{opacity:.35}50%{opacity:.75}}
+
+.scarcity{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:12.5px;color:var(--text-3);margin-top:16px;
+}
+.scarcity .pulse-dot{width:5px;height:5px;}
+
+/* ---- rodapé ---- */
+.foot{
+  text-align:center;padding:18px 0 26px;
+  font-size:11px;color:#3D4A38;line-height:1.6;
+}
+
+/* ---- confete ---- */
+#confetti{position:fixed;inset:0;z-index:5;pointer-events:none;}
+
+/* ---- responsivo ---- */
+@media(max-width:400px){
+  .opt{padding:15px 13px;font-size:14.6px;gap:11px;}
+  .opt-key{width:32px;height:32px;border-radius:10px;font-size:13px;}
+  .options.grid-2{gap:9px;}
+  .btn{font-size:15px;padding:17px 18px;}
+}
+@media(min-width:720px){
+  .shell{padding:0 24px;}
+  .options.tall .opt{padding:18px;}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.12s!important;}
+  #bg-canvas{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== SPRITE DA LOGO ===== -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <symbol id="logo-mark" viewBox="0 0 120 120">
+    <defs>
+      <linearGradient id="lgGrad" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stop-color="#5CB70C"/>
+        <stop offset=".55" stop-color="#7CD61A"/>
+        <stop offset="1" stop-color="#AEF945"/>
+      </linearGradient>
+    </defs>
+    <path d="M15 101 L43 63 L61 85 L103 27" fill="none" stroke="url(#lgGrad)"
+          stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="skewX(-9)" fill="url(#lgGrad)">
+      <rect x="20" y="48" width="29" height="36" rx="8"/>
+      <rect x="53" y="28" width="29" height="36" rx="8"/>
+      <rect x="86" y="2"  width="29" height="46" rx="8"/>
+    </g>
+  </symbol>
+  <symbol id="ico-check" viewBox="0 0 24 24"><polyline points="4 12.5 9.5 18 20 6.5"/></symbol>
+  <symbol id="ico-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></symbol>
+  <symbol id="ico-lock" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="ico-bolt" viewBox="0 0 24 24"><polygon points="13.5 2 4 14 11 14 10.5 22 20 10 13 10 13.5 2"/></symbol>
+  <symbol id="ico-arrow" viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+  <symbol id="ico-back" viewBox="0 0 24 24"><line x1="20" y1="12" x2="5" y2="12"/><polyline points="11 6 5 12 11 18"/></symbol>
+  <symbol id="ico-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="ico-whats" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.03c-.25.69-1.44 1.32-1.98 1.37-.53.05-1.02.24-3.44-.72-2.9-1.14-4.73-4.1-4.87-4.29-.14-.19-1.15-1.53-1.15-2.92s.73-2.07 1-2.36c.26-.28.57-.35.76-.35.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.57.8 1.96.87 2.1.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.3.37-.42.5-.14.14-.29.29-.12.57.16.29.73 1.2 1.56 1.94 1.07.95 1.97 1.25 2.26 1.39.28.14.45.12.61-.07.17-.19.71-.83.9-1.11.19-.29.38-.24.64-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.11.07.66-.18 1.35Z" stroke="none" fill="currentColor"/></symbol>
+  <symbol id="ico-users" viewBox="0 0 24 24"><path d="M16 20v-1.8a3.6 3.6 0 0 0-3.6-3.6H6.6A3.6 3.6 0 0 0 3 18.2V20"/><circle cx="9.5" cy="7.6" r="3.6"/><path d="M21 20v-1.8a3.6 3.6 0 0 0-2.7-3.48"/><path d="M15.5 4.2a3.6 3.6 0 0 1 0 6.8"/></symbol>
+  <symbol id="ico-shield" viewBox="0 0 24 24"><path d="M12 2.8 4.5 6v5.6c0 4.4 3.1 8.5 7.5 9.6 4.4-1.1 7.5-5.2 7.5-9.6V6L12 2.8Z"/></symbol>
+</svg>
+
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow a" aria-hidden="true"></div>
+<div class="bg-glow b" aria-hidden="true"></div>
+<div class="bg-vignette" aria-hidden="true"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<main class="shell">
+
+  <header class="topbar">
+    <div class="brand">
+      <svg aria-hidden="true"><use href="#logo-mark"/></svg>
+      <div class="brand-text">
+        <b>TRADER PRO</b>
+        <span>Diagnóstico</span>
+      </div>
+    </div>
+    <div class="step-chip" id="stepChip" hidden>Pergunta 1 de 4</div>
+  </header>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+
+  <div class="stage">
+
+    <!-- ========== CAPA ========== -->
+    <section class="screen active" id="screen-intro" data-screen="intro">
+      <div class="stagger">
+        <svg class="hero-logo" aria-label="Trader Pro"><use href="#logo-mark"/></svg>
+        <div style="text-align:center">
+          <span class="eyebrow"><i class="pulse-dot"></i> Diagnóstico gratuito</span>
+        </div>
+        <h1 style="text-align:center">Descubra em 60 segundos o seu <span class="hl">perfil de trader</span></h1>
+        <p class="lede" style="text-align:center;margin-left:auto;margin-right:auto">
+          São <strong>4 perguntas rápidas</strong>. No final você recebe o caminho exato para o seu momento —
+          sem enrolação e sem teoria que não cabe na sua rotina.
+        </p>
+        <div class="meta-row" style="justify-content:center">
+          <span class="meta-pill"><svg><use href="#ico-clock"/></svg> Menos de 1 minuto</span>
+          <span class="meta-pill"><svg><use href="#ico-target"/></svg> 4 perguntas</span>
+          <span class="meta-pill"><svg><use href="#ico-shield"/></svg> 100% gratuito</span>
+        </div>
+        <div class="cta-wrap">
+          <button class="btn" id="startBtn" type="button">
+            <span>COMEÇAR AGORA</span>
+            <svg><use href="#ico-arrow" stroke="currentColor" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="note">Sem cadastro. Sem e-mail. É só responder.</p>
+      </div>
+    </section>
+
+    <!-- ========== PERGUNTA 1 ========== -->
+    <section class="screen" id="screen-q1" data-screen="q1">
+      <div class="stagger">
+        <span class="q-index">Pergunta 01</span>
+        <h2 class="q-title">Você já tem experiência no mercado?</h2>
+        <p class="q-hint">Não existe resposta errada — isso só define por onde você começa.</p>
+        <div class="options grid-2" data-q="1">
+          <button class="opt" type="button" data-value="sim" data-key="Sim">
+            <span class="opt-key">A</span>
+            <span class="opt-label">Sim</span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="nao" data-key="Não">
+            <span class="opt-key">B</span>
+            <span class="opt-label">Não</span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+        </div>
+        <button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>
+      </div>
+    </section>
+
+    <!-- ========== PERGUNTA 2 ========== -->
+    <section class="screen" id="screen-q2" data-screen="q2">
+      <div class="stagger">
+        <span class="q-index">Pergunta 02</span>
+        <h2 class="q-title">Quanto tempo você tem por dia para operar?</h2>
+        <p class="q-hint">Seja realista com a sua rotina de hoje.</p>
+        <div class="options" data-q="2">
+          <button class="opt" type="button" data-value="30min-1h" data-key="30 min a 1 hora">
+            <span class="opt-key">A</span>
+            <span class="opt-label">30 min a 1 hora<small>Janela curta, precisa de foco</small></span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="1-2h" data-key="1 a 2 horas">
+            <span class="opt-key">B</span>
+            <span class="opt-label">1 a 2 horas<small>Dá para pegar um bom pregão</small></span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="3-4h" data-key="3 a 4 horas">
+            <span class="opt-key">C</span>
+            <span class="opt-label">3 a 4 horas<small>Tempo de sobra para operar</small></span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="dia-inteiro" data-key="Dia inteiro">
+            <span class="opt-key">D</span>
+            <span class="opt-label">Dia inteiro<small>Dedicação total ao mercado</small></span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+        </div>
+        <button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>
+      </div>
+    </section>
+
+    <!-- ========== PERGUNTA 3 ========== -->
+    <section class="screen" id="screen-q3" data-screen="q3">
+      <div class="stagger">
+        <span class="q-index">Pergunta 03</span>
+        <h2 class="q-title">Qual dessas situações mais parece com você?</h2>
+        <p class="q-hint">Escolha a que bate mais forte.</p>
+        <div class="options tall" data-q="3">
+          <button class="opt" type="button" data-value="comecar" data-key="Quero começar, mas não sei por onde">
+            <span class="opt-key">A</span>
+            <span class="opt-label">Quero começar, mas não sei por onde</span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="executar" data-key="Sei analisar, mas tenho dificuldade em executar">
+            <span class="opt-key">B</span>
+            <span class="opt-label">Sei analisar, mas tenho dificuldade em executar</span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="consistencia" data-key="Tenho estratégia, mas falta consistência">
+            <span class="opt-key">C</span>
+            <span class="opt-label">Tenho estratégia, mas falta consistência</span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="tempo" data-key="Tenho pouco tempo para acompanhar o mercado">
+            <span class="opt-key">D</span>
+            <span class="opt-label">Tenho pouco tempo para acompanhar o mercado</span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="automatizar" data-key="Quero automatizar parte do meu processo">
+            <span class="opt-key">E</span>
+            <span class="opt-label">Quero automatizar parte do meu processo</span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+        </div>
+        <button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>
+      </div>
+    </section>
+
+    <!-- ========== PERGUNTA 4 ========== -->
+    <section class="screen" id="screen-q4" data-screen="q4">
+      <div class="stagger">
+        <span class="q-index">Pergunta 04 — última</span>
+        <h2 class="q-title">Quanto de capital você pretende investir?</h2>
+        <p class="q-hint">Isso define qual estrutura faz sentido para você agora.</p>
+        <div class="options" data-q="4">
+          <button class="opt" type="button" data-value="50" data-key="R$ 50" data-destino="whats">
+            <span class="opt-key">A</span>
+            <span class="opt-label">R$ 50<small>Começando com o mínimo</small></span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="100" data-key="R$ 100" data-destino="whats">
+            <span class="opt-key">B</span>
+            <span class="opt-label">R$ 100<small>Capital inicial equilibrado</small></span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="200+" data-key="R$ 200 ou mais" data-destino="whats">
+            <span class="opt-key">C</span>
+            <span class="opt-label">R$ 200 ou mais<small>Pronto para acelerar</small></span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+          <button class="opt" type="button" data-value="sem-capital" data-key="Não tenho capital para investir" data-destino="comunidade">
+            <span class="opt-key">D</span>
+            <span class="opt-label">Não tenho capital para investir agora<small>Quero aprender primeiro</small></span>
+            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
+          </button>
+        </div>
+        <button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>
+      </div>
+    </section>
+
+    <!-- ========== ANÁLISE ========== -->
+    <section class="screen" id="screen-loading" data-screen="loading">
+      <div class="analyzer">
+        <div class="radar">
+          <div class="radar-ring"></div>
+          <div class="radar-ring"></div>
+          <div class="radar-ring"></div>
+          <div class="radar-sweep"></div>
+          <div class="radar-core"><svg><use href="#logo-mark"/></svg></div>
+        </div>
+        <h2>Analisando suas respostas...</h2>
+        <p>Cruzando seu perfil com os melhores caminhos disponíveis</p>
+        <div class="checklist" id="checklist">
+          <div class="check-item" data-i="0"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Lendo seu nível de experiência</div>
+          <div class="check-item" data-i="1"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Ajustando à sua rotina diária</div>
+          <div class="check-item" data-i="2"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Identificando seu principal gargalo</div>
+          <div class="check-item" data-i="3"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Definindo a estrutura ideal</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== RESULTADO ========== -->
+    <section class="screen" id="screen-result" data-screen="result">
+      <div class="stagger">
+        <div style="text-align:center">
+          <span class="result-badge"><svg><use href="#ico-check"/></svg> <span id="badgeText">Diagnóstico concluído</span></span>
+        </div>
+        <h2 class="profile-name" id="profileName" style="text-align:center"></h2>
+        <div class="score-card">
+          <div class="score-head">
+            <span id="scoreLabel">Nível de prontidão</span>
+            <div class="score-value"><span id="scoreNum">0</span><sub>/100</sub></div>
+          </div>
+          <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+        </div>
+        <p class="profile-text" id="profileText"></p>
+        <div class="recap" id="recap"></div>
+        <div class="cta-wrap">
+          <a class="btn" id="ctaBtn" href="#" rel="noopener">
+            <svg id="ctaIcon"><use href="#ico-whats"/></svg>
+            <span id="ctaText">CONTINUAR</span>
+          </a>
+        </div>
+        <p class="scarcity" id="scarcity"><i class="pulse-dot"></i> <span id="scarcityText"></span></p>
+        <button class="btn-ghost" id="restartBtn" type="button" style="margin:10px auto 0;display:flex">
+          <svg><use href="#ico-back"/></svg> Refazer o diagnóstico
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    Este diagnóstico é uma ferramenta educacional. Resultados passados não garantem resultados futuros.<br>
+    Opere com responsabilidade.
+  </footer>
+
+</main>
+
+<style>
+  .btn svg{stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+  .radar-core svg use{fill:url(#lgGrad);}
+</style>
+
+<script>
+(function(){
+  'use strict';
+
+  /* =========================================================
+     CONFIGURAÇÃO — altere apenas aqui
+     ========================================================= */
+  var CONFIG = {
+    // Lead COM capital (R$50 / R$100 / R$200+)  ->  WhatsApp
+    redirectWhats: 'https://app.massflow.tech/api/go/whats-trading-pro-h91aeoh9k8',
+    // Lead SEM capital  ->  Comunidade
+    redirectComunidade: 'https://app.massflow.tech/api/go/comunidade-traderpro-tpnra3ppsd',
+    // Repassar utm_source, utm_campaign, etc. para o link de destino
+    repassarParametros: true,
+    // Redirecionar sozinho depois de X segundos (0 = desligado, só no clique)
+    autoRedirectSegundos: 0,
+    // Duração da tela de análise (ms)
+    tempoAnalise: 3400
+  };
+
+  /* ========================= ESTADO ========================= */
+  var ORDEM = ['intro','q1','q2','q3','q4','loading','result'];
+  var TOTAL_PERGUNTAS = 4;
+  var respostas = {};
+  var indiceAtual = 0;
+  var travado = false;
+
+  var $  = function(s,c){ return (c||document).querySelector(s); };
+  var $$ = function(s,c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
+
+  var telas       = {};
+  ORDEM.forEach(function(n){ telas[n] = $('#screen-' + n); });
+  var progressBar = $('#progressBar');
+  var progressWrap= $('#progressWrap');
+  var stepChip    = $('#stepChip');
+
+  var reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ========================= NAVEGAÇÃO ========================= */
+  function nomeAtual(){ return ORDEM[indiceAtual]; }
+
+  function irPara(indice){
+    if (indice < 0 || indice >= ORDEM.length) return;
+    var saindo  = telas[ORDEM[indiceAtual]];
+    var entrando= telas[ORDEM[indice]];
+    if (saindo === entrando) return;
+
+    travado = true;
+    saindo.classList.add('leaving');
+
+    window.setTimeout(function(){
+      saindo.classList.remove('active','leaving','entering');
+      indiceAtual = indice;
+      entrando.classList.add('active','entering');
+      reiniciarAnimacoes(entrando);
+      window.scrollTo({ top: 0, behavior: reduzirMovimento ? 'auto' : 'smooth' });
+      atualizarProgresso();
+      window.setTimeout(function(){
+        entrando.classList.remove('entering');
+        travado = false;
+      }, 400);
+      aoEntrar(ORDEM[indice]);
+    }, reduzirMovimento ? 20 : 210);
+  }
+
+  function reiniciarAnimacoes(tela){
+    var grupo = $('.stagger', tela);
+    if (!grupo) return;
+    $$('.stagger > *', tela).forEach(function(el){
+      el.style.animation = 'none';
+      void el.offsetHeight;
+      el.style.animation = '';
+    });
+  }
+
+  function atualizarProgresso(){
+    var nome = nomeAtual();
+    var numero = ORDEM.indexOf(nome) - 1;       // q1 -> 0
+    var ehPergunta = numero >= 0 && numero < TOTAL_PERGUNTAS;
+
+    if (nome === 'intro'){
+      progressWrap.classList.remove('on');
+      progressBar.style.width = '0%';
+      stepChip.hidden = true;
+      return;
+    }
+    progressWrap.classList.add('on');
+
+    if (ehPergunta){
+      stepChip.hidden = false;
+      stepChip.textContent = 'Pergunta ' + (numero + 1) + ' de ' + TOTAL_PERGUNTAS;
+      progressBar.style.width = (((numero + 0.5) / TOTAL_PERGUNTAS) * 100) + '%';
+    } else {
+      stepChip.hidden = false;
+      stepChip.textContent = nome === 'loading' ? 'Analisando...' : 'Resultado';
+      progressBar.style.width = '100%';
+    }
+  }
+
+  function aoEntrar(nome){
+    var tela = telas[nome];
+    if (tela) $$('.opt', tela).forEach(function(o){ o.classList.remove('dimmed'); });
+    if (nome === 'loading') rodarAnalise();
+    if (nome === 'result')  soltarConfete();
+  }
+
+  /* ========================= RESPOSTAS ========================= */
+  function vibrar(ms){
+    if (navigator.vibrate) { try { navigator.vibrate(ms); } catch(e){} }
+  }
+
+  $$('.options').forEach(function(grupo){
+    var q = grupo.getAttribute('data-q');
+    $$('.opt', grupo).forEach(function(botao){
+      botao.addEventListener('click', function(){
+        if (travado) return;
+        travado = true;
+        vibrar(12);
+
+        $$('.opt', grupo).forEach(function(outro){
+          outro.classList.remove('selected');
+          if (outro !== botao) outro.classList.add('dimmed');
+        });
+        botao.classList.remove('dimmed');
+        botao.classList.add('selected');
+
+        respostas['q' + q] = {
+          valor: botao.getAttribute('data-value'),
+          texto: botao.getAttribute('data-key'),
+          letra: $('.opt-key', botao).textContent.trim(),
+          destino: botao.getAttribute('data-destino') || null
+        };
+
+        rastrear('quiz_resposta', { pergunta: Number(q), resposta: botao.getAttribute('data-value') });
+
+        window.setTimeout(function(){
+          travado = false;
+          irPara(indiceAtual + 1);
+        }, reduzirMovimento ? 120 : 400);
+      });
+    });
+  });
+
+  $$('.back-btn').forEach(function(botao){
+    botao.addEventListener('click', function(){
+      if (travado) return;
+      irPara(indiceAtual - 1);
+    });
+  });
+
+  $('#startBtn').addEventListener('click', function(){
+    rastrear('quiz_iniciado', {});
+    irPara(1);
+  });
+
+  $('#restartBtn').addEventListener('click', function(){
+    respostas = {};
+    $$('.opt').forEach(function(o){ o.classList.remove('selected','dimmed'); });
+    irPara(0);
+  });
+
+  // aplica a tecla assim que a transição liberar, desde que ainda seja a mesma tela
+  function clicarQuandoLiberar(alvo, telaDaTecla, tentativas){
+    if (!travado){
+      if (nomeAtual() === telaDaTecla) alvo.click();
+      return;
+    }
+    if (tentativas <= 0) return;
+    window.setTimeout(function(){
+      clicarQuandoLiberar(alvo, telaDaTecla, tentativas - 1);
+    }, 120);
+  }
+
+  // teclado: 1..5 ou A..E respondem, Backspace volta
+  document.addEventListener('keydown', function(ev){
+    var tela = telas[nomeAtual()];
+    var grupo = tela ? $('.options', tela) : null;
+    if (ev.key === 'Enter' && nomeAtual() === 'intro'){ $('#startBtn').click(); return; }
+    if (!grupo) return;
+    if (ev.key === 'Backspace'){ ev.preventDefault(); irPara(indiceAtual - 1); return; }
+    var opcoes = $$('.opt', grupo);
+    var idx = -1;
+    if (/^[1-9]$/.test(ev.key)) idx = Number(ev.key) - 1;
+    else if (/^[a-eA-E]$/.test(ev.key)) idx = ev.key.toUpperCase().charCodeAt(0) - 65;
+    if (idx >= 0 && opcoes[idx]) {
+      ev.preventDefault();
+      clicarQuandoLiberar(opcoes[idx], nomeAtual(), 12);
+    }
+  });
+
+  /* ========================= TELA DE ANÁLISE ========================= */
+  function rodarAnalise(){
+    var itens = $$('.check-item');
+    itens.forEach(function(i){ i.classList.remove('on'); });
+    var passo = CONFIG.tempoAnalise / (itens.length + 1);
+
+    itens.forEach(function(item, i){
+      window.setTimeout(function(){
+        item.classList.add('on');
+        vibrar(6);
+      }, passo * (i + 1) * 0.92);
+    });
+
+    window.setTimeout(function(){
+      montarResultado();
+      irPara(ORDEM.indexOf('result'));
+    }, CONFIG.tempoAnalise);
+  }
+
+  /* ========================= PERFIS ========================= */
+  var PERFIS = {
+    'comecar': {
+      nome: 'Iniciante com <em>Potencial Real</em>',
+      resumo: 'Você está no melhor momento possível: <strong>sem vícios e sem vieses</strong>. O que te falta não é capacidade, é um caminho na ordem certa. Quem começa com estrutura pula anos de tentativa e erro.',
+      gargalo: 'Falta de um ponto de partida claro'
+    },
+    'executar': {
+      nome: 'Analista <em>Travado na Execução</em>',
+      resumo: 'Você enxerga o gráfico — o problema acontece na hora do clique. Isso é <strong>gestão emocional e processo</strong>, não análise. É exatamente o gargalo que mais rápido se resolve quando existe um sistema por trás da decisão.',
+      gargalo: 'Hesitação no momento da entrada'
+    },
+    'consistencia': {
+      nome: 'Trader <em>Inconsistente</em>',
+      resumo: 'Você já sabe operar. O que oscila é o <strong>padrão de execução</strong>: semanas boas seguidas de semanas que devolvem tudo. Consistência não vem de mais estratégia, vem de repetir a mesma estratégia do mesmo jeito.',
+      gargalo: 'Resultado que não se repete'
+    },
+    'tempo': {
+      nome: 'Trader <em>Sem Tempo</em>',
+      resumo: 'Seu limite não é conhecimento, é <strong>agenda</strong>. Você perde entradas porque a vida não para no horário do pregão. A saída para o seu caso não é estudar mais — é reduzir o tempo que cada decisão exige de você.',
+      gargalo: 'Rotina que não acompanha o mercado'
+    },
+    'automatizar': {
+      nome: 'Pronto para <em>Automatizar</em>',
+      resumo: 'Você já entendeu que escala vem de <strong>processo, não de esforço</strong>. Esse é o estágio em que o trader para de trabalhar no operacional e começa a trabalhar no sistema. Seu perfil é o que mais rápido aproveita uma estrutura pronta.',
+      gargalo: 'Processo ainda 100% manual'
+    }
+  };
+
+  var PONTOS = {
+    q1: { 'sim':15, 'nao':9 },
+    q2: { '30min-1h':11, '1-2h':16, '3-4h':20, 'dia-inteiro':22 },
+    q3: { 'comecar':12, 'executar':16, 'consistencia':18, 'tempo':14, 'automatizar':20 },
+    q4: { '50':18, '100':24, '200+':30, 'sem-capital':10 }
+  };
+
+  function calcularScore(){
+    var bruto = 0;
+    ['q1','q2','q3','q4'].forEach(function(k){
+      var r = respostas[k];
+      if (r && PONTOS[k][r.valor] != null) bruto += PONTOS[k][r.valor];
+    });
+    var score = Math.round(55 + (bruto / 87) * 42);
+    return Math.max(60, Math.min(98, score));
+  }
+
+  function textoTempo(){
+    var v = respostas.q2 ? respostas.q2.valor : '';
+    if (v === '30min-1h')    return 'Com <b>menos de 1 hora por dia</b>, cada operação precisa ser certeira — não há espaço para ficar caçando setup.';
+    if (v === '1-2h')        return 'Com <b>1 a 2 horas por dia</b> você pega as melhores janelas do pregão. É tempo suficiente para operar bem.';
+    if (v === '3-4h')        return 'Com <b>3 a 4 horas por dia</b> você tem folga real para acompanhar o mercado e executar com calma.';
+    if (v === 'dia-inteiro') return 'Com o <b>dia inteiro disponível</b>, seu limitante deixa de ser tempo e passa a ser método.';
+    return '';
+  }
+
+  function textoExperiencia(){
+    var v = respostas.q1 ? respostas.q1.valor : '';
+    return v === 'sim'
+      ? 'Você <b>já tem vivência no mercado</b> — a curva de adaptação é bem mais curta.'
+      : 'Você está <b>começando do zero</b>, e isso é uma vantagem: nada para desaprender.';
+  }
+
+  function textoCapital(){
+    var v = respostas.q4 ? respostas.q4.valor : '';
+    if (v === '50')          return 'Com <b>R$ 50</b> dá para validar o processo antes de aumentar o risco.';
+    if (v === '100')         return 'Com <b>R$ 100</b> você tem margem para operar com gestão de risco de verdade.';
+    if (v === '200+')        return 'Com <b>R$ 200 ou mais</b> você já opera em uma faixa onde a consistência aparece mais rápido.';
+    if (v === 'sem-capital') return 'Sem capital agora, o passo certo é <b>construir base</b> — aprender primeiro, capitalizar depois.';
+    return '';
+  }
+
+  /* ========================= RESULTADO ========================= */
+  function montarResultado(){
+    var perfil  = PERFIS[respostas.q3 ? respostas.q3.valor : 'comecar'] || PERFIS['comecar'];
+    var destino = (respostas.q4 && respostas.q4.destino) || 'comunidade';
+    var temCapital = destino === 'whats';
+    var score = calcularScore();
+
+    $('#profileName').innerHTML = perfil.nome;
+    $('#profileText').innerHTML = perfil.resumo;
+    $('#scoreLabel').textContent = temCapital ? 'Nível de prontidão' : 'Potencial identificado';
+    $('#badgeText').textContent  = 'Diagnóstico concluído';
+
+    // contador animado
+    var alvo = score, atual = 0;
+    var numEl = $('#scoreNum');
+    numEl.textContent = '0';
+    $('#scoreFill').style.width = '0%';
+    window.setTimeout(function(){ $('#scoreFill').style.width = score + '%'; }, 260);
+    var timer = window.setInterval(function(){
+      atual += Math.max(1, Math.ceil((alvo - atual) / 8));
+      if (atual >= alvo){ atual = alvo; window.clearInterval(timer); }
+      numEl.textContent = atual;
+    }, reduzirMovimento ? 5 : 26);
+
+    // recapitulação
+    var linhas = [
+      { icone:'#ico-target', txt: '<b>Seu gargalo hoje:</b> ' + perfil.gargalo },
+      { icone:'#ico-shield', txt: textoExperiencia() },
+      { icone:'#ico-clock',  txt: textoTempo() },
+      { icone:'#ico-bolt',   txt: textoCapital() }
+    ];
+    $('#recap').innerHTML = linhas.map(function(l){
+      return '<div class="recap-row"><svg><use href="' + l.icone + '"/></svg><span>' + l.txt + '</span></div>';
+    }).join('');
+
+    // CTA
+    var cta       = $('#ctaBtn');
+    var ctaTexto  = $('#ctaText');
+    var ctaIcone  = $('#ctaIcon').querySelector('use');
+    var escassez  = $('#scarcityText');
+
+    if (temCapital){
+      cta.href = montarLink(CONFIG.redirectWhats);
+      ctaTexto.textContent = 'FALAR COM UM ESPECIALISTA';
+      ctaIcone.setAttribute('href', '#ico-whats');
+      escassez.textContent = 'Atendimento liberado agora no WhatsApp';
+      $('#profileText').innerHTML += '<br><br>Com o capital que você indicou, o próximo passo é <strong>montar sua estrutura junto com um especialista</strong> — no seu ritmo e com o seu tempo disponível.';
+    } else {
+      cta.href = montarLink(CONFIG.redirectComunidade);
+      ctaTexto.textContent = 'ENTRAR NA COMUNIDADE GRATUITA';
+      ctaIcone.setAttribute('href', '#ico-users');
+      escassez.textContent = 'Acesso gratuito — entrada imediata';
+      $('#profileText').innerHTML += '<br><br>Como você ainda não tem capital para investir, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
+    }
+
+    rastrear('quiz_finalizado', {
+      destino: destino,
+      score: score,
+      perfil: respostas.q3 ? respostas.q3.valor : null,
+      experiencia: respostas.q1 ? respostas.q1.valor : null,
+      tempo: respostas.q2 ? respostas.q2.valor : null,
+      capital: respostas.q4 ? respostas.q4.valor : null
+    });
+
+    if (CONFIG.autoRedirectSegundos > 0){
+      window.setTimeout(function(){ cta.click(); }, CONFIG.autoRedirectSegundos * 1000);
+    }
+  }
+
+  $('#ctaBtn').addEventListener('click', function(){
+    rastrear('quiz_cta_clique', {
+      destino: (respostas.q4 && respostas.q4.destino) || 'comunidade'
+    });
+  });
+
+  /* ========================= LINK + PARÂMETROS ========================= */
+  function montarLink(base){
+    if (!CONFIG.repassarParametros) return base;
+    var entrada = window.location.search;
+    if (!entrada || entrada.length < 2) return base;
+    try{
+      var url = new URL(base);
+      new URLSearchParams(entrada).forEach(function(valor, chave){
+        if (!url.searchParams.has(chave)) url.searchParams.set(chave, valor);
+      });
+      return url.toString();
+    }catch(e){
+      return base + (base.indexOf('?') > -1 ? '&' : '?') + entrada.slice(1);
+    }
+  }
+
+  /* ========================= RASTREAMENTO ========================= */
+  function rastrear(evento, dados){
+    try{
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push(Object.assign({ event: evento }, dados || {}));
+      if (typeof window.fbq === 'function'){
+        if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', dados);
+        else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', dados);
+        else window.fbq('trackCustom', evento, dados);
+      }
+      if (typeof window.gtag === 'function') window.gtag('event', evento, dados || {});
+    }catch(e){}
+  }
+
+  /* ========================= FUNDO: CANDLES ========================= */
+  (function fundoAnimado(){
+    if (reduzirMovimento) return;
+    var cv = document.getElementById('bg-canvas');
+    var ctx = cv.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var L, A, candles = [], deslocamento = 0, ultimoPreco;
+
+    var LARGURA_VELA = 15;
+    var ESPACO = 9;
+    var PASSO = LARGURA_VELA + ESPACO;
+
+    function dimensionar(){
+      L = cv.clientWidth; A = cv.clientHeight;
+      cv.width = L * dpr; cv.height = A * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      gerar();
+    }
+
+    function novaVela(anterior){
+      var base = anterior ? anterior.fechamento : A * 0.62;
+      var variacao = (Math.random() - 0.46) * (A * 0.045);
+      var fechamento = Math.min(A * 0.88, Math.max(A * 0.16, base + variacao));
+      var maxima = Math.min(A * 0.92, Math.min(base, fechamento) - Math.random() * A * 0.03);
+      var minima = Math.max(A * 0.10, Math.max(base, fechamento) + Math.random() * A * 0.03);
+      return { abertura: base, fechamento: fechamento, topo: maxima, base: minima, alta: fechamento < base };
+    }
+
+    function gerar(){
+      candles = [];
+      var total = Math.ceil(L / PASSO) + 3;
+      var anterior = null;
+      for (var i = 0; i < total; i++){
+        anterior = novaVela(anterior);
+        candles.push(anterior);
+      }
+      ultimoPreco = anterior;
+    }
+
+    function desenhar(){
+      ctx.clearRect(0, 0, L, A);
+      for (var i = 0; i < candles.length; i++){
+        var c = candles[i];
+        var x = i * PASSO - deslocamento;
+        if (x < -PASSO || x > L + PASSO) continue;
+        var cor = c.alta ? 'rgba(124,214,26,' : 'rgba(210,60,60,';
+        var opacidade = c.alta ? 0.24 : 0.14;
+        ctx.strokeStyle = cor + opacidade + ')';
+        ctx.fillStyle   = cor + (opacidade * 0.75) + ')';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(x + LARGURA_VELA / 2, c.topo);
+        ctx.lineTo(x + LARGURA_VELA / 2, c.base);
+        ctx.stroke();
+        var topoCorpo = Math.min(c.abertura, c.fechamento);
+        var altura = Math.max(2, Math.abs(c.fechamento - c.abertura));
+        ctx.fillRect(x, topoCorpo, LARGURA_VELA, altura);
+        ctx.strokeRect(x + 0.5, topoCorpo + 0.5, LARGURA_VELA - 1, altura - 1);
+      }
+    }
+
+    function animar(){
+      deslocamento += 0.28;
+      if (deslocamento >= PASSO){
+        deslocamento -= PASSO;
+        candles.shift();
+        ultimoPreco = novaVela(ultimoPreco);
+        candles.push(ultimoPreco);
+      }
+      desenhar();
+      window.requestAnimationFrame(animar);
+    }
+
+    var t;
+    window.addEventListener('resize', function(){
+      window.clearTimeout(t);
+      t = window.setTimeout(dimensionar, 180);
+    });
+    dimensionar();
+    animar();
+  })();
+
+  /* ========================= CONFETE ========================= */
+  function soltarConfete(){
+    if (reduzirMovimento) return;
+    var cv = document.getElementById('confetti');
+    var ctx = cv.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = cv.clientWidth * dpr;
+    cv.height = cv.clientHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    var L = cv.clientWidth, A = cv.clientHeight;
+    var cores = ['#7CD61A', '#A6F23C', '#4E9A08', '#DFFFAE', '#FFFFFF'];
+    var pecas = [];
+    var quantidade = L < 520 ? 60 : 95;
+
+    for (var i = 0; i < quantidade; i++){
+      pecas.push({
+        x: L / 2 + (Math.random() - 0.5) * L * 0.65,
+        y: A * 0.30 + (Math.random() - 0.5) * 60,
+        vx: (Math.random() - 0.5) * 7,
+        vy: Math.random() * -9 - 3,
+        g: 0.22 + Math.random() * 0.14,
+        tam: 4 + Math.random() * 6,
+        cor: cores[Math.floor(Math.random() * cores.length)],
+        rot: Math.random() * Math.PI,
+        vrot: (Math.random() - 0.5) * 0.3,
+        vida: 1
+      });
+    }
+
+    var quadros = 0;
+    (function tick(){
+      quadros++;
+      ctx.clearRect(0, 0, L, A);
+      var vivas = 0;
+      pecas.forEach(function(p){
+        p.vy += p.g;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.99;
+        p.rot += p.vrot;
+        if (quadros > 55) p.vida -= 0.014;
+        if (p.vida <= 0 || p.y > A + 40) return;
+        vivas++;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.vida);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.cor;
+        ctx.fillRect(-p.tam / 2, -p.tam / 4, p.tam, p.tam / 2);
+        ctx.restore();
+      });
+      if (vivas > 0) window.requestAnimationFrame(tick);
+      else ctx.clearRect(0, 0, L, A);
+    })();
+  }
+
+  /* ========================= INÍCIO ========================= */
+  atualizarProgresso();
+  rastrear('quiz_visualizado', {});
+
+  // pré-carrega os destinos para o redirecionamento sair instantâneo
+  [CONFIG.redirectWhats, CONFIG.redirectComunidade].forEach(function(u){
+    var l = document.createElement('link');
+    l.rel = 'dns-prefetch';
+    try { l.href = new URL(u).origin; document.head.appendChild(l); } catch(e){}
+  });
+
+})();
+</script>
+</body>
+</html>
