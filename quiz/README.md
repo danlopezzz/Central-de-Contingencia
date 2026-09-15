@@ -23,6 +23,31 @@ Depois é só apontar o domínio ou usar o link `.vercel.app` no anúncio.
 
 ---
 
+## Como o quiz se monta
+
+São sempre 4 perguntas, mas só duas são iguais para todo mundo:
+
+| # | Pergunta | Varia? |
+| - | -------- | ------ |
+| 1 | Qual é o seu maior desafio hoje para ter uma rotina melhor no mercado? | Fixa — é ela que define a trilha |
+| 2 | Aprofunda o desafio escolhido | **Muda conforme o perfil** |
+| 3 | Mede o contexto do perfil (tempo, organização, tentativas anteriores…) | **Muda conforme o perfil** |
+| 4 | Quanto de capital você pretende investir? | Fixa — é ela que decide o destino |
+
+As 5 trilhas, conforme a resposta da pergunta 1:
+
+| Resposta da pergunta 1 | Perfil no resultado | Pergunta 2 | Pergunta 3 |
+| ---------------------- | ------------------- | ---------- | ---------- |
+| Não sei por onde começar | Iniciante com Potencial Real | O que mais te trava no primeiro passo | Tempo disponível para aprender |
+| O mercado toma tempo demais | Trader Sufocado pelo Tempo | O que você mais perde por não acompanhar | Janela real por dia |
+| Dificuldade de ser consistente | Trader Inconsistente | O que acontece quando o resultado escapa | Acompanha os resultados? |
+| Quero automatizar | Pronto para Automatizar | Que parte quer tirar do manual | Já tentou automatizar antes? |
+| Já opero bem, quero eficiência | Operador Pronto para Escalar | O que limita a sua escala | Tempo de tela que a operação exige |
+
+Cada alternativa das perguntas 2 e 3 carrega o próprio texto de resultado, então o
+diagnóstico final é montado com as palavras da trilha que a pessoa percorreu — não
+com um texto genérico. São **80 combinações de diagnóstico** (5 trilhas × 4 × 4).
+
 ## Regra de roteamento do lead
 
 O destino é decidido **exclusivamente pela pergunta 4** (capital):
@@ -34,16 +59,16 @@ O destino é decidido **exclusivamente pela pergunta 4** (capital):
 | C — R$ 501 a R$ 1.000         | WhatsApp   |
 | D — Não tenho capital         | Comunidade |
 
-As perguntas 1, 2 e 3 não mudam o destino — elas personalizam o texto do
-resultado e alimentam o score, o que aumenta a percepção de diagnóstico real
-antes do clique.
+Nenhuma outra pergunta muda o destino: elas alimentam o score e personalizam o
+resultado, para o lead chegar no CTA já tendo recebido um diagnóstico.
 
----
+Se a pessoa voltar e trocar a resposta da pergunta 1, a trilha é remontada e as
+respostas das perguntas 2 e 3 são descartadas — elas pertenciam ao perfil antigo.
 
 ## Onde mexer
 
 Tudo que você normalmente vai querer alterar está no bloco `CONFIG`, no topo do
-`<script>` (por volta da linha 817 do `index.html`):
+`<script>` (por volta da linha 700 do `index.html`):
 
 ```js
 var CONFIG = {
@@ -55,16 +80,22 @@ var CONFIG = {
 };
 ```
 
-Outros pontos de edição:
+Outros pontos de edição, todos em estruturas de dados no início do `<script>`:
 
-- **Textos dos perfis e do resultado**: objeto `PERFIS`.
-- **Pesos do score**: objeto `PONTOS`.
-- **Perguntas e alternativas**: as seções `<section id="screen-q1">` … `screen-q4`.
-  Para mudar o destino de uma alternativa, troque o atributo `data-destino`
-  (`"whats"` ou `"comunidade"`).
+- **`PERGUNTA_1`** — a pergunta que define a trilha. Cada alternativa tem `valor`
+  (a chave da trilha) e `pontos`.
+- **`TRILHAS`** — as perguntas 2 e 3 de cada perfil, indexadas pelo `valor` da
+  pergunta 1. Cada alternativa tem `titulo`, `sub` (a linha menor), `pontos` e
+  `recap` — este último é a frase que vai para o resultado.
+- **`PERGUNTA_CAPITAL`** — a pergunta 4. O atributo `destino` de cada alternativa
+  (`'whats'` ou `'comunidade'`) é o que decide para onde o lead vai.
+- **`PERFIS`** — nome, gargalo e texto de cada um dos 5 perfis do resultado.
 - **Cores da marca**: variáveis CSS em `:root` (`--green`, `--green-bright`, `--bg`…).
 - **Logo**: SVG no `<symbol id="logo-mark">`, desenhado em vetor — escala sem perder
   qualidade e não depende de arquivo de imagem externo.
+
+Para acrescentar uma alternativa, basta adicioná-la ao array `opcoes`: as letras
+(A, B, C…) são geradas sozinhas e a tela se monta a partir dos dados.
 
 ---
 
@@ -76,8 +107,8 @@ O quiz já dispara eventos, sem precisar de configuração:
 | ------------------ | ------------------------------------------------ |
 | `quiz_visualizado` | página carregou                                  |
 | `quiz_iniciado`    | clique em "Começar agora"                        |
-| `quiz_resposta`    | cada resposta (envia pergunta e valor escolhido)  |
-| `quiz_finalizado`  | tela de resultado (envia destino, score e perfil) |
+| `quiz_resposta`    | cada resposta (envia pergunta, valor e perfil)   |
+| `quiz_finalizado`  | tela de resultado (destino, score, perfil e trilha) |
 | `quiz_cta_clique`  | clique no botão final                            |
 
 Eles vão para `window.dataLayer` (GTM), `gtag` (GA4) e `fbq` (Meta Pixel) quando
@@ -91,6 +122,7 @@ enviado como evento padrão **Lead**.
 
 - Fundo com candlesticks em `<canvas>`, gerados por código e em movimento contínuo.
 - Radar animado na tela de análise + confete na tela de resultado.
+- Perguntas montadas em tempo real a partir dos dados da trilha escolhida.
 - Navegação por teclado: `A`–`E` ou `1`–`5` respondem, `Backspace` volta, `Enter` inicia.
 - Vibração tátil no celular a cada resposta (onde o aparelho suporta).
 - Botão "Voltar" preserva a resposta já marcada.

@@ -163,8 +163,8 @@ body{
 }
 .screen{display:none;}
 .screen.active{display:block;}
-.screen.leaving{animation:slideOut .28s var(--ease) both;}
-.screen.entering{animation:slideIn .5s var(--ease) both;}
+.screen.leaving,.anim.leaving{animation:slideOut .28s var(--ease) both;}
+.screen.entering,.anim.entering{animation:slideIn .5s var(--ease) both;}
 
 @keyframes slideIn{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}
 @keyframes slideOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-16px) scale(.985)}}
@@ -620,128 +620,11 @@ h1 .hl{
       </div>
     </section>
 
-    <!-- ========== PERGUNTA 1 ========== -->
-    <section class="screen" id="screen-q1" data-screen="q1">
-      <div class="stagger">
-        <span class="q-index">Pergunta 01</span>
-        <h2 class="q-title">Você já tem experiência no mercado?</h2>
-        <p class="q-hint">Não existe resposta errada — isso só define por onde você começa.</p>
-        <div class="options grid-2" data-q="1">
-          <button class="opt" type="button" data-value="sim" data-key="Sim">
-            <span class="opt-key">A</span>
-            <span class="opt-label">Sim</span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="nao" data-key="Não">
-            <span class="opt-key">B</span>
-            <span class="opt-label">Não</span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-        </div>
-        <button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>
-      </div>
+    <!-- ========== PERGUNTAS (montadas por trilha, via JS) ========== -->
+    <section class="screen" id="screen-question" data-screen="question">
+      <div class="anim" id="question-body"></div>
     </section>
 
-    <!-- ========== PERGUNTA 2 ========== -->
-    <section class="screen" id="screen-q2" data-screen="q2">
-      <div class="stagger">
-        <span class="q-index">Pergunta 02</span>
-        <h2 class="q-title">Quanto tempo você tem por dia para operar?</h2>
-        <p class="q-hint">Seja realista com a sua rotina de hoje.</p>
-        <div class="options" data-q="2">
-          <button class="opt" type="button" data-value="30min-1h" data-key="30 min a 1 hora">
-            <span class="opt-key">A</span>
-            <span class="opt-label">30 min a 1 hora<small>Janela curta, precisa de foco</small></span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="1-2h" data-key="1 a 2 horas">
-            <span class="opt-key">B</span>
-            <span class="opt-label">1 a 2 horas<small>Dá para pegar um bom pregão</small></span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="3-4h" data-key="3 a 4 horas">
-            <span class="opt-key">C</span>
-            <span class="opt-label">3 a 4 horas<small>Tempo de sobra para operar</small></span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="dia-inteiro" data-key="Dia inteiro">
-            <span class="opt-key">D</span>
-            <span class="opt-label">Dia inteiro<small>Dedicação total ao mercado</small></span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-        </div>
-        <button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>
-      </div>
-    </section>
-
-    <!-- ========== PERGUNTA 3 ========== -->
-    <section class="screen" id="screen-q3" data-screen="q3">
-      <div class="stagger">
-        <span class="q-index">Pergunta 03</span>
-        <h2 class="q-title">Qual dessas situações mais parece com você?</h2>
-        <p class="q-hint">Escolha a que bate mais forte.</p>
-        <div class="options tall" data-q="3">
-          <button class="opt" type="button" data-value="comecar" data-key="Quero começar, mas não sei por onde">
-            <span class="opt-key">A</span>
-            <span class="opt-label">Quero começar, mas não sei por onde</span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="executar" data-key="Sei analisar, mas tenho dificuldade em executar">
-            <span class="opt-key">B</span>
-            <span class="opt-label">Sei analisar, mas tenho dificuldade em executar</span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="consistencia" data-key="Tenho estratégia, mas falta consistência">
-            <span class="opt-key">C</span>
-            <span class="opt-label">Tenho estratégia, mas falta consistência</span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="tempo" data-key="Tenho pouco tempo para acompanhar o mercado">
-            <span class="opt-key">D</span>
-            <span class="opt-label">Tenho pouco tempo para acompanhar o mercado</span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="automatizar" data-key="Quero automatizar parte do meu processo">
-            <span class="opt-key">E</span>
-            <span class="opt-label">Quero automatizar parte do meu processo</span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-        </div>
-        <button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>
-      </div>
-    </section>
-
-    <!-- ========== PERGUNTA 4 ========== -->
-    <section class="screen" id="screen-q4" data-screen="q4">
-      <div class="stagger">
-        <span class="q-index">Pergunta 04 — última</span>
-        <h2 class="q-title">Quanto de capital você pretende investir?</h2>
-        <p class="q-hint">Isso define qual estrutura faz sentido para você agora.</p>
-        <div class="options" data-q="4">
-          <button class="opt" type="button" data-value="100-200" data-key="R$ 100 a R$ 200" data-destino="whats">
-            <span class="opt-key">A</span>
-            <span class="opt-label">R$ 100 a R$ 200<small>Primeiro passo estruturado</small></span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="201-500" data-key="R$ 201 a R$ 500" data-destino="whats">
-            <span class="opt-key">B</span>
-            <span class="opt-label">R$ 201 a R$ 500<small>Margem real para gerir risco</small></span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="501-1000" data-key="R$ 501 a R$ 1.000" data-destino="whats">
-            <span class="opt-key">C</span>
-            <span class="opt-label">R$ 501 a R$ 1.000<small>Pronto para acelerar</small></span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-          <button class="opt" type="button" data-value="sem-capital" data-key="Não tenho capital para investir" data-destino="comunidade">
-            <span class="opt-key">D</span>
-            <span class="opt-label">Não tenho capital para investir agora<small>Quero aprender primeiro</small></span>
-            <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
-          </button>
-        </div>
-        <button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>
-      </div>
-    </section>
 
     <!-- ========== ANÁLISE ========== -->
     <section class="screen" id="screen-loading" data-screen="loading">
@@ -827,54 +710,325 @@ h1 .hl{
     tempoAnalise: 3400
   };
 
+  /* =========================================================
+     CONTEÚDO DO QUIZ
+     Pergunta 1 define a trilha. As perguntas 2 e 3 mudam
+     conforme o perfil. A pergunta 4 (capital) é fixa e é a
+     única que decide o destino do lead.
+     ========================================================= */
+  var LETRAS = ['A','B','C','D','E'];
+
+  var PERGUNTA_1 = {
+    indice: 'Pergunta 01',
+    titulo: 'Qual é o seu maior desafio hoje para ter uma rotina melhor no mercado?',
+    dica: 'Escolha a que mais parece com o seu momento.',
+    layout: 'tall',
+    icone: '#ico-target',
+    opcoes: [
+      { valor:'comecar', pontos:12,
+        titulo:'Não sei por onde começar e ainda não me sinto preparado para operar' },
+      { valor:'tempo', pontos:15,
+        titulo:'O mercado toma tempo demais e preciso ficar acompanhando tudo de perto' },
+      { valor:'consistencia', pontos:17,
+        titulo:'Tenho dificuldade para manter uma operação consistente e organizada' },
+      { valor:'automatizar', pontos:20,
+        titulo:'Quero reduzir minha dependência do acompanhamento manual e automatizar minha operação' },
+      { valor:'eficiencia', pontos:22,
+        titulo:'Já opero bem, mas quero mais eficiência, liberdade e controle sobre minha rotina' }
+    ]
+  };
+
+  var TRILHAS = {
+
+    /* ---------- A: não sabe por onde começar ---------- */
+    'comecar': {
+      q2: {
+        indice:'Pergunta 02', icone:'#ico-shield',
+        titulo:'O que mais te trava na hora de dar o primeiro passo?',
+        dica:'Aqui não tem resposta errada — só o ponto de partida.',
+        opcoes:[
+          { valor:'medo', pontos:8, titulo:'Medo de perder dinheiro logo no começo', sub:'O risco pesa mais que a vontade',
+            recap:'O que te trava é o <b>medo de perder no começo</b> — e isso se resolve com risco controlado, não com coragem.' },
+          { valor:'informacao', pontos:12, titulo:'Excesso de informação e nenhuma ordem clara', sub:'Muito conteúdo, nenhum caminho',
+            recap:'Você não sofre de falta de informação, e sim de <b>excesso sem ordem</b>. O que falta é sequência.' },
+          { valor:'ferramentas', pontos:14, titulo:'Não saber quais ferramentas usar', sub:'Trava antes mesmo de abrir o gráfico',
+            recap:'Seu bloqueio é <b>operacional</b>: saber qual ferramenta usar já resolve boa parte do problema.' },
+          { valor:'parei', pontos:16, titulo:'Já tentei antes e parei no meio do caminho', sub:'Não é a primeira tentativa',
+            recap:'Você <b>já tentou antes e parou</b> — o que faltou não foi vontade, foi estrutura para continuar.' }
+        ]
+      },
+      q3: {
+        indice:'Pergunta 03', icone:'#ico-clock',
+        titulo:'Quanto tempo você conseguiria dedicar por dia para aprender e operar?',
+        dica:'Seja realista com a sua rotina de hoje.',
+        opcoes:[
+          { valor:'30min-1h', pontos:10, titulo:'30 min a 1 hora', sub:'Janela curta, precisa ser objetiva',
+            recap:'Com <b>menos de 1 hora por dia</b>, cada passo precisa ser direto ao ponto.' },
+          { valor:'1-2h', pontos:14, titulo:'1 a 2 horas', sub:'Dá para evoluir rápido',
+            recap:'Com <b>1 a 2 horas por dia</b> dá para evoluir rápido sem virar sua rotina de cabeça para baixo.' },
+          { valor:'3-4h', pontos:17, titulo:'3 a 4 horas', sub:'Tempo de sobra para praticar',
+            recap:'Com <b>3 a 4 horas por dia</b> você tem folga para praticar e absorver o processo.' },
+          { valor:'dia-inteiro', pontos:20, titulo:'Dia inteiro', sub:'Dedicação total',
+            recap:'Com o <b>dia inteiro disponível</b>, seu limitante deixa de ser tempo e passa a ser método.' }
+        ]
+      }
+    },
+
+    /* ---------- B: o mercado toma tempo demais ---------- */
+    'tempo': {
+      q2: {
+        indice:'Pergunta 02', icone:'#ico-bolt',
+        titulo:'O que você mais perde por não conseguir acompanhar o mercado de perto?',
+        dica:'Escolha o que mais dói no seu dia a dia.',
+        opcoes:[
+          { valor:'entradas', pontos:12, titulo:'Entradas boas que passam enquanto estou ocupado', sub:'A oportunidade vem na hora errada',
+            recap:'Você perde <b>entradas que passam</b> enquanto está ocupado — é oportunidade indo embora por ausência, não por análise.' },
+          { valor:'saidas', pontos:14, titulo:'A hora certa de sair da operação', sub:'Cedo demais ou tarde demais',
+            recap:'Seu custo está na <b>saída fora de hora</b>: sai cedo do que estava certo e tarde do que estava errado.' },
+          { valor:'cabeca', pontos:10, titulo:'Tranquilidade — fico checando o gráfico o dia todo', sub:'O mercado não sai da cabeça',
+            recap:'O preço que você paga é <b>mental</b>: o gráfico te acompanha mesmo longe da tela.' },
+          { valor:'consistencia', pontos:16, titulo:'Consistência — só opero quando sobra tempo', sub:'Resultado depende da agenda',
+            recap:'Você opera <b>só quando sobra tempo</b>, e resultado que depende de sobra na agenda não se repete.' }
+        ]
+      },
+      q3: {
+        indice:'Pergunta 03', icone:'#ico-clock',
+        titulo:'Qual é a janela real que você consegue reservar por dia?',
+        dica:'O tempo que existe de verdade, não o ideal.',
+        opcoes:[
+          { valor:'menos-30min', pontos:8, titulo:'Menos de 30 minutos', sub:'A agenda está no limite',
+            recap:'Com <b>menos de 30 minutos por dia</b>, só faz sentido um processo que trabalhe sem você na tela.' },
+          { valor:'30min-1h', pontos:12, titulo:'30 min a 1 hora', sub:'Uma janela curta e fixa',
+            recap:'Com <b>30 min a 1 hora por dia</b>, cada decisão precisa estar definida antes de você abrir o gráfico.' },
+          { valor:'1-2h', pontos:16, titulo:'1 a 2 horas', sub:'Dá para pegar o melhor do pregão',
+            recap:'Com <b>1 a 2 horas por dia</b> dá para pegar as melhores janelas — desde que você saiba quais são.' },
+          { valor:'manha-noite', pontos:11, titulo:'Só consigo olhar de manhã e à noite', sub:'Fora do horário comercial',
+            recap:'Olhando <b>só de manhã e à noite</b>, sua operação precisa caber fora do horário de pico.' }
+        ]
+      }
+    },
+
+    /* ---------- C: falta consistência ---------- */
+    'consistencia': {
+      q2: {
+        indice:'Pergunta 02', icone:'#ico-bolt',
+        titulo:'Quando o resultado escapa, o que costuma acontecer?',
+        dica:'Seja honesto — é aqui que mora o padrão.',
+        opcoes:[
+          { valor:'dobrar', pontos:9, titulo:'Aumento o risco para recuperar o prejuízo', sub:'Tentativa de virar o dia',
+            recap:'Você <b>aumenta o risco para recuperar</b> — é o movimento que mais transforma um dia ruim em um mês ruim.' },
+          { valor:'sair-cedo', pontos:13, titulo:'Saio cedo das operações que estavam dando certo', sub:'Lucro pequeno, prejuízo inteiro',
+            recap:'Você <b>corta cedo o que estava certo</b>: os acertos não pagam os erros porque não duram o suficiente.' },
+          { valor:'trocar', pontos:11, titulo:'Mudo de estratégia toda vez que tomo um stop', sub:'Recomeça do zero direto',
+            recap:'Você <b>troca de estratégia a cada stop</b>, e assim nenhuma chega a ser testada de verdade.' },
+          { valor:'fora-do-plano', pontos:15, titulo:'Opero fora do plano quando o dia está devagar', sub:'Entra por tédio, não por sinal',
+            recap:'Seu furo é o <b>trade fora do plano</b> em dia parado — tédio custa caro no mercado.' }
+        ]
+      },
+      q3: {
+        indice:'Pergunta 03', icone:'#ico-shield',
+        titulo:'Você acompanha seus resultados de forma organizada?',
+        dica:'O que não se mede não se corrige.',
+        opcoes:[
+          { valor:'nada', pontos:8, titulo:'Não anoto nada', sub:'Vai pela memória',
+            recap:'Sem <b>registro nenhum</b>, não dá para saber o que funciona — e o que não se mede não se corrige.' },
+          { valor:'as-vezes', pontos:12, titulo:'Anoto às vezes, sem um padrão', sub:'Registro incompleto',
+            recap:'Você anota <b>às vezes</b>, o que gera um retrato incompleto e fácil de interpretar errado.' },
+          { valor:'planilha', pontos:16, titulo:'Tenho planilha, mas quase não reviso', sub:'O dado existe, parado',
+            recap:'Você tem <b>planilha mas não revisa</b>: o dado existe, só não vira decisão.' },
+          { valor:'acompanho', pontos:20, titulo:'Sim, acompanho de perto', sub:'Números na ponta do lápis',
+            recap:'Você <b>já acompanha seus números de perto</b>: é a base pronta para ganhar consistência.' }
+        ]
+      }
+    },
+
+    /* ---------- D: quer automatizar ---------- */
+    'automatizar': {
+      q2: {
+        indice:'Pergunta 02', icone:'#ico-bolt',
+        titulo:'Qual parte da sua operação você mais quer tirar do manual?',
+        dica:'Onde o processo mais depende de você hoje.',
+        opcoes:[
+          { valor:'monitorar', pontos:14, titulo:'Monitorar o mercado e achar as oportunidades', sub:'A parte que mais consome tempo',
+            recap:'Você quer tirar do manual o <b>monitoramento</b> — a parte que mais consome tempo e menos exige você.' },
+          { valor:'executar', pontos:16, titulo:'Executar entradas e saídas na hora certa', sub:'Onde o emocional entra',
+            recap:'Você quer automatizar a <b>execução</b>, justamente onde o emocional mais atrapalha.' },
+          { valor:'risco', pontos:18, titulo:'Gestão de risco e tamanho de posição', sub:'A decisão que define o longo prazo',
+            recap:'Você quer automatizar a <b>gestão de risco</b> — a decisão que mais define a sua sobrevivência no longo prazo.' },
+          { valor:'tudo', pontos:20, titulo:'Tudo — quero o processo rodando sozinho', sub:'Operação independente da presença',
+            recap:'Você quer o <b>processo inteiro rodando sozinho</b>, sem depender da sua presença.' }
+        ]
+      },
+      q3: {
+        indice:'Pergunta 03', icone:'#ico-shield',
+        titulo:'Você já tentou automatizar antes?',
+        dica:'Saber o que já foi tentado encurta o caminho.',
+        opcoes:[
+          { valor:'nunca', pontos:10, titulo:'Nunca tentei', sub:'Primeira automação',
+            recap:'É sua <b>primeira automação</b>: a vantagem é começar já no caminho certo, sem desaprender nada.' },
+          { valor:'robo-pronto', pontos:13, titulo:'Testei robôs prontos e não funcionou', sub:'Comprou pronto, não engatou',
+            recap:'Você já <b>testou robô pronto e não funcionou</b> — em geral o problema é usar sem entender o critério por trás.' },
+          { valor:'tentei-montar', pontos:16, titulo:'Tentei montar o meu e faltou conhecimento técnico', sub:'A estratégia existia',
+            recap:'Você <b>tentou montar o seu</b> e esbarrou na parte técnica: a estratégia existia, faltou a ponte.' },
+          { valor:'ja-rodando', pontos:20, titulo:'Já tenho algo rodando e quero melhorar', sub:'Refinar, não começar',
+            recap:'Você <b>já tem algo rodando</b>: agora é questão de refinar, não de começar do zero.' }
+        ]
+      }
+    },
+
+    /* ---------- E: já opera bem, quer eficiência ---------- */
+    'eficiencia': {
+      q2: {
+        indice:'Pergunta 02', icone:'#ico-bolt',
+        titulo:'O que mais limita a sua escala hoje?',
+        dica:'O teto que você já sente na prática.',
+        opcoes:[
+          { valor:'presenca', pontos:14, titulo:'Dependo de estar na frente da tela', sub:'O resultado exige presença',
+            recap:'Sua escala esbarra na <b>presença</b>: o resultado só acontece quando você está lá.' },
+          { valor:'emocional', pontos:12, titulo:'O emocional pesa em posições maiores', sub:'O método aguenta, a cabeça ainda não',
+            recap:'O que limita você é o <b>emocional em posição maior</b> — o método aguenta, a cabeça ainda não.' },
+          { valor:'processo', pontos:16, titulo:'Falta um processo replicável', sub:'Está tudo na cabeça',
+            recap:'Falta <b>processo replicável</b>: o que você faz bem ainda mora na sua cabeça, não num sistema.' },
+          { valor:'uma-por-vez', pontos:20, titulo:'Não consigo rodar mais de uma estratégia ao mesmo tempo', sub:'Teto operacional',
+            recap:'Você já <b>esbarra no limite de rodar uma estratégia por vez</b> — é teto operacional, não de conhecimento.' }
+        ]
+      },
+      q3: {
+        indice:'Pergunta 03', icone:'#ico-clock',
+        titulo:'Quanto tempo de tela a sua operação exige hoje?',
+        dica:'O custo real da sua rotina atual.',
+        opcoes:[
+          { valor:'menos-1h', pontos:18, titulo:'Menos de 1 hora', sub:'Operação enxuta',
+            recap:'Sua operação já cabe em <b>menos de 1 hora</b>: é eficiência que só falta escalar.' },
+          { valor:'1-2h', pontos:16, titulo:'1 a 2 horas', sub:'Margem para crescer',
+            recap:'Com <b>1 a 2 horas de tela</b>, você tem margem para crescer sem tomar o dia inteiro.' },
+          { valor:'3-4h', pontos:12, titulo:'3 a 4 horas', sub:'Custo alto de rotina',
+            recap:'<b>3 a 4 horas de tela por dia</b> é um custo alto de manter no longo prazo.' },
+          { valor:'dia-inteiro', pontos:9, titulo:'Praticamente o dia inteiro', sub:'A tela virou o trabalho',
+            recap:'Operar <b>praticamente o dia inteiro</b> é o oposto da liberdade que você está buscando.' }
+        ]
+      }
+    }
+  };
+
+  /* ---------- Pergunta 4: fixa, decide o destino do lead ---------- */
+  var PERGUNTA_CAPITAL = {
+    indice:'Pergunta 04 — última', icone:'#ico-bolt',
+    titulo:'Quanto de capital você pretende investir?',
+    dica:'Isso define qual estrutura faz sentido para você agora.',
+    opcoes:[
+      { valor:'100-200', pontos:18, destino:'whats', titulo:'R$ 100 a R$ 200', sub:'Primeiro passo estruturado',
+        recap:'Com <b>R$ 100 a R$ 200</b> dá para validar o processo antes de aumentar o risco.' },
+      { valor:'201-500', pontos:24, destino:'whats', titulo:'R$ 201 a R$ 500', sub:'Margem real para gerir risco',
+        recap:'Com <b>R$ 201 a R$ 500</b> você tem margem para operar com gestão de risco de verdade.' },
+      { valor:'501-1000', pontos:30, destino:'whats', titulo:'R$ 501 a R$ 1.000', sub:'Pronto para acelerar',
+        recap:'Com <b>R$ 501 a R$ 1.000</b> você já opera em uma faixa onde a consistência aparece bem mais rápido.' },
+      { valor:'sem-capital', pontos:10, destino:'comunidade', titulo:'Não tenho capital para investir agora', sub:'Quero aprender primeiro',
+        recap:'Sem capital agora, o passo certo é <b>construir base</b> — aprender primeiro, capitalizar depois.' }
+    ]
+  };
+
+  /* ---------- Perfis do resultado ---------- */
+  var PERFIS = {
+    'comecar': {
+      nome:'Iniciante com <em>Potencial Real</em>',
+      gargalo:'Falta de um ponto de partida claro',
+      resumo:'Você está no melhor momento possível: <strong>sem vícios e sem vieses</strong>. O que te falta não é capacidade, é um caminho na ordem certa. Quem começa com estrutura pula anos de tentativa e erro.'
+    },
+    'tempo': {
+      nome:'Trader <em>Sufocado pelo Tempo</em>',
+      gargalo:'Rotina que não acompanha o mercado',
+      resumo:'Seu limite não é conhecimento, é <strong>agenda</strong>. Você perde oportunidade porque a vida não para no horário do pregão. A saída para o seu caso não é estudar mais — é reduzir o tempo que cada decisão exige de você.'
+    },
+    'consistencia': {
+      nome:'Trader <em>Inconsistente</em>',
+      gargalo:'Resultado que não se repete',
+      resumo:'Você já sabe operar. O que oscila é o <strong>padrão de execução</strong>: semanas boas seguidas de semanas que devolvem tudo. Consistência não vem de mais estratégia, vem de repetir a mesma estratégia do mesmo jeito.'
+    },
+    'automatizar': {
+      nome:'Pronto para <em>Automatizar</em>',
+      gargalo:'Processo ainda 100% manual',
+      resumo:'Você já entendeu que escala vem de <strong>processo, não de esforço</strong>. Esse é o estágio em que o trader para de trabalhar no operacional e começa a trabalhar no sistema — e é o perfil que mais rápido aproveita uma estrutura pronta.'
+    },
+    'eficiencia': {
+      nome:'Operador <em>Pronto para Escalar</em>',
+      gargalo:'Escala travada pelo tempo de tela',
+      resumo:'Você já passou da fase de aprender a operar — seu problema agora é <strong>de arquitetura</strong>. Quem opera bem e continua preso à tela não tem um problema de estratégia, tem um teto operacional. É exatamente aí que eficiência vira liberdade.'
+    }
+  };
+
   /* ========================= ESTADO ========================= */
-  var ORDEM = ['intro','q1','q2','q3','q4','loading','result'];
   var TOTAL_PERGUNTAS = 4;
-  var respostas = {};
-  var indiceAtual = 0;
+  var perguntas = [PERGUNTA_1];   // a trilha completa é montada após a pergunta 1
+  var respostas = [];             // respostas[i] corresponde a perguntas[i]
+  var passo = 0;
+  var secaoAtual = 'intro';
   var travado = false;
 
   var $  = function(s,c){ return (c||document).querySelector(s); };
   var $$ = function(s,c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
 
-  var telas       = {};
-  ORDEM.forEach(function(n){ telas[n] = $('#screen-' + n); });
-  var progressBar = $('#progressBar');
-  var progressWrap= $('#progressWrap');
-  var stepChip    = $('#stepChip');
+  var secoes = {
+    intro:    $('#screen-intro'),
+    question: $('#screen-question'),
+    loading:  $('#screen-loading'),
+    result:   $('#screen-result')
+  };
+  var caixa        = $('#question-body');
+  var progressBar  = $('#progressBar');
+  var progressWrap = $('#progressWrap');
+  var stepChip     = $('#stepChip');
 
   var reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var msSaida  = function(){ return reduzirMovimento ? 20 : 210; };
+  var msEntrada= function(){ return reduzirMovimento ? 60 : 400; };
 
   /* ========================= NAVEGAÇÃO ========================= */
-  function nomeAtual(){ return ORDEM[indiceAtual]; }
-
-  function irPara(indice){
-    if (indice < 0 || indice >= ORDEM.length) return;
-    var saindo  = telas[ORDEM[indiceAtual]];
-    var entrando= telas[ORDEM[indice]];
-    if (saindo === entrando) return;
-
+  function trocarSecao(nome, antesDeEntrar){
+    if (secaoAtual === nome){ if (antesDeEntrar) antesDeEntrar(); return; }
+    var sai = secoes[secaoAtual], entra = secoes[nome];
     travado = true;
-    saindo.classList.add('leaving');
-
+    sai.classList.add('leaving');
     window.setTimeout(function(){
-      saindo.classList.remove('active','leaving','entering');
-      indiceAtual = indice;
-      entrando.classList.add('active','entering');
-      reiniciarAnimacoes(entrando);
-      window.scrollTo({ top: 0, behavior: reduzirMovimento ? 'auto' : 'smooth' });
+      sai.classList.remove('active','leaving','entering');
+      secaoAtual = nome;
+      if (antesDeEntrar) antesDeEntrar();
+      entra.classList.add('active','entering');
+      reiniciarAnimacoes(entra);
+      subirTopo();
       atualizarProgresso();
-      window.setTimeout(function(){
-        entrando.classList.remove('entering');
-        travado = false;
-      }, 400);
-      aoEntrar(ORDEM[indice]);
-    }, reduzirMovimento ? 20 : 210);
+      travado = false;
+      window.setTimeout(function(){ entra.classList.remove('entering'); }, msEntrada());
+      aoEntrar(nome);
+    }, msSaida());
+  }
+
+  function irParaPasso(indice){
+    if (indice < 0){ passo = 0; trocarSecao('intro'); return; }
+    if (indice >= TOTAL_PERGUNTAS){ trocarSecao('loading'); return; }
+
+    if (secaoAtual !== 'question'){
+      trocarSecao('question', function(){ passo = indice; renderizarPergunta(); });
+      return;
+    }
+    // já estamos na tela de perguntas: anima só o conteúdo
+    travado = true;
+    caixa.classList.add('leaving');
+    window.setTimeout(function(){
+      passo = indice;
+      caixa.classList.remove('leaving');
+      renderizarPergunta();
+      subirTopo();
+      atualizarProgresso();
+      travado = false;
+    }, msSaida());
+  }
+
+  function subirTopo(){
+    window.scrollTo({ top:0, behavior: reduzirMovimento ? 'auto' : 'smooth' });
   }
 
   function reiniciarAnimacoes(tela){
-    var grupo = $('.stagger', tela);
-    if (!grupo) return;
     $$('.stagger > *', tela).forEach(function(el){
       el.style.animation = 'none';
       void el.offsetHeight;
@@ -883,117 +1037,152 @@ h1 .hl{
   }
 
   function atualizarProgresso(){
-    var nome = nomeAtual();
-    var numero = ORDEM.indexOf(nome) - 1;       // q1 -> 0
-    var ehPergunta = numero >= 0 && numero < TOTAL_PERGUNTAS;
-
-    if (nome === 'intro'){
+    if (secaoAtual === 'intro'){
       progressWrap.classList.remove('on');
       progressBar.style.width = '0%';
       stepChip.hidden = true;
       return;
     }
     progressWrap.classList.add('on');
-
-    if (ehPergunta){
-      stepChip.hidden = false;
-      stepChip.textContent = 'Pergunta ' + (numero + 1) + ' de ' + TOTAL_PERGUNTAS;
-      progressBar.style.width = (((numero + 0.5) / TOTAL_PERGUNTAS) * 100) + '%';
+    stepChip.hidden = false;
+    if (secaoAtual === 'question'){
+      stepChip.textContent = 'Pergunta ' + (passo + 1) + ' de ' + TOTAL_PERGUNTAS;
+      progressBar.style.width = (((passo + 0.5) / TOTAL_PERGUNTAS) * 100) + '%';
     } else {
-      stepChip.hidden = false;
-      stepChip.textContent = nome === 'loading' ? 'Analisando...' : 'Resultado';
+      stepChip.textContent = secaoAtual === 'loading' ? 'Analisando...' : 'Resultado';
       progressBar.style.width = '100%';
     }
   }
 
   function aoEntrar(nome){
-    var tela = telas[nome];
-    if (tela) $$('.opt', tela).forEach(function(o){ o.classList.remove('dimmed'); });
     if (nome === 'loading') rodarAnalise();
     if (nome === 'result')  soltarConfete();
   }
 
-  /* ========================= RESPOSTAS ========================= */
-  function vibrar(ms){
-    if (navigator.vibrate) { try { navigator.vibrate(ms); } catch(e){} }
+  /* ========================= RENDER DA PERGUNTA ========================= */
+  function renderizarPergunta(){
+    var p = perguntas[passo];
+    var marcada = respostas[passo];
+
+    var opcoes = p.opcoes.map(function(o, i){
+      var selecionada = marcada && marcada.valor === o.valor;
+      return '<button class="opt' + (selecionada ? ' selected' : '') + '" type="button" data-i="' + i + '">'
+           +   '<span class="opt-key">' + LETRAS[i] + '</span>'
+           +   '<span class="opt-label">' + o.titulo + (o.sub ? '<small>' + o.sub + '</small>' : '') + '</span>'
+           +   '<span class="opt-check"><svg><use href="#ico-check"/></svg></span>'
+           + '</button>';
+    }).join('');
+
+    caixa.innerHTML =
+      '<div class="stagger">'
+      +  '<span class="q-index">' + p.indice + '</span>'
+      +  '<h2 class="q-title">' + p.titulo + '</h2>'
+      +  '<p class="q-hint">' + p.dica + '</p>'
+      +  '<div class="options' + (p.layout ? ' ' + p.layout : '') + '">' + opcoes + '</div>'
+      +  '<button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>'
+      + '</div>';
   }
 
-  $$('.options').forEach(function(grupo){
-    var q = grupo.getAttribute('data-q');
-    $$('.opt', grupo).forEach(function(botao){
-      botao.addEventListener('click', function(){
-        if (travado) return;
-        travado = true;
-        vibrar(12);
+  /* ========================= RESPOSTAS ========================= */
+  function vibrar(ms){
+    if (navigator.vibrate){ try { navigator.vibrate(ms); } catch(e){} }
+  }
 
-        $$('.opt', grupo).forEach(function(outro){
-          outro.classList.remove('selected');
-          if (outro !== botao) outro.classList.add('dimmed');
-        });
-        botao.classList.remove('dimmed');
-        botao.classList.add('selected');
+  function montarTrilha(perfil){
+    var trilha = TRILHAS[perfil];
+    var mudou = perguntas[1] !== trilha.q2;
+    perguntas = [PERGUNTA_1, trilha.q2, trilha.q3, PERGUNTA_CAPITAL];
+    // trocou de perfil: as respostas das ramificações não valem mais
+    if (mudou) respostas.length = 1;
+  }
 
-        respostas['q' + q] = {
-          valor: botao.getAttribute('data-value'),
-          texto: botao.getAttribute('data-key'),
-          letra: $('.opt-key', botao).textContent.trim(),
-          destino: botao.getAttribute('data-destino') || null
-        };
+  function responder(indice){
+    if (travado) return;
+    travado = true;
+    vibrar(12);
 
-        rastrear('quiz_resposta', { pergunta: Number(q), resposta: botao.getAttribute('data-value') });
+    var p = perguntas[passo];
+    var o = p.opcoes[indice];
+    var botoes = $$('.opt', caixa);
 
-        window.setTimeout(function(){
-          travado = false;
-          irPara(indiceAtual + 1);
-        }, reduzirMovimento ? 120 : 400);
-      });
+    botoes.forEach(function(b, i){
+      b.classList.remove('selected');
+      if (i !== indice) b.classList.add('dimmed');
     });
-  });
+    botoes[indice].classList.remove('dimmed');
+    botoes[indice].classList.add('selected');
 
-  $$('.back-btn').forEach(function(botao){
-    botao.addEventListener('click', function(){
-      if (travado) return;
-      irPara(indiceAtual - 1);
+    respostas[passo] = {
+      valor: o.valor,
+      texto: o.titulo,
+      letra: LETRAS[indice],
+      pontos: o.pontos,
+      recap: o.recap || '',
+      icone: p.icone,
+      destino: o.destino || null
+    };
+
+    if (passo === 0) montarTrilha(o.valor);
+
+    rastrear('quiz_resposta', {
+      pergunta: passo + 1,
+      resposta: o.valor,
+      perfil: respostas[0] ? respostas[0].valor : null
     });
+
+    var proximo = passo + 1;
+    window.setTimeout(function(){
+      travado = false;
+      irParaPasso(proximo);
+    }, reduzirMovimento ? 120 : 340);
+  }
+
+  // delegação: o conteúdo da pergunta é recriado a cada passo
+  caixa.addEventListener('click', function(ev){
+    var opcao = ev.target.closest('.opt');
+    if (opcao){ responder(Number(opcao.getAttribute('data-i'))); return; }
+    if (ev.target.closest('.back-btn')){
+      if (!travado) irParaPasso(passo - 1);
+    }
   });
 
   $('#startBtn').addEventListener('click', function(){
     rastrear('quiz_iniciado', {});
-    irPara(1);
+    irParaPasso(0);
   });
 
   $('#restartBtn').addEventListener('click', function(){
-    respostas = {};
-    $$('.opt').forEach(function(o){ o.classList.remove('selected','dimmed'); });
-    irPara(0);
+    respostas = [];
+    perguntas = [PERGUNTA_1];
+    passo = 0;
+    trocarSecao('intro');
   });
 
-  // aplica a tecla assim que a transição liberar, desde que ainda seja a mesma tela
-  function clicarQuandoLiberar(alvo, telaDaTecla, tentativas){
+  // aplica a tecla assim que a transição liberar, se ainda for a mesma pergunta
+  function clicarQuandoLiberar(indice, passoDaTecla, tentativas){
     if (!travado){
-      if (nomeAtual() === telaDaTecla) alvo.click();
+      if (secaoAtual === 'question' && passo === passoDaTecla) responder(indice);
       return;
     }
     if (tentativas <= 0) return;
     window.setTimeout(function(){
-      clicarQuandoLiberar(alvo, telaDaTecla, tentativas - 1);
+      clicarQuandoLiberar(indice, passoDaTecla, tentativas - 1);
     }, 120);
   }
 
-  // teclado: 1..5 ou A..E respondem, Backspace volta
+  // teclado: A-E ou 1-5 respondem, Backspace volta, Enter inicia
   document.addEventListener('keydown', function(ev){
-    var tela = telas[nomeAtual()];
-    var grupo = tela ? $('.options', tela) : null;
-    if (ev.key === 'Enter' && nomeAtual() === 'intro'){ $('#startBtn').click(); return; }
-    if (!grupo) return;
-    if (ev.key === 'Backspace'){ ev.preventDefault(); irPara(indiceAtual - 1); return; }
-    var opcoes = $$('.opt', grupo);
+    if (ev.key === 'Enter' && secaoAtual === 'intro'){ $('#startBtn').click(); return; }
+    if (secaoAtual !== 'question') return;
+    if (ev.key === 'Backspace'){ ev.preventDefault(); if (!travado) irParaPasso(passo - 1); return; }
+
+    var total = perguntas[passo].opcoes.length;
     var idx = -1;
     if (/^[1-9]$/.test(ev.key)) idx = Number(ev.key) - 1;
     else if (/^[a-eA-E]$/.test(ev.key)) idx = ev.key.toUpperCase().charCodeAt(0) - 65;
-    if (idx >= 0 && opcoes[idx]) {
+    if (idx >= 0 && idx < total){
       ev.preventDefault();
-      clicarQuandoLiberar(opcoes[idx], nomeAtual(), 12);
+      clicarQuandoLiberar(idx, passo, 12);
     }
   });
 
@@ -1001,103 +1190,47 @@ h1 .hl{
   function rodarAnalise(){
     var itens = $$('.check-item');
     itens.forEach(function(i){ i.classList.remove('on'); });
-    var passo = CONFIG.tempoAnalise / (itens.length + 1);
+    var intervalo = CONFIG.tempoAnalise / (itens.length + 1);
 
     itens.forEach(function(item, i){
       window.setTimeout(function(){
         item.classList.add('on');
         vibrar(6);
-      }, passo * (i + 1) * 0.92);
+      }, intervalo * (i + 1) * 0.92);
     });
 
     window.setTimeout(function(){
       montarResultado();
-      irPara(ORDEM.indexOf('result'));
+      trocarSecao('result');
     }, CONFIG.tempoAnalise);
   }
 
-  /* ========================= PERFIS ========================= */
-  var PERFIS = {
-    'comecar': {
-      nome: 'Iniciante com <em>Potencial Real</em>',
-      resumo: 'Você está no melhor momento possível: <strong>sem vícios e sem vieses</strong>. O que te falta não é capacidade, é um caminho na ordem certa. Quem começa com estrutura pula anos de tentativa e erro.',
-      gargalo: 'Falta de um ponto de partida claro'
-    },
-    'executar': {
-      nome: 'Analista <em>Travado na Execução</em>',
-      resumo: 'Você enxerga o gráfico — o problema acontece na hora do clique. Isso é <strong>gestão emocional e processo</strong>, não análise. É exatamente o gargalo que mais rápido se resolve quando existe um sistema por trás da decisão.',
-      gargalo: 'Hesitação no momento da entrada'
-    },
-    'consistencia': {
-      nome: 'Trader <em>Inconsistente</em>',
-      resumo: 'Você já sabe operar. O que oscila é o <strong>padrão de execução</strong>: semanas boas seguidas de semanas que devolvem tudo. Consistência não vem de mais estratégia, vem de repetir a mesma estratégia do mesmo jeito.',
-      gargalo: 'Resultado que não se repete'
-    },
-    'tempo': {
-      nome: 'Trader <em>Sem Tempo</em>',
-      resumo: 'Seu limite não é conhecimento, é <strong>agenda</strong>. Você perde entradas porque a vida não para no horário do pregão. A saída para o seu caso não é estudar mais — é reduzir o tempo que cada decisão exige de você.',
-      gargalo: 'Rotina que não acompanha o mercado'
-    },
-    'automatizar': {
-      nome: 'Pronto para <em>Automatizar</em>',
-      resumo: 'Você já entendeu que escala vem de <strong>processo, não de esforço</strong>. Esse é o estágio em que o trader para de trabalhar no operacional e começa a trabalhar no sistema. Seu perfil é o que mais rápido aproveita uma estrutura pronta.',
-      gargalo: 'Processo ainda 100% manual'
-    }
-  };
-
-  var PONTOS = {
-    q1: { 'sim':15, 'nao':9 },
-    q2: { '30min-1h':11, '1-2h':16, '3-4h':20, 'dia-inteiro':22 },
-    q3: { 'comecar':12, 'executar':16, 'consistencia':18, 'tempo':14, 'automatizar':20 },
-    q4: { '100-200':18, '201-500':24, '501-1000':30, 'sem-capital':10 }
-  };
+  /* ========================= RESULTADO ========================= */
+  // soma máxima possível da trilha mais "cara" (usada só para normalizar o score)
+  var PONTOS_MAX = 92;
 
   function calcularScore(){
     var bruto = 0;
-    ['q1','q2','q3','q4'].forEach(function(k){
-      var r = respostas[k];
-      if (r && PONTOS[k][r.valor] != null) bruto += PONTOS[k][r.valor];
-    });
-    var score = Math.round(55 + (bruto / 87) * 42);
+    respostas.forEach(function(r){ if (r) bruto += r.pontos; });
+    var score = Math.round(55 + (bruto / PONTOS_MAX) * 42);
     return Math.max(60, Math.min(98, score));
   }
 
-  function textoTempo(){
-    var v = respostas.q2 ? respostas.q2.valor : '';
-    if (v === '30min-1h')    return 'Com <b>menos de 1 hora por dia</b>, cada operação precisa ser certeira — não há espaço para ficar caçando setup.';
-    if (v === '1-2h')        return 'Com <b>1 a 2 horas por dia</b> você pega as melhores janelas do pregão. É tempo suficiente para operar bem.';
-    if (v === '3-4h')        return 'Com <b>3 a 4 horas por dia</b> você tem folga real para acompanhar o mercado e executar com calma.';
-    if (v === 'dia-inteiro') return 'Com o <b>dia inteiro disponível</b>, seu limitante deixa de ser tempo e passa a ser método.';
-    return '';
-  }
-
-  function textoExperiencia(){
-    var v = respostas.q1 ? respostas.q1.valor : '';
-    return v === 'sim'
-      ? 'Você <b>já tem vivência no mercado</b> — a curva de adaptação é bem mais curta.'
-      : 'Você está <b>começando do zero</b>, e isso é uma vantagem: nada para desaprender.';
-  }
-
-  function textoCapital(){
-    var v = respostas.q4 ? respostas.q4.valor : '';
-    if (v === '100-200')     return 'Com <b>R$ 100 a R$ 200</b> dá para validar o processo antes de aumentar o risco.';
-    if (v === '201-500')     return 'Com <b>R$ 201 a R$ 500</b> você tem margem para operar com gestão de risco de verdade.';
-    if (v === '501-1000')    return 'Com <b>R$ 501 a R$ 1.000</b> você já opera em uma faixa onde a consistência aparece bem mais rápido.';
-    if (v === 'sem-capital') return 'Sem capital agora, o passo certo é <b>construir base</b> — aprender primeiro, capitalizar depois.';
-    return '';
-  }
-
-  /* ========================= RESULTADO ========================= */
   function montarResultado(){
-    var perfil  = PERFIS[respostas.q3 ? respostas.q3.valor : 'comecar'] || PERFIS['comecar'];
-    var destino = (respostas.q4 && respostas.q4.destino) || 'comunidade';
+    var perfil  = PERFIS[respostas[0].valor];
+    var capital = respostas[3];
+    var destino = (capital && capital.destino) || 'comunidade';
     var temCapital = destino === 'whats';
     var score = calcularScore();
 
     $('#profileName').innerHTML = perfil.nome;
-    $('#profileText').innerHTML = perfil.resumo;
     $('#scoreLabel').textContent = temCapital ? 'Nível de prontidão' : 'Potencial identificado';
     $('#badgeText').textContent  = 'Diagnóstico concluído';
+
+    var fecho = temCapital
+      ? '<br><br>Com o capital que você indicou, o próximo passo é <strong>montar sua estrutura junto com um especialista</strong> — no seu ritmo e com o seu tempo disponível.'
+      : '<br><br>Como você ainda não tem capital para investir, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
+    $('#profileText').innerHTML = perfil.resumo + fecho;
 
     // contador animado
     var alvo = score, atual = 0;
@@ -1111,44 +1244,39 @@ h1 .hl{
       numEl.textContent = atual;
     }, reduzirMovimento ? 5 : 26);
 
-    // recapitulação
-    var linhas = [
-      { icone:'#ico-target', txt: '<b>Seu gargalo hoje:</b> ' + perfil.gargalo },
-      { icone:'#ico-shield', txt: textoExperiencia() },
-      { icone:'#ico-clock',  txt: textoTempo() },
-      { icone:'#ico-bolt',   txt: textoCapital() }
-    ];
+    // recapitulação: o gargalo do perfil + o que cada resposta da trilha revelou
+    var linhas = [{ icone:'#ico-target', txt:'<b>Seu gargalo hoje:</b> ' + perfil.gargalo }];
+    respostas.slice(1).forEach(function(r){
+      if (r && r.recap) linhas.push({ icone: r.icone || '#ico-check', txt: r.recap });
+    });
     $('#recap').innerHTML = linhas.map(function(l){
       return '<div class="recap-row"><svg><use href="' + l.icone + '"/></svg><span>' + l.txt + '</span></div>';
     }).join('');
 
     // CTA
-    var cta       = $('#ctaBtn');
-    var ctaTexto  = $('#ctaText');
-    var ctaIcone  = $('#ctaIcon').querySelector('use');
-    var escassez  = $('#scarcityText');
+    var cta      = $('#ctaBtn');
+    var ctaIcone = $('#ctaIcon').querySelector('use');
 
     if (temCapital){
       cta.href = montarLink(CONFIG.redirectWhats);
-      ctaTexto.textContent = 'FALAR COM UM ESPECIALISTA';
+      $('#ctaText').textContent = 'FALAR COM UM ESPECIALISTA';
       ctaIcone.setAttribute('href', '#ico-whats');
-      escassez.textContent = 'Atendimento liberado agora no WhatsApp';
-      $('#profileText').innerHTML += '<br><br>Com o capital que você indicou, o próximo passo é <strong>montar sua estrutura junto com um especialista</strong> — no seu ritmo e com o seu tempo disponível.';
+      $('#scarcityText').textContent = 'Atendimento liberado agora no WhatsApp';
     } else {
       cta.href = montarLink(CONFIG.redirectComunidade);
-      ctaTexto.textContent = 'ENTRAR NA COMUNIDADE GRATUITA';
+      $('#ctaText').textContent = 'ENTRAR NA COMUNIDADE GRATUITA';
       ctaIcone.setAttribute('href', '#ico-users');
-      escassez.textContent = 'Acesso gratuito — entrada imediata';
-      $('#profileText').innerHTML += '<br><br>Como você ainda não tem capital para investir, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
+      $('#scarcityText').textContent = 'Acesso gratuito — entrada imediata';
     }
 
     rastrear('quiz_finalizado', {
       destino: destino,
       score: score,
-      perfil: respostas.q3 ? respostas.q3.valor : null,
-      experiencia: respostas.q1 ? respostas.q1.valor : null,
-      tempo: respostas.q2 ? respostas.q2.valor : null,
-      capital: respostas.q4 ? respostas.q4.valor : null
+      perfil: respostas[0].valor,
+      desafio: respostas[0].valor,
+      resposta_2: respostas[1] ? respostas[1].valor : null,
+      resposta_3: respostas[2] ? respostas[2].valor : null,
+      capital: capital ? capital.valor : null
     });
 
     if (CONFIG.autoRedirectSegundos > 0){
@@ -1158,9 +1286,11 @@ h1 .hl{
 
   $('#ctaBtn').addEventListener('click', function(){
     rastrear('quiz_cta_clique', {
-      destino: (respostas.q4 && respostas.q4.destino) || 'comunidade'
+      destino: (respostas[3] && respostas[3].destino) || 'comunidade',
+      perfil: respostas[0] ? respostas[0].valor : null
     });
   });
+
 
   /* ========================= LINK + PARÂMETROS ========================= */
   function montarLink(base){
