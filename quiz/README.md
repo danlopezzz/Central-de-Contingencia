@@ -25,50 +25,58 @@ Depois é só apontar o domínio ou usar o link `.vercel.app` no anúncio.
 
 ## Como o quiz se monta
 
-São sempre 4 perguntas, mas só duas são iguais para todo mundo:
+São 5 perguntas. Três são iguais para todo mundo, duas variam:
 
 | # | Pergunta | Varia? |
 | - | -------- | ------ |
-| 1 | O que mais te chamou atenção no anúncio? | Fixa — é ela que define a trilha |
+| 1 | O que mais te chamou atenção no anúncio? | Fixa, é ela que define a trilha |
 | 2 | Aprofunda o desejo que trouxe a pessoa | **Muda conforme a trilha** |
-| 3 | Mede o contexto real (tempo, experiência, meta…) | **Muda conforme a trilha** |
-| 4 | Quanto de capital você tem investido? | Fixa — é ela que decide o destino |
+| 3 | Mede o contexto real | **Muda conforme a trilha** |
+| 4 | Você já investiu? | Fixa |
+| 5 | Você teria de R$ 100,00 a R$ 300,00 para iniciar hoje? | Fixa, é ela que decide o destino |
 
 A pergunta 1 não pergunta a dor: pergunta o **desejo que fez a pessoa clicar**.
-Por isso ela funciona para qualquer público que o anúncio traga, do leigo ao
-trader experiente — todo mundo sabe responder o que chamou a sua atenção. É a
-pergunta 2 que desce ao nível de quem a pessoa é de fato.
+Por isso funciona para qualquer público que o anúncio traga, do leigo ao trader
+experiente. É a pergunta 2 que desce ao nível de quem a pessoa é de fato.
+
+A pergunta 5 carrega a oferta das 24 horas acima do enunciado e, abaixo das
+alternativas, a explicação de por que o valor é necessário.
 
 As 4 trilhas, conforme a resposta da pergunta 1:
 
 | Respondeu na pergunta 1 | Perfil no resultado | Pergunta 2 | Pergunta 3 |
 | ----------------------- | ------------------- | ---------- | ---------- |
-| Ferramenta 100% automatizada | Movido por Automação | Como está sua relação com o mercado hoje | O que quer que a ferramenta resolva |
+| Operar de forma automática pois não tenho tempo | Movido por Automação | Como está sua relação com o mercado hoje | O que quer que a ferramenta resolva |
 | Iniciar sem dinheiro e sem tempo | Começando do Zero Absoluto | O que mais te impede de começar | Tempo que conseguiria reservar |
 | Operar sem olhar o mercado sempre | Em busca de Liberdade Operacional | O que te atrapalha por não acompanhar | Janela real por dia |
 | Conquistar uma nova fonte de renda | Construindo uma Nova Fonte de Renda | O que espera dessa renda | Já teve experiência no mercado |
 
-Cada alternativa das perguntas 2 e 3 carrega o próprio texto de resultado, então o
-diagnóstico final é montado com as palavras da trilha que a pessoa percorreu — não
-com um texto genérico. São **80 combinações de diagnóstico** (4 trilhas × 4 × 4 × as 5 faixas de capital no fecho).
+Cada alternativa das perguntas 2 a 5 carrega o próprio texto de resultado, então
+o diagnóstico final é montado com as palavras da trilha que a pessoa percorreu.
 
 ## Regra de roteamento do lead
 
-O destino é decidido **exclusivamente pela pergunta 4** (capital):
+O destino é decidido **exclusivamente pela pergunta 5**:
 
-| Resposta na pergunta 4          | Destino    |
-| ------------------------------- | ---------- |
-| A — R$ 1.000 a R$ 5.000         | WhatsApp   |
-| B — R$ 5.000 a R$ 20.000        | WhatsApp   |
-| C — R$ 20.000 a R$ 100.000      | WhatsApp   |
-| D — Mais de R$ 100.000          | WhatsApp   |
-| E — Não tenho capital investido | Comunidade |
+| Resposta na pergunta 5              | Destino    |
+| ----------------------------------- | ---------- |
+| A: Sim, tenho de R$ 100,00 a R$ 300,00   | WhatsApp   |
+| B: Sim, tenho de R$ 500,00 a R$ 1.000,00 | WhatsApp   |
+| C: Não tenho nenhum investimento         | Comunidade |
 
-Nenhuma outra pergunta muda o destino: elas alimentam o score e personalizam o
-resultado, para o lead chegar no CTA já tendo recebido um diagnóstico.
+A pergunta 4 (você já investiu) **não** muda o destino: ela alimenta o score e
+personaliza o resultado. Quem já investiu R$ 100 mil mas não tem valor para
+iniciar hoje vai para a comunidade, como qualquer outro.
 
 Se a pessoa voltar e trocar a resposta da pergunta 1, a trilha é remontada e as
-respostas das perguntas 2 e 3 são descartadas — elas pertenciam ao perfil antigo.
+respostas seguintes são descartadas, porque pertenciam ao perfil antigo.
+
+### Sobre o botão no resultado
+
+O botão aparece **logo abaixo do nome do perfil**, antes do score e do
+diagnóstico, para ninguém precisar rolar até achá-lo. O mesmo botão se repete
+no fim da página, para quem leu tudo. Os dois apontam para o mesmo destino e
+disparam o mesmo evento.
 
 ## Onde mexer
 

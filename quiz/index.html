@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#050A06" />
 <title>Descubra seu Perfil de Trader</title>
-<meta name="description" content="Responda 4 perguntas rápidas e descubra o caminho mais curto para operar com consistência." />
+<meta name="description" content="Responda 5 perguntas rápidas e descubra o caminho mais curto para operar com consistência." />
 <meta name="robots" content="noindex, nofollow" />
 
 <!-- Meta Pixel Code -->
@@ -25,7 +25,7 @@ fbq('track', 'PageView');
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Descubra seu Perfil de Trader" />
-<meta property="og:description" content="4 perguntas. Menos de 60 segundos. Descubra o caminho mais curto para operar com consistência." />
+<meta property="og:description" content="5 perguntas. Menos de 1 minuto. Descubra o caminho mais curto para operar com consistência." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -266,6 +266,28 @@ h1 .hl{
   margin-bottom:8px;
 }
 .q-hint{font-size:14px;color:var(--text-3);margin-bottom:24px;}
+
+/* chamada da oferta, acima do título da última pergunta */
+.q-chamada{
+  display:block;
+  background:linear-gradient(135deg,rgba(124,214,26,.13),rgba(124,214,26,.04));
+  border:1px solid rgba(124,214,26,.32);
+  border-radius:16px;
+  padding:15px 16px;margin-bottom:18px;
+  font-size:15px;line-height:1.5;color:var(--text);
+  box-shadow:0 10px 30px -18px var(--green-glow);
+}
+.q-chamada b{color:var(--green-bright);font-weight:700;}
+
+/* explicação embaixo das opções */
+.q-aviso{
+  display:flex;gap:11px;align-items:flex-start;
+  background:var(--surface);border:1px solid var(--stroke);
+  border-radius:15px;padding:14px 15px;margin-top:14px;
+  font-size:13.2px;line-height:1.55;color:var(--text-2);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+}
+.q-aviso svg{width:17px;height:17px;flex:none;margin-top:2px;stroke:var(--green);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
 
 .options{display:flex;flex-direction:column;gap:11px;}
 .options.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
@@ -621,14 +643,14 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
         <div style="text-align:center">
           <span class="eyebrow"><i class="pulse-dot"></i> Diagnóstico gratuito</span>
         </div>
-        <h1 style="text-align:center">Descubra em 60 segundos o seu <span class="hl">perfil de trader</span></h1>
+        <h1 style="text-align:center">Descubra em menos de 1 minuto o seu <span class="hl">perfil de trader</span></h1>
         <p class="lede" style="text-align:center;margin-left:auto;margin-right:auto">
-          São <strong>4 perguntas rápidas</strong>. No final você recebe o caminho exato para o seu momento —
-          sem enrolação e sem teoria que não cabe na sua rotina.
+          São <strong>5 perguntas rápidas</strong>. No final você recebe o caminho exato para o seu
+          momento, sem enrolação e sem teoria que não cabe na sua rotina.
         </p>
         <div class="meta-row" style="justify-content:center">
           <span class="meta-pill"><svg><use href="#ico-clock"/></svg> Menos de 1 minuto</span>
-          <span class="meta-pill"><svg><use href="#ico-target"/></svg> 4 perguntas</span>
+          <span class="meta-pill"><svg><use href="#ico-target"/></svg> 5 perguntas</span>
           <span class="meta-pill"><svg><use href="#ico-shield"/></svg> 100% gratuito</span>
         </div>
         <div class="cta-wrap">
@@ -675,6 +697,16 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
           <span class="result-badge"><svg><use href="#ico-check"/></svg> <span id="badgeText">Diagnóstico concluído</span></span>
         </div>
         <h2 class="profile-name" id="profileName" style="text-align:center"></h2>
+
+        <!-- o botão vem antes de tudo: ninguém precisa rolar para encontrá-lo -->
+        <div class="cta-wrap">
+          <a class="btn cta-link" href="#" rel="noopener">
+            <svg class="cta-icone"><use href="#ico-whats"/></svg>
+            <span class="cta-texto">CONTINUAR</span>
+          </a>
+        </div>
+        <p class="scarcity"><i class="pulse-dot"></i> <span class="scarcity-texto"></span></p>
+
         <div class="score-card">
           <div class="score-head">
             <span id="scoreLabel">Nível de prontidão</span>
@@ -684,13 +716,15 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
         </div>
         <p class="profile-text" id="profileText"></p>
         <div class="recap" id="recap"></div>
+
+        <!-- repetido no fim, para quem leu o diagnóstico inteiro -->
         <div class="cta-wrap">
-          <a class="btn" id="ctaBtn" href="#" rel="noopener">
-            <svg id="ctaIcon"><use href="#ico-whats"/></svg>
-            <span id="ctaText">CONTINUAR</span>
+          <a class="btn cta-link" href="#" rel="noopener">
+            <svg class="cta-icone"><use href="#ico-whats"/></svg>
+            <span class="cta-texto">CONTINUAR</span>
           </a>
         </div>
-        <p class="scarcity" id="scarcity"><i class="pulse-dot"></i> <span id="scarcityText"></span></p>
+        <p class="scarcity"><i class="pulse-dot"></i> <span class="scarcity-texto"></span></p>
         <button class="btn-ghost" id="restartBtn" type="button" style="margin:10px auto 0;display:flex">
           <svg><use href="#ico-back"/></svg> Refazer o diagnóstico
         </button>
@@ -716,7 +750,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
   'use strict';
 
   /* =========================================================
-     CONFIGURAÇÃO — altere apenas aqui
+     CONFIGURACAO: altere apenas aqui
      ========================================================= */
   var CONFIG = {
     // Lead COM capital (R$50 / R$100 / R$200+)  ->  WhatsApp
@@ -749,7 +783,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     icone: '#ico-target',
     opcoes: [
       { valor:'automacao', pontos:20,
-        titulo:'Ferramenta 100% automatizada', sub:'Uma operação que roda sozinha' },
+        titulo:'Operar de forma automática pois não tenho tempo', sub:'Uma operação que roda sozinha' },
       { valor:'comecar', pontos:12,
         titulo:'Iniciar no mercado financeiro sem dinheiro e sem tempo', sub:'Começar mesmo com pouco' },
       { valor:'liberdade', pontos:17,
@@ -769,11 +803,11 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
         dica:'Isso define de onde a sua automação parte.',
         opcoes:[
           { valor:'nunca-operei', pontos:12, titulo:'Nunca operei, mas quero começar já automatizado', sub:'Começar direto no certo',
-            recap:'Você quer <b>começar já automatizado</b>, sem passar anos no manual — é o caminho mais curto e também o mais raro.' },
+            recap:'Você quer <b>começar já automatizado</b>, sem passar anos no manual. É o caminho mais curto e também o mais raro.' },
           { valor:'parei', pontos:14, titulo:'Já operei, mas parei em algum momento', sub:'Voltando ao mercado',
             recap:'Você <b>já operou e parou</b>: o que costuma quebrar não é a estratégia, é o esforço manual que ela exige.' },
           { valor:'as-vezes', pontos:16, titulo:'Opero de vez em quando, no manual', sub:'Sem regularidade',
-            recap:'Você <b>opera no manual de vez em quando</b> — e é justamente a irregularidade que a automação resolve primeiro.' },
+            recap:'Você <b>opera no manual de vez em quando</b>, e é justamente a irregularidade que a automação resolve primeiro.' },
           { valor:'frequente', pontos:20, titulo:'Opero com frequência e quero automatizar o que já faço', sub:'Processo já definido',
             recap:'Você <b>já opera com frequência</b>: tem processo para automatizar, não precisa inventar um do zero.' }
         ]
@@ -784,12 +818,12 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
         dica:'A parte que mais depende de você hoje.',
         opcoes:[
           { valor:'encontrar', pontos:14, titulo:'Encontrar as oportunidades por mim', sub:'Fim da garimpagem',
-            recap:'Você quer que a ferramenta <b>encontre as oportunidades</b> — a parte que mais consome tempo e menos exige você.' },
+            recap:'Você quer que a ferramenta <b>encontre as oportunidades</b>, a parte que mais consome tempo e menos exige você.' },
           { valor:'executar', pontos:16, titulo:'Executar na hora certa, sem eu hesitar', sub:'Sem o peso da decisão',
             recap:'Você quer <b>execução sem hesitação</b>, justamente onde o emocional mais custa caro.' },
           { valor:'risco', pontos:18, titulo:'Controlar o risco automaticamente', sub:'Proteção em primeiro lugar',
-            recap:'Você quer <b>risco controlado automaticamente</b> — a decisão que mais define sobrevivência no longo prazo.' },
-          { valor:'tudo', pontos:20, titulo:'Tudo — quero o processo rodando sozinho', sub:'Operação independente',
+            recap:'Você quer <b>risco controlado automaticamente</b>, a decisão que mais define sobrevivência no longo prazo.' },
+          { valor:'tudo', pontos:20, titulo:'Tudo, quero o processo rodando sozinho', sub:'Operação independente',
             recap:'Você quer o <b>processo inteiro rodando sozinho</b>, sem depender da sua presença.' }
         ]
       }
@@ -800,16 +834,16 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       q2: {
         indice:'Pergunta 02', icone:'#ico-shield',
         titulo:'O que hoje mais te impede de começar?',
-        dica:'Não tem resposta errada — só o ponto de partida.',
+        dica:'Não tem resposta errada. É só o ponto de partida.',
         opcoes:[
           { valor:'capital', pontos:9, titulo:'Não tenho capital sobrando no momento', sub:'O dinheiro é o limite',
-            recap:'Hoje o seu limite é <b>capital</b> — o que significa começar pequeno e crescer com o resultado, nunca com o improviso.' },
+            recap:'Hoje o seu limite é <b>capital</b>, o que significa começar pequeno e crescer com o resultado, nunca com o improviso.' },
           { valor:'tempo', pontos:12, titulo:'Não sobra tempo na minha rotina', sub:'A agenda é o limite',
             recap:'Seu limite é <b>tempo</b>: você precisa de algo que caiba na sua rotina, não de mais uma obrigação nela.' },
           { valor:'caminho', pontos:14, titulo:'Não sei por onde começar', sub:'Falta um caminho claro',
-            recap:'Você trava por <b>falta de um caminho claro</b> — não é informação que falta, é ordem.' },
+            recap:'Você trava por <b>falta de um caminho claro</b>. Não é informação que falta, é ordem.' },
           { valor:'medo', pontos:11, titulo:'Tenho medo de perder o pouco que tenho', sub:'O risco pesa mais',
-            recap:'O que te segura é o <b>medo de perder o pouco que tem</b> — e isso se resolve com risco controlado, não com coragem.' }
+            recap:'O que te segura é o <b>medo de perder o pouco que tem</b>, e isso se resolve com risco controlado, não com coragem.' }
         ]
       },
       q3: {
@@ -837,7 +871,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
         dica:'Escolha o que mais pesa no seu dia a dia.',
         opcoes:[
           { valor:'entradas', pontos:14, titulo:'Perco boas entradas enquanto estou ocupado', sub:'A oportunidade vem na hora errada',
-            recap:'Você perde <b>entradas que passam</b> enquanto está ocupado — é oportunidade indo embora por ausência, não por análise.' },
+            recap:'Você perde <b>entradas que passam</b> enquanto está ocupado. É oportunidade indo embora por ausência, não por análise.' },
           { valor:'saidas', pontos:15, titulo:'Não consigo sair na hora certa', sub:'Cedo demais ou tarde demais',
             recap:'Seu custo está na <b>saída fora de hora</b>: sai cedo do que estava certo e tarde do que estava errado.' },
           { valor:'cabeca', pontos:11, titulo:'Fico checando o gráfico o dia inteiro', sub:'O mercado não sai da cabeça',
@@ -856,7 +890,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
           { valor:'30min-1h', pontos:12, titulo:'30 min a 1 hora', sub:'Uma janela curta e fixa',
             recap:'Com <b>30 min a 1 hora por dia</b>, cada decisão precisa estar definida antes de você abrir o gráfico.' },
           { valor:'1-2h', pontos:16, titulo:'1 a 2 horas', sub:'Dá para pegar o melhor do pregão',
-            recap:'Com <b>1 a 2 horas por dia</b> dá para pegar as melhores janelas — desde que você saiba quais são.' },
+            recap:'Com <b>1 a 2 horas por dia</b> dá para pegar as melhores janelas, desde que você saiba quais são.' },
           { valor:'manha-noite', pontos:11, titulo:'Só consigo olhar de manhã e à noite', sub:'Fora do horário comercial',
             recap:'Olhando <b>só de manhã e à noite</b>, sua operação precisa caber fora do horário de pico.' }
         ]
@@ -871,11 +905,11 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
         dica:'O tamanho da meta muda o caminho.',
         opcoes:[
           { valor:'complementar', pontos:12, titulo:'Uma renda extra para complementar o mês', sub:'Começar somando',
-            recap:'Você busca uma <b>renda que complemente o mês</b> — meta realista e o melhor ponto de partida.' },
+            recap:'Você busca uma <b>renda que complemente o mês</b>. É a meta mais realista e o melhor ponto de partida.' },
           { valor:'substituir', pontos:15, titulo:'Substituir parte da minha renda atual', sub:'Menos dependência',
             recap:'Você quer <b>substituir parte da sua renda atual</b>: isso exige consistência antes de volume.' },
           { valor:'longo-prazo', pontos:18, titulo:'Construir liberdade financeira no longo prazo', sub:'Visão de longo prazo',
-            recap:'Você pensa em <b>liberdade no longo prazo</b> — o horizonte certo para quem quer durar no mercado.' },
+            recap:'Você pensa em <b>liberdade no longo prazo</b>, o horizonte certo para quem quer durar no mercado.' },
           { valor:'viver', pontos:20, titulo:'Viver do mercado um dia', sub:'A meta mais alta',
             recap:'Sua meta é <b>viver do mercado</b>: é possível, mas é o caminho que mais exige processo e menos perdoa improviso.' }
         ]
@@ -888,7 +922,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
           { valor:'nunca', pontos:10, titulo:'Nunca operei', sub:'Partindo do zero',
             recap:'Você <b>nunca operou</b>: a vantagem é começar já no caminho certo, sem nada para desaprender.' },
           { valor:'so-estudei', pontos:13, titulo:'Só estudei, nunca coloquei em prática', sub:'Teoria sem execução',
-            recap:'Você <b>estudou mas nunca executou</b> — e a distância entre saber e fazer é onde quase todo mundo para.' },
+            recap:'Você <b>estudou mas nunca executou</b>, e a distância entre saber e fazer é onde quase todo mundo para.' },
           { valor:'nao-deu-certo', pontos:15, titulo:'Já operei e não deu certo', sub:'Tentou antes',
             recap:'Você <b>já tentou e não deu certo</b>: na maioria das vezes faltou processo, não capacidade.' },
           { valor:'opero-hoje', pontos:19, titulo:'Opero hoje, mas quero melhorar os resultados', sub:'Já está no jogo',
@@ -898,21 +932,37 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     }
   };
   /* ---------- Pergunta 4: fixa, decide o destino do lead ---------- */
-  var PERGUNTA_CAPITAL = {
-    indice:'Pergunta 04 — última', icone:'#ico-bolt',
-    titulo:'Quanto de capital você tem investido?',
-    dica:'Isso define qual estrutura faz sentido para você agora.',
+  /* ---------- Pergunta 4: histórico de investimento ---------- */
+  var PERGUNTA_JA_INVESTIU = {
+    indice:'Pergunta 04', icone:'#ico-shield',
+    titulo:'Você já investiu?',
+    dica:'Isso define de onde a sua operação parte.',
     opcoes:[
-      { valor:'1k-5k', pontos:20, destino:'whats', titulo:'R$ 1.000 a R$ 5.000', sub:'Primeira faixa de capital',
-        recap:'Com <b>R$ 1.000 a R$ 5.000</b> investidos, você já tem base para operar com gestão de risco de verdade.' },
-      { valor:'5k-20k', pontos:25, destino:'whats', titulo:'R$ 5.000 a R$ 20.000', sub:'Capital consolidado',
-        recap:'Com <b>R$ 5.000 a R$ 20.000</b> investidos, cada ponto de eficiência a mais já pesa no resultado do mês.' },
-      { valor:'20k-100k', pontos:30, destino:'whats', titulo:'R$ 20.000 a R$ 100.000', sub:'Patrimônio relevante',
-        recap:'Com <b>R$ 20.000 a R$ 100.000</b> investidos, proteger o que já existe pesa tanto quanto buscar retorno.' },
-      { valor:'mais-100k', pontos:34, destino:'whats', titulo:'Mais de R$ 100.000', sub:'Alto patrimônio',
-        recap:'Com <b>mais de R$ 100.000</b> investidos, o jogo deixa de ser acertar mais e passa a ser errar menos.' },
-      { valor:'sem-capital', pontos:10, destino:'comunidade', titulo:'Não tenho capital investido', sub:'Quero aprender primeiro',
-        recap:'Sem capital investido hoje, o passo certo é <b>construir base</b> — aprender o processo primeiro, capitalizar depois.' }
+      { valor:'nunca-investi', pontos:10, titulo:'Nunca investi, quero começar da forma certa e automática', sub:'Partindo do zero',
+        recap:'Você <b>nunca investiu</b> e quer começar já da forma certa e automática. A vantagem é não ter nada para desaprender.' },
+      { valor:'1k-5k', pontos:18, titulo:'Já investi de 1.000 a 5.000', sub:'Primeira faixa de capital',
+        recap:'Você <b>já investiu de R$ 1.000 a R$ 5.000</b>, então já conhece na prática o que é ver o dinheiro oscilar.' },
+      { valor:'5k-20k', pontos:24, titulo:'Já investi de 5.000 a 20.000', sub:'Capital consolidado',
+        recap:'Você <b>já investiu de R$ 5.000 a R$ 20.000</b>, uma faixa em que cada ponto de eficiência a mais já pesa no resultado.' },
+      { valor:'mais-100k', pontos:30, titulo:'Já investi mais de 100.000', sub:'Alto patrimônio',
+        recap:'Você <b>já investiu mais de R$ 100.000</b>. Nesse patamar, proteger o que existe pesa tanto quanto buscar retorno.' }
+    ]
+  };
+
+  /* ---------- Pergunta 5: a última, é ela que decide o destino ---------- */
+  var PERGUNTA_INICIAR_HOJE = {
+    indice:'Última pergunta', icone:'#ico-bolt',
+    chamada:'Vou liberar gratuitamente esse algoritmo por <b>24 horas</b> para você testar. Me responde a última pergunta:',
+    titulo:'Você teria de R$ 100,00 a R$ 300,00 para iniciar hoje?',
+    dica:'Esse valor fica na sua conta e você pode sacar a qualquer momento.',
+    aviso:'Como o algoritmo é liberado de forma gratuita, você precisa ter algum valor na sua conta para que a Trading Pro opere nela de forma automática. Por isso perguntamos se você tem qualquer valor acima de R$ 100,00 para iniciar. Esse valor fica na sua conta e você pode sacar a qualquer momento. Operamos em corretoras com mais de 10 anos de mercado e segurança.',
+    opcoes:[
+      { valor:'100-300', pontos:20, destino:'whats', titulo:'Sim, tenho de R$ 100,00 a R$ 300,00', sub:'Pronto para iniciar hoje',
+        recap:'Você tem <b>de R$ 100,00 a R$ 300,00</b> disponíveis, o suficiente para liberar o algoritmo e começar hoje.' },
+      { valor:'500-1000', pontos:26, destino:'whats', titulo:'Sim, tenho de R$ 500,00 a R$ 1.000,00', sub:'Margem maior para operar',
+        recap:'Você tem <b>de R$ 500,00 a R$ 1.000,00</b> disponíveis, margem confortável para o algoritmo trabalhar desde o primeiro dia.' },
+      { valor:'sem-capital', pontos:8, destino:'comunidade', titulo:'Não tenho nenhum investimento', sub:'Quero aprender primeiro',
+        recap:'Sem valor disponível agora, o passo certo é <b>construir base</b>: aprender o processo primeiro e capitalizar depois.' }
     ]
   };
 
@@ -921,27 +971,27 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     'automacao': {
       nome:'Movido por <em>Automação</em>',
       gargalo:'Operação que ainda depende de você o tempo todo',
-      resumo:'O que te chamou atenção foi a automação — e isso diz muito sobre você. Não está atrás de mais um curso nem de mais um sinal: quer um <strong>processo que funcione sem depender da sua presença</strong>. Esse é o raciocínio de quem pensa em escala, não em sorte.'
+      resumo:'O que te chamou atenção foi a automação, e isso diz muito sobre você. Não está atrás de mais um curso nem de mais um sinal: quer um <strong>processo que funcione sem depender da sua presença</strong>. Esse é o raciocínio de quem pensa em escala, não em sorte.'
     },
     'comecar': {
       nome:'Começando <em>do Zero Absoluto</em>',
       gargalo:'Falta de tempo e de capital para dar o primeiro passo',
-      resumo:'O que te chamou atenção foi poder começar <strong>sem muito dinheiro e sem muito tempo</strong> — exatamente a barreira que trava a maioria. A verdade é que o capital inicial pesa menos do que o processo: quem começa pequeno e organizado chega mais longe do que quem começa grande e no escuro.'
+      resumo:'O que te chamou atenção foi poder começar <strong>sem muito dinheiro e sem muito tempo</strong>, exatamente a barreira que trava a maioria. A verdade é que o capital inicial pesa menos do que o processo: quem começa pequeno e organizado chega mais longe do que quem começa grande e no escuro.'
     },
     'liberdade': {
       nome:'Em busca de <em>Liberdade Operacional</em>',
       gargalo:'Resultado preso ao tempo de tela',
-      resumo:'O que te chamou atenção foi <strong>não precisar viver olhando o gráfico</strong>. Faz sentido: o mercado abre no mesmo horário em que a vida acontece. Quem depende de estar na tela não tem uma operação, tem um segundo emprego — e é essa troca que dá para desfazer.'
+      resumo:'O que te chamou atenção foi <strong>não precisar viver olhando o gráfico</strong>. Faz sentido: o mercado abre no mesmo horário em que a vida acontece. Quem depende de estar na tela não tem uma operação, tem um segundo emprego, e é essa troca que dá para desfazer.'
     },
     'renda': {
       nome:'Construindo <em>uma Nova Fonte de Renda</em>',
       gargalo:'Depender de uma única fonte de renda',
-      resumo:'O que te chamou atenção foi <strong>construir uma nova fonte de renda</strong> — a motivação mais honesta que existe. Só que renda extra não nasce de sorte nem de palpite: ela vem de um processo que você consegue repetir mesmo nos dias em que a vontade não aparece.'
+      resumo:'O que te chamou atenção foi <strong>construir uma nova fonte de renda</strong>, a motivação mais honesta que existe. Só que renda extra não nasce de sorte nem de palpite: ela vem de um processo que você consegue repetir mesmo nos dias em que a vontade não aparece.'
     }
   };
 
   /* ========================= ESTADO ========================= */
-  var TOTAL_PERGUNTAS = 4;
+  var TOTAL_PERGUNTAS = 5;
   var perguntas = [PERGUNTA_1];   // a trilha completa é montada após a pergunta 1
   var respostas = [];             // respostas[i] corresponde a perguntas[i]
   var passo = 0;
@@ -1056,12 +1106,19 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
            + '</button>';
     }).join('');
 
+    var chamada = p.chamada ? '<span class="q-chamada">' + p.chamada + '</span>' : '';
+    var aviso = p.aviso
+      ? '<div class="q-aviso"><svg><use href="#ico-shield"/></svg><span>' + p.aviso + '</span></div>'
+      : '';
+
     caixa.innerHTML =
       '<div class="stagger">'
       +  '<span class="q-index">' + p.indice + '</span>'
+      +  chamada
       +  '<h2 class="q-title">' + p.titulo + '</h2>'
       +  '<p class="q-hint">' + p.dica + '</p>'
       +  '<div class="options' + (p.layout ? ' ' + p.layout : '') + '">' + opcoes + '</div>'
+      +  aviso
       +  '<button class="btn-ghost back-btn" type="button"><svg><use href="#ico-back"/></svg> Voltar</button>'
       + '</div>';
   }
@@ -1074,7 +1131,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
   function montarTrilha(perfil){
     var trilha = TRILHAS[perfil];
     var mudou = perguntas[1] !== trilha.q2;
-    perguntas = [PERGUNTA_1, trilha.q2, trilha.q3, PERGUNTA_CAPITAL];
+    perguntas = [PERGUNTA_1, trilha.q2, trilha.q3, PERGUNTA_JA_INVESTIU, PERGUNTA_INICIAR_HOJE];
     // trocou de perfil: as respostas das ramificações não valem mais
     if (mudou) respostas.length = 1;
   }
@@ -1190,7 +1247,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
   /* ========================= RESULTADO ========================= */
   // soma máxima possível da trilha mais "cara" (usada só para normalizar o score)
-  var PONTOS_MAX = 94;
+  var PONTOS_MAX = 116;
 
   function calcularScore(){
     var bruto = 0;
@@ -1201,8 +1258,8 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
   function montarResultado(){
     var perfil  = PERFIS[respostas[0].valor];
-    var capital = respostas[3];
-    var destino = (capital && capital.destino) || 'comunidade';
+    var ultima  = respostas[4];
+    var destino = (ultima && ultima.destino) || 'comunidade';
     var temCapital = destino === 'whats';
     var score = calcularScore();
 
@@ -1211,8 +1268,8 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     $('#badgeText').textContent  = 'Diagnóstico concluído';
 
     var fecho = temCapital
-      ? '<br><br>Com o capital que você indicou, o próximo passo é <strong>montar sua estrutura junto com um especialista</strong> — no seu ritmo e com o seu tempo disponível.'
-      : '<br><br>Como você ainda não tem capital investido, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
+      ? '<br><br>Como você tem valor disponível para iniciar hoje, o próximo passo é <strong>liberar o algoritmo junto com um especialista</strong>, no seu ritmo e com o seu tempo disponível.'
+      : '<br><br>Como você ainda não tem valor disponível para iniciar, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
     $('#profileText').innerHTML = perfil.resumo + fecho;
 
     // contador animado
@@ -1236,21 +1293,26 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       return '<div class="recap-row"><svg><use href="' + l.icone + '"/></svg><span>' + l.txt + '</span></div>';
     }).join('');
 
-    // CTA
-    var cta      = $('#ctaBtn');
-    var ctaIcone = $('#ctaIcon').querySelector('use');
-
+    // CTA: o mesmo destino no botão do topo e no do fim
+    var destinoUrl, textoCta, iconeCta, escassez;
     if (temCapital){
-      cta.href = montarLink(CONFIG.redirectWhats);
-      $('#ctaText').textContent = 'FALAR COM UM ESPECIALISTA';
-      ctaIcone.setAttribute('href', '#ico-whats');
-      $('#scarcityText').textContent = 'Atendimento liberado agora no WhatsApp';
+      destinoUrl = montarLink(CONFIG.redirectWhats);
+      textoCta   = 'FALAR COM UM ESPECIALISTA';
+      iconeCta   = '#ico-whats';
+      escassez   = 'Liberação gratuita do algoritmo por 24 horas';
     } else {
-      cta.href = montarLink(CONFIG.redirectComunidade);
-      $('#ctaText').textContent = 'ENTRAR NA COMUNIDADE GRATUITA';
-      ctaIcone.setAttribute('href', '#ico-users');
-      $('#scarcityText').textContent = 'Acesso gratuito — entrada imediata';
+      destinoUrl = montarLink(CONFIG.redirectComunidade);
+      textoCta   = 'ENTRAR NA COMUNIDADE GRATUITA';
+      iconeCta   = '#ico-users';
+      escassez   = 'Acesso gratuito, entrada imediata';
     }
+    $$('.cta-link').forEach(function(a){
+      a.href = destinoUrl;
+      $('.cta-texto', a).textContent = textoCta;
+      $('.cta-icone use', a).setAttribute('href', iconeCta);
+    });
+    $$('.scarcity-texto').forEach(function(e){ e.textContent = escassez; });
+    var cta = $('.cta-link');
 
     rastrear('quiz_finalizado', {
       destino: destino,
@@ -1259,7 +1321,8 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       desafio: respostas[0].valor,
       resposta_2: respostas[1] ? respostas[1].valor : null,
       resposta_3: respostas[2] ? respostas[2].valor : null,
-      capital: capital ? capital.valor : null
+      ja_investiu: respostas[3] ? respostas[3].valor : null,
+      valor_hoje: ultima ? ultima.valor : null
     });
 
     if (CONFIG.autoRedirectSegundos > 0){
@@ -1267,8 +1330,9 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     }
   }
 
-  $('#ctaBtn').addEventListener('click', function(ev){
-    var destino = (respostas[3] && respostas[3].destino) || 'comunidade';
+  $$('.cta-link').forEach(function(botaoCta){
+  botaoCta.addEventListener('click', function(ev){
+    var destino = (respostas[4] && respostas[4].destino) || 'comunidade';
     rastrear('quiz_cta_clique', {
       destino: destino,
       perfil: respostas[0] ? respostas[0].valor : null
@@ -1292,6 +1356,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       window.location.href = url;
     };
     window.setTimeout(seguir, CONFIG.esperaPixelMs);
+  });
   });
 
 
