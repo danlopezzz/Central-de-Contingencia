@@ -29,24 +29,28 @@ São sempre 4 perguntas, mas só duas são iguais para todo mundo:
 
 | # | Pergunta | Varia? |
 | - | -------- | ------ |
-| 1 | Qual é o seu maior desafio hoje para ter uma rotina melhor no mercado? | Fixa — é ela que define a trilha |
-| 2 | Aprofunda o desafio escolhido | **Muda conforme o perfil** |
-| 3 | Mede o contexto do perfil (tempo, organização, tentativas anteriores…) | **Muda conforme o perfil** |
+| 1 | O que mais te chamou atenção no anúncio? | Fixa — é ela que define a trilha |
+| 2 | Aprofunda o desejo que trouxe a pessoa | **Muda conforme a trilha** |
+| 3 | Mede o contexto real (tempo, experiência, meta…) | **Muda conforme a trilha** |
 | 4 | Quanto de capital você pretende investir? | Fixa — é ela que decide o destino |
 
-As 5 trilhas, conforme a resposta da pergunta 1:
+A pergunta 1 não pergunta a dor: pergunta o **desejo que fez a pessoa clicar**.
+Por isso ela funciona para qualquer público que o anúncio traga, do leigo ao
+trader experiente — todo mundo sabe responder o que chamou a sua atenção. É a
+pergunta 2 que desce ao nível de quem a pessoa é de fato.
 
-| Resposta da pergunta 1 | Perfil no resultado | Pergunta 2 | Pergunta 3 |
-| ---------------------- | ------------------- | ---------- | ---------- |
-| Não sei por onde começar | Iniciante com Potencial Real | O que mais te trava no primeiro passo | Tempo disponível para aprender |
-| O mercado toma tempo demais | Trader Sufocado pelo Tempo | O que você mais perde por não acompanhar | Janela real por dia |
-| Dificuldade de ser consistente | Trader Inconsistente | O que acontece quando o resultado escapa | Acompanha os resultados? |
-| Quero automatizar | Pronto para Automatizar | Que parte quer tirar do manual | Já tentou automatizar antes? |
-| Já opero bem, quero eficiência | Operador Pronto para Escalar | O que limita a sua escala | Tempo de tela que a operação exige |
+As 4 trilhas, conforme a resposta da pergunta 1:
+
+| Respondeu na pergunta 1 | Perfil no resultado | Pergunta 2 | Pergunta 3 |
+| ----------------------- | ------------------- | ---------- | ---------- |
+| Ferramenta 100% automatizada | Movido por Automação | Como está sua relação com o mercado hoje | O que quer que a ferramenta resolva |
+| Iniciar sem dinheiro e sem tempo | Começando do Zero Absoluto | O que mais te impede de começar | Tempo que conseguiria reservar |
+| Operar sem olhar o mercado sempre | Em busca de Liberdade Operacional | O que te atrapalha por não acompanhar | Janela real por dia |
+| Conquistar uma nova fonte de renda | Construindo uma Nova Fonte de Renda | O que espera dessa renda | Já teve experiência no mercado |
 
 Cada alternativa das perguntas 2 e 3 carrega o próprio texto de resultado, então o
 diagnóstico final é montado com as palavras da trilha que a pessoa percorreu — não
-com um texto genérico. São **80 combinações de diagnóstico** (5 trilhas × 4 × 4).
+com um texto genérico. São **64 combinações de diagnóstico** (4 trilhas × 4 × 4).
 
 ## Regra de roteamento do lead
 

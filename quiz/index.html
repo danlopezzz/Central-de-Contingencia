@@ -639,8 +639,8 @@ h1 .hl{
         <h2>Analisando suas respostas...</h2>
         <p>Cruzando seu perfil com os melhores caminhos disponíveis</p>
         <div class="checklist" id="checklist">
-          <div class="check-item" data-i="0"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Lendo seu nível de experiência</div>
-          <div class="check-item" data-i="1"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Ajustando à sua rotina diária</div>
+          <div class="check-item" data-i="0"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Lendo o que mais chamou sua atenção</div>
+          <div class="check-item" data-i="1"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Cruzando com o seu momento atual</div>
           <div class="check-item" data-i="2"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Identificando seu principal gargalo</div>
           <div class="check-item" data-i="3"><span class="check-box"><svg><use href="#ico-check"/></svg></span> Definindo a estrutura ideal</div>
         </div>
@@ -720,74 +720,105 @@ h1 .hl{
 
   var PERGUNTA_1 = {
     indice: 'Pergunta 01',
-    titulo: 'Qual é o seu maior desafio hoje para ter uma rotina melhor no mercado?',
-    dica: 'Escolha a que mais parece com o seu momento.',
-    layout: 'tall',
+    titulo: 'O que mais te chamou atenção no anúncio?',
+    dica: 'Escolha o que mais pesou na hora de você clicar.',
     icone: '#ico-target',
     opcoes: [
+      { valor:'automacao', pontos:20,
+        titulo:'Ferramenta 100% automatizada', sub:'Uma operação que roda sozinha' },
       { valor:'comecar', pontos:12,
-        titulo:'Não sei por onde começar e ainda não me sinto preparado para operar' },
-      { valor:'tempo', pontos:15,
-        titulo:'O mercado toma tempo demais e preciso ficar acompanhando tudo de perto' },
-      { valor:'consistencia', pontos:17,
-        titulo:'Tenho dificuldade para manter uma operação consistente e organizada' },
-      { valor:'automatizar', pontos:20,
-        titulo:'Quero reduzir minha dependência do acompanhamento manual e automatizar minha operação' },
-      { valor:'eficiencia', pontos:22,
-        titulo:'Já opero bem, mas quero mais eficiência, liberdade e controle sobre minha rotina' }
+        titulo:'Iniciar no mercado financeiro sem dinheiro e sem tempo', sub:'Começar mesmo com pouco' },
+      { valor:'liberdade', pontos:17,
+        titulo:'Operar sem precisar olhar para o mercado sempre', sub:'Liberdade na rotina' },
+      { valor:'renda', pontos:15,
+        titulo:'Conquistar uma nova fonte de renda', sub:'Uma renda além da atual' }
     ]
   };
 
   var TRILHAS = {
 
-    /* ---------- A: não sabe por onde começar ---------- */
-    'comecar': {
+    /* ---------- A: ferramenta 100% automatizada ---------- */
+    'automacao': {
       q2: {
         indice:'Pergunta 02', icone:'#ico-shield',
-        titulo:'O que mais te trava na hora de dar o primeiro passo?',
-        dica:'Aqui não tem resposta errada — só o ponto de partida.',
+        titulo:'Hoje, como está a sua relação com o mercado?',
+        dica:'Isso define de onde a sua automação parte.',
         opcoes:[
-          { valor:'medo', pontos:8, titulo:'Medo de perder dinheiro logo no começo', sub:'O risco pesa mais que a vontade',
-            recap:'O que te trava é o <b>medo de perder no começo</b> — e isso se resolve com risco controlado, não com coragem.' },
-          { valor:'informacao', pontos:12, titulo:'Excesso de informação e nenhuma ordem clara', sub:'Muito conteúdo, nenhum caminho',
-            recap:'Você não sofre de falta de informação, e sim de <b>excesso sem ordem</b>. O que falta é sequência.' },
-          { valor:'ferramentas', pontos:14, titulo:'Não saber quais ferramentas usar', sub:'Trava antes mesmo de abrir o gráfico',
-            recap:'Seu bloqueio é <b>operacional</b>: saber qual ferramenta usar já resolve boa parte do problema.' },
-          { valor:'parei', pontos:16, titulo:'Já tentei antes e parei no meio do caminho', sub:'Não é a primeira tentativa',
-            recap:'Você <b>já tentou antes e parou</b> — o que faltou não foi vontade, foi estrutura para continuar.' }
+          { valor:'nunca-operei', pontos:12, titulo:'Nunca operei, mas quero começar já automatizado', sub:'Começar direto no certo',
+            recap:'Você quer <b>começar já automatizado</b>, sem passar anos no manual — é o caminho mais curto e também o mais raro.' },
+          { valor:'parei', pontos:14, titulo:'Já operei, mas parei em algum momento', sub:'Voltando ao mercado',
+            recap:'Você <b>já operou e parou</b>: o que costuma quebrar não é a estratégia, é o esforço manual que ela exige.' },
+          { valor:'as-vezes', pontos:16, titulo:'Opero de vez em quando, no manual', sub:'Sem regularidade',
+            recap:'Você <b>opera no manual de vez em quando</b> — e é justamente a irregularidade que a automação resolve primeiro.' },
+          { valor:'frequente', pontos:20, titulo:'Opero com frequência e quero automatizar o que já faço', sub:'Processo já definido',
+            recap:'Você <b>já opera com frequência</b>: tem processo para automatizar, não precisa inventar um do zero.' }
         ]
       },
       q3: {
-        indice:'Pergunta 03', icone:'#ico-clock',
-        titulo:'Quanto tempo você conseguiria dedicar por dia para aprender e operar?',
-        dica:'Seja realista com a sua rotina de hoje.',
+        indice:'Pergunta 03', icone:'#ico-bolt',
+        titulo:'O que você mais quer que a ferramenta resolva?',
+        dica:'A parte que mais depende de você hoje.',
         opcoes:[
-          { valor:'30min-1h', pontos:10, titulo:'30 min a 1 hora', sub:'Janela curta, precisa ser objetiva',
-            recap:'Com <b>menos de 1 hora por dia</b>, cada passo precisa ser direto ao ponto.' },
-          { valor:'1-2h', pontos:14, titulo:'1 a 2 horas', sub:'Dá para evoluir rápido',
-            recap:'Com <b>1 a 2 horas por dia</b> dá para evoluir rápido sem virar sua rotina de cabeça para baixo.' },
-          { valor:'3-4h', pontos:17, titulo:'3 a 4 horas', sub:'Tempo de sobra para praticar',
-            recap:'Com <b>3 a 4 horas por dia</b> você tem folga para praticar e absorver o processo.' },
-          { valor:'dia-inteiro', pontos:20, titulo:'Dia inteiro', sub:'Dedicação total',
-            recap:'Com o <b>dia inteiro disponível</b>, seu limitante deixa de ser tempo e passa a ser método.' }
+          { valor:'encontrar', pontos:14, titulo:'Encontrar as oportunidades por mim', sub:'Fim da garimpagem',
+            recap:'Você quer que a ferramenta <b>encontre as oportunidades</b> — a parte que mais consome tempo e menos exige você.' },
+          { valor:'executar', pontos:16, titulo:'Executar na hora certa, sem eu hesitar', sub:'Sem o peso da decisão',
+            recap:'Você quer <b>execução sem hesitação</b>, justamente onde o emocional mais custa caro.' },
+          { valor:'risco', pontos:18, titulo:'Controlar o risco automaticamente', sub:'Proteção em primeiro lugar',
+            recap:'Você quer <b>risco controlado automaticamente</b> — a decisão que mais define sobrevivência no longo prazo.' },
+          { valor:'tudo', pontos:20, titulo:'Tudo — quero o processo rodando sozinho', sub:'Operação independente',
+            recap:'Você quer o <b>processo inteiro rodando sozinho</b>, sem depender da sua presença.' }
         ]
       }
     },
 
-    /* ---------- B: o mercado toma tempo demais ---------- */
-    'tempo': {
+    /* ---------- B: começar sem dinheiro e sem tempo ---------- */
+    'comecar': {
+      q2: {
+        indice:'Pergunta 02', icone:'#ico-shield',
+        titulo:'O que hoje mais te impede de começar?',
+        dica:'Não tem resposta errada — só o ponto de partida.',
+        opcoes:[
+          { valor:'capital', pontos:9, titulo:'Não tenho capital sobrando no momento', sub:'O dinheiro é o limite',
+            recap:'Hoje o seu limite é <b>capital</b> — o que significa começar pequeno e crescer com o resultado, nunca com o improviso.' },
+          { valor:'tempo', pontos:12, titulo:'Não sobra tempo na minha rotina', sub:'A agenda é o limite',
+            recap:'Seu limite é <b>tempo</b>: você precisa de algo que caiba na sua rotina, não de mais uma obrigação nela.' },
+          { valor:'caminho', pontos:14, titulo:'Não sei por onde começar', sub:'Falta um caminho claro',
+            recap:'Você trava por <b>falta de um caminho claro</b> — não é informação que falta, é ordem.' },
+          { valor:'medo', pontos:11, titulo:'Tenho medo de perder o pouco que tenho', sub:'O risco pesa mais',
+            recap:'O que te segura é o <b>medo de perder o pouco que tem</b> — e isso se resolve com risco controlado, não com coragem.' }
+        ]
+      },
+      q3: {
+        indice:'Pergunta 03', icone:'#ico-clock',
+        titulo:'Quanto tempo por dia você conseguiria reservar?',
+        dica:'Seja realista com a rotina que você tem hoje.',
+        opcoes:[
+          { valor:'menos-30min', pontos:8, titulo:'Menos de 30 minutos', sub:'A rotina está cheia',
+            recap:'Com <b>menos de 30 minutos por dia</b>, só faz sentido um processo que trabalhe sem você na tela.' },
+          { valor:'30min-1h', pontos:12, titulo:'30 min a 1 hora', sub:'Uma janela curta e fixa',
+            recap:'Com <b>30 min a 1 hora por dia</b> dá para começar, desde que cada passo seja direto ao ponto.' },
+          { valor:'1-2h', pontos:16, titulo:'1 a 2 horas', sub:'Dá para evoluir rápido',
+            recap:'Com <b>1 a 2 horas por dia</b> dá para evoluir rápido sem virar sua rotina de cabeça para baixo.' },
+          { valor:'mais-2h', pontos:19, titulo:'Mais de 2 horas', sub:'Tempo é o que não falta',
+            recap:'Com <b>mais de 2 horas por dia</b>, seu limitante deixa de ser tempo e passa a ser método.' }
+        ]
+      }
+    },
+
+    /* ---------- C: operar sem viver olhando o mercado ---------- */
+    'liberdade': {
       q2: {
         indice:'Pergunta 02', icone:'#ico-bolt',
-        titulo:'O que você mais perde por não conseguir acompanhar o mercado de perto?',
-        dica:'Escolha o que mais dói no seu dia a dia.',
+        titulo:'O que mais te atrapalha por não conseguir acompanhar o mercado?',
+        dica:'Escolha o que mais pesa no seu dia a dia.',
         opcoes:[
-          { valor:'entradas', pontos:12, titulo:'Entradas boas que passam enquanto estou ocupado', sub:'A oportunidade vem na hora errada',
+          { valor:'entradas', pontos:14, titulo:'Perco boas entradas enquanto estou ocupado', sub:'A oportunidade vem na hora errada',
             recap:'Você perde <b>entradas que passam</b> enquanto está ocupado — é oportunidade indo embora por ausência, não por análise.' },
-          { valor:'saidas', pontos:14, titulo:'A hora certa de sair da operação', sub:'Cedo demais ou tarde demais',
+          { valor:'saidas', pontos:15, titulo:'Não consigo sair na hora certa', sub:'Cedo demais ou tarde demais',
             recap:'Seu custo está na <b>saída fora de hora</b>: sai cedo do que estava certo e tarde do que estava errado.' },
-          { valor:'cabeca', pontos:10, titulo:'Tranquilidade — fico checando o gráfico o dia todo', sub:'O mercado não sai da cabeça',
-            recap:'O preço que você paga é <b>mental</b>: o gráfico te acompanha mesmo longe da tela.' },
-          { valor:'consistencia', pontos:16, titulo:'Consistência — só opero quando sobra tempo', sub:'Resultado depende da agenda',
+          { valor:'cabeca', pontos:11, titulo:'Fico checando o gráfico o dia inteiro', sub:'O mercado não sai da cabeça',
+            recap:'O preço que você paga é <b>mental</b>: o gráfico te acompanha mesmo quando você está longe da tela.' },
+          { valor:'sobra-tempo', pontos:17, titulo:'Só opero quando sobra tempo', sub:'Resultado depende da agenda',
             recap:'Você opera <b>só quando sobra tempo</b>, e resultado que depende de sobra na agenda não se repete.' }
         ]
       },
@@ -797,7 +828,7 @@ h1 .hl{
         dica:'O tempo que existe de verdade, não o ideal.',
         opcoes:[
           { valor:'menos-30min', pontos:8, titulo:'Menos de 30 minutos', sub:'A agenda está no limite',
-            recap:'Com <b>menos de 30 minutos por dia</b>, só faz sentido um processo que trabalhe sem você na tela.' },
+            recap:'Com <b>menos de 30 minutos por dia</b>, sua operação precisa funcionar sem você na tela.' },
           { valor:'30min-1h', pontos:12, titulo:'30 min a 1 hora', sub:'Uma janela curta e fixa',
             recap:'Com <b>30 min a 1 hora por dia</b>, cada decisão precisa estar definida antes de você abrir o gráfico.' },
           { valor:'1-2h', pontos:16, titulo:'1 a 2 horas', sub:'Dá para pegar o melhor do pregão',
@@ -808,109 +839,40 @@ h1 .hl{
       }
     },
 
-    /* ---------- C: falta consistência ---------- */
-    'consistencia': {
+    /* ---------- D: nova fonte de renda ---------- */
+    'renda': {
       q2: {
-        indice:'Pergunta 02', icone:'#ico-bolt',
-        titulo:'Quando o resultado escapa, o que costuma acontecer?',
-        dica:'Seja honesto — é aqui que mora o padrão.',
+        indice:'Pergunta 02', icone:'#ico-target',
+        titulo:'O que você espera dessa nova fonte de renda?',
+        dica:'O tamanho da meta muda o caminho.',
         opcoes:[
-          { valor:'dobrar', pontos:9, titulo:'Aumento o risco para recuperar o prejuízo', sub:'Tentativa de virar o dia',
-            recap:'Você <b>aumenta o risco para recuperar</b> — é o movimento que mais transforma um dia ruim em um mês ruim.' },
-          { valor:'sair-cedo', pontos:13, titulo:'Saio cedo das operações que estavam dando certo', sub:'Lucro pequeno, prejuízo inteiro',
-            recap:'Você <b>corta cedo o que estava certo</b>: os acertos não pagam os erros porque não duram o suficiente.' },
-          { valor:'trocar', pontos:11, titulo:'Mudo de estratégia toda vez que tomo um stop', sub:'Recomeça do zero direto',
-            recap:'Você <b>troca de estratégia a cada stop</b>, e assim nenhuma chega a ser testada de verdade.' },
-          { valor:'fora-do-plano', pontos:15, titulo:'Opero fora do plano quando o dia está devagar', sub:'Entra por tédio, não por sinal',
-            recap:'Seu furo é o <b>trade fora do plano</b> em dia parado — tédio custa caro no mercado.' }
+          { valor:'complementar', pontos:12, titulo:'Uma renda extra para complementar o mês', sub:'Começar somando',
+            recap:'Você busca uma <b>renda que complemente o mês</b> — meta realista e o melhor ponto de partida.' },
+          { valor:'substituir', pontos:15, titulo:'Substituir parte da minha renda atual', sub:'Menos dependência',
+            recap:'Você quer <b>substituir parte da sua renda atual</b>: isso exige consistência antes de volume.' },
+          { valor:'longo-prazo', pontos:18, titulo:'Construir liberdade financeira no longo prazo', sub:'Visão de longo prazo',
+            recap:'Você pensa em <b>liberdade no longo prazo</b> — o horizonte certo para quem quer durar no mercado.' },
+          { valor:'viver', pontos:20, titulo:'Viver do mercado um dia', sub:'A meta mais alta',
+            recap:'Sua meta é <b>viver do mercado</b>: é possível, mas é o caminho que mais exige processo e menos perdoa improviso.' }
         ]
       },
       q3: {
         indice:'Pergunta 03', icone:'#ico-shield',
-        titulo:'Você acompanha seus resultados de forma organizada?',
-        dica:'O que não se mede não se corrige.',
+        titulo:'Você já teve alguma experiência no mercado?',
+        dica:'Saber de onde você parte encurta o caminho.',
         opcoes:[
-          { valor:'nada', pontos:8, titulo:'Não anoto nada', sub:'Vai pela memória',
-            recap:'Sem <b>registro nenhum</b>, não dá para saber o que funciona — e o que não se mede não se corrige.' },
-          { valor:'as-vezes', pontos:12, titulo:'Anoto às vezes, sem um padrão', sub:'Registro incompleto',
-            recap:'Você anota <b>às vezes</b>, o que gera um retrato incompleto e fácil de interpretar errado.' },
-          { valor:'planilha', pontos:16, titulo:'Tenho planilha, mas quase não reviso', sub:'O dado existe, parado',
-            recap:'Você tem <b>planilha mas não revisa</b>: o dado existe, só não vira decisão.' },
-          { valor:'acompanho', pontos:20, titulo:'Sim, acompanho de perto', sub:'Números na ponta do lápis',
-            recap:'Você <b>já acompanha seus números de perto</b>: é a base pronta para ganhar consistência.' }
-        ]
-      }
-    },
-
-    /* ---------- D: quer automatizar ---------- */
-    'automatizar': {
-      q2: {
-        indice:'Pergunta 02', icone:'#ico-bolt',
-        titulo:'Qual parte da sua operação você mais quer tirar do manual?',
-        dica:'Onde o processo mais depende de você hoje.',
-        opcoes:[
-          { valor:'monitorar', pontos:14, titulo:'Monitorar o mercado e achar as oportunidades', sub:'A parte que mais consome tempo',
-            recap:'Você quer tirar do manual o <b>monitoramento</b> — a parte que mais consome tempo e menos exige você.' },
-          { valor:'executar', pontos:16, titulo:'Executar entradas e saídas na hora certa', sub:'Onde o emocional entra',
-            recap:'Você quer automatizar a <b>execução</b>, justamente onde o emocional mais atrapalha.' },
-          { valor:'risco', pontos:18, titulo:'Gestão de risco e tamanho de posição', sub:'A decisão que define o longo prazo',
-            recap:'Você quer automatizar a <b>gestão de risco</b> — a decisão que mais define a sua sobrevivência no longo prazo.' },
-          { valor:'tudo', pontos:20, titulo:'Tudo — quero o processo rodando sozinho', sub:'Operação independente da presença',
-            recap:'Você quer o <b>processo inteiro rodando sozinho</b>, sem depender da sua presença.' }
-        ]
-      },
-      q3: {
-        indice:'Pergunta 03', icone:'#ico-shield',
-        titulo:'Você já tentou automatizar antes?',
-        dica:'Saber o que já foi tentado encurta o caminho.',
-        opcoes:[
-          { valor:'nunca', pontos:10, titulo:'Nunca tentei', sub:'Primeira automação',
-            recap:'É sua <b>primeira automação</b>: a vantagem é começar já no caminho certo, sem desaprender nada.' },
-          { valor:'robo-pronto', pontos:13, titulo:'Testei robôs prontos e não funcionou', sub:'Comprou pronto, não engatou',
-            recap:'Você já <b>testou robô pronto e não funcionou</b> — em geral o problema é usar sem entender o critério por trás.' },
-          { valor:'tentei-montar', pontos:16, titulo:'Tentei montar o meu e faltou conhecimento técnico', sub:'A estratégia existia',
-            recap:'Você <b>tentou montar o seu</b> e esbarrou na parte técnica: a estratégia existia, faltou a ponte.' },
-          { valor:'ja-rodando', pontos:20, titulo:'Já tenho algo rodando e quero melhorar', sub:'Refinar, não começar',
-            recap:'Você <b>já tem algo rodando</b>: agora é questão de refinar, não de começar do zero.' }
-        ]
-      }
-    },
-
-    /* ---------- E: já opera bem, quer eficiência ---------- */
-    'eficiencia': {
-      q2: {
-        indice:'Pergunta 02', icone:'#ico-bolt',
-        titulo:'O que mais limita a sua escala hoje?',
-        dica:'O teto que você já sente na prática.',
-        opcoes:[
-          { valor:'presenca', pontos:14, titulo:'Dependo de estar na frente da tela', sub:'O resultado exige presença',
-            recap:'Sua escala esbarra na <b>presença</b>: o resultado só acontece quando você está lá.' },
-          { valor:'emocional', pontos:12, titulo:'O emocional pesa em posições maiores', sub:'O método aguenta, a cabeça ainda não',
-            recap:'O que limita você é o <b>emocional em posição maior</b> — o método aguenta, a cabeça ainda não.' },
-          { valor:'processo', pontos:16, titulo:'Falta um processo replicável', sub:'Está tudo na cabeça',
-            recap:'Falta <b>processo replicável</b>: o que você faz bem ainda mora na sua cabeça, não num sistema.' },
-          { valor:'uma-por-vez', pontos:20, titulo:'Não consigo rodar mais de uma estratégia ao mesmo tempo', sub:'Teto operacional',
-            recap:'Você já <b>esbarra no limite de rodar uma estratégia por vez</b> — é teto operacional, não de conhecimento.' }
-        ]
-      },
-      q3: {
-        indice:'Pergunta 03', icone:'#ico-clock',
-        titulo:'Quanto tempo de tela a sua operação exige hoje?',
-        dica:'O custo real da sua rotina atual.',
-        opcoes:[
-          { valor:'menos-1h', pontos:18, titulo:'Menos de 1 hora', sub:'Operação enxuta',
-            recap:'Sua operação já cabe em <b>menos de 1 hora</b>: é eficiência que só falta escalar.' },
-          { valor:'1-2h', pontos:16, titulo:'1 a 2 horas', sub:'Margem para crescer',
-            recap:'Com <b>1 a 2 horas de tela</b>, você tem margem para crescer sem tomar o dia inteiro.' },
-          { valor:'3-4h', pontos:12, titulo:'3 a 4 horas', sub:'Custo alto de rotina',
-            recap:'<b>3 a 4 horas de tela por dia</b> é um custo alto de manter no longo prazo.' },
-          { valor:'dia-inteiro', pontos:9, titulo:'Praticamente o dia inteiro', sub:'A tela virou o trabalho',
-            recap:'Operar <b>praticamente o dia inteiro</b> é o oposto da liberdade que você está buscando.' }
+          { valor:'nunca', pontos:10, titulo:'Nunca operei', sub:'Partindo do zero',
+            recap:'Você <b>nunca operou</b>: a vantagem é começar já no caminho certo, sem nada para desaprender.' },
+          { valor:'so-estudei', pontos:13, titulo:'Só estudei, nunca coloquei em prática', sub:'Teoria sem execução',
+            recap:'Você <b>estudou mas nunca executou</b> — e a distância entre saber e fazer é onde quase todo mundo para.' },
+          { valor:'nao-deu-certo', pontos:15, titulo:'Já operei e não deu certo', sub:'Tentou antes',
+            recap:'Você <b>já tentou e não deu certo</b>: na maioria das vezes faltou processo, não capacidade.' },
+          { valor:'opero-hoje', pontos:19, titulo:'Opero hoje, mas quero melhorar os resultados', sub:'Já está no jogo',
+            recap:'Você <b>já opera e quer melhorar</b>: é ajuste de processo, não recomeço.' }
         ]
       }
     }
   };
-
   /* ---------- Pergunta 4: fixa, decide o destino do lead ---------- */
   var PERGUNTA_CAPITAL = {
     indice:'Pergunta 04 — última', icone:'#ico-bolt',
@@ -930,30 +892,25 @@ h1 .hl{
 
   /* ---------- Perfis do resultado ---------- */
   var PERFIS = {
+    'automacao': {
+      nome:'Movido por <em>Automação</em>',
+      gargalo:'Operação que ainda depende de você o tempo todo',
+      resumo:'O que te chamou atenção foi a automação — e isso diz muito sobre você. Não está atrás de mais um curso nem de mais um sinal: quer um <strong>processo que funcione sem depender da sua presença</strong>. Esse é o raciocínio de quem pensa em escala, não em sorte.'
+    },
     'comecar': {
-      nome:'Iniciante com <em>Potencial Real</em>',
-      gargalo:'Falta de um ponto de partida claro',
-      resumo:'Você está no melhor momento possível: <strong>sem vícios e sem vieses</strong>. O que te falta não é capacidade, é um caminho na ordem certa. Quem começa com estrutura pula anos de tentativa e erro.'
+      nome:'Começando <em>do Zero Absoluto</em>',
+      gargalo:'Falta de tempo e de capital para dar o primeiro passo',
+      resumo:'O que te chamou atenção foi poder começar <strong>sem muito dinheiro e sem muito tempo</strong> — exatamente a barreira que trava a maioria. A verdade é que o capital inicial pesa menos do que o processo: quem começa pequeno e organizado chega mais longe do que quem começa grande e no escuro.'
     },
-    'tempo': {
-      nome:'Trader <em>Sufocado pelo Tempo</em>',
-      gargalo:'Rotina que não acompanha o mercado',
-      resumo:'Seu limite não é conhecimento, é <strong>agenda</strong>. Você perde oportunidade porque a vida não para no horário do pregão. A saída para o seu caso não é estudar mais — é reduzir o tempo que cada decisão exige de você.'
+    'liberdade': {
+      nome:'Em busca de <em>Liberdade Operacional</em>',
+      gargalo:'Resultado preso ao tempo de tela',
+      resumo:'O que te chamou atenção foi <strong>não precisar viver olhando o gráfico</strong>. Faz sentido: o mercado abre no mesmo horário em que a vida acontece. Quem depende de estar na tela não tem uma operação, tem um segundo emprego — e é essa troca que dá para desfazer.'
     },
-    'consistencia': {
-      nome:'Trader <em>Inconsistente</em>',
-      gargalo:'Resultado que não se repete',
-      resumo:'Você já sabe operar. O que oscila é o <strong>padrão de execução</strong>: semanas boas seguidas de semanas que devolvem tudo. Consistência não vem de mais estratégia, vem de repetir a mesma estratégia do mesmo jeito.'
-    },
-    'automatizar': {
-      nome:'Pronto para <em>Automatizar</em>',
-      gargalo:'Processo ainda 100% manual',
-      resumo:'Você já entendeu que escala vem de <strong>processo, não de esforço</strong>. Esse é o estágio em que o trader para de trabalhar no operacional e começa a trabalhar no sistema — e é o perfil que mais rápido aproveita uma estrutura pronta.'
-    },
-    'eficiencia': {
-      nome:'Operador <em>Pronto para Escalar</em>',
-      gargalo:'Escala travada pelo tempo de tela',
-      resumo:'Você já passou da fase de aprender a operar — seu problema agora é <strong>de arquitetura</strong>. Quem opera bem e continua preso à tela não tem um problema de estratégia, tem um teto operacional. É exatamente aí que eficiência vira liberdade.'
+    'renda': {
+      nome:'Construindo <em>uma Nova Fonte de Renda</em>',
+      gargalo:'Depender de uma única fonte de renda',
+      resumo:'O que te chamou atenção foi <strong>construir uma nova fonte de renda</strong> — a motivação mais honesta que existe. Só que renda extra não nasce de sorte nem de palpite: ela vem de um processo que você consegue repetir mesmo nos dias em que a vontade não aparece.'
     }
   };
 
@@ -1207,7 +1164,7 @@ h1 .hl{
 
   /* ========================= RESULTADO ========================= */
   // soma máxima possível da trilha mais "cara" (usada só para normalizar o score)
-  var PONTOS_MAX = 92;
+  var PONTOS_MAX = 90;
 
   function calcularScore(){
     var bruto = 0;
