@@ -29,9 +29,9 @@ O destino é decidido **exclusivamente pela pergunta 4** (capital):
 
 | Resposta na pergunta 4        | Destino    |
 | ----------------------------- | ---------- |
-| A — R$ 50                     | WhatsApp   |
-| B — R$ 100                    | WhatsApp   |
-| C — R$ 200 ou mais            | WhatsApp   |
+| A — R$ 100 a R$ 200           | WhatsApp   |
+| B — R$ 201 a R$ 500           | WhatsApp   |
+| C — R$ 501 a R$ 1.000         | WhatsApp   |
 | D — Não tenho capital         | Comunidade |
 
 As perguntas 1, 2 e 3 não mudam o destino — elas personalizam o texto do

@@ -718,19 +718,19 @@ h1 .hl{
         <h2 class="q-title">Quanto de capital você pretende investir?</h2>
         <p class="q-hint">Isso define qual estrutura faz sentido para você agora.</p>
         <div class="options" data-q="4">
-          <button class="opt" type="button" data-value="50" data-key="R$ 50" data-destino="whats">
+          <button class="opt" type="button" data-value="100-200" data-key="R$ 100 a R$ 200" data-destino="whats">
             <span class="opt-key">A</span>
-            <span class="opt-label">R$ 50<small>Começando com o mínimo</small></span>
+            <span class="opt-label">R$ 100 a R$ 200<small>Primeiro passo estruturado</small></span>
             <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
           </button>
-          <button class="opt" type="button" data-value="100" data-key="R$ 100" data-destino="whats">
+          <button class="opt" type="button" data-value="201-500" data-key="R$ 201 a R$ 500" data-destino="whats">
             <span class="opt-key">B</span>
-            <span class="opt-label">R$ 100<small>Capital inicial equilibrado</small></span>
+            <span class="opt-label">R$ 201 a R$ 500<small>Margem real para gerir risco</small></span>
             <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
           </button>
-          <button class="opt" type="button" data-value="200+" data-key="R$ 200 ou mais" data-destino="whats">
+          <button class="opt" type="button" data-value="501-1000" data-key="R$ 501 a R$ 1.000" data-destino="whats">
             <span class="opt-key">C</span>
-            <span class="opt-label">R$ 200 ou mais<small>Pronto para acelerar</small></span>
+            <span class="opt-label">R$ 501 a R$ 1.000<small>Pronto para acelerar</small></span>
             <span class="opt-check"><svg><use href="#ico-check"/></svg></span>
           </button>
           <button class="opt" type="button" data-value="sem-capital" data-key="Não tenho capital para investir" data-destino="comunidade">
@@ -1049,7 +1049,7 @@ h1 .hl{
     q1: { 'sim':15, 'nao':9 },
     q2: { '30min-1h':11, '1-2h':16, '3-4h':20, 'dia-inteiro':22 },
     q3: { 'comecar':12, 'executar':16, 'consistencia':18, 'tempo':14, 'automatizar':20 },
-    q4: { '50':18, '100':24, '200+':30, 'sem-capital':10 }
+    q4: { '100-200':18, '201-500':24, '501-1000':30, 'sem-capital':10 }
   };
 
   function calcularScore(){
@@ -1080,9 +1080,9 @@ h1 .hl{
 
   function textoCapital(){
     var v = respostas.q4 ? respostas.q4.valor : '';
-    if (v === '50')          return 'Com <b>R$ 50</b> dá para validar o processo antes de aumentar o risco.';
-    if (v === '100')         return 'Com <b>R$ 100</b> você tem margem para operar com gestão de risco de verdade.';
-    if (v === '200+')        return 'Com <b>R$ 200 ou mais</b> você já opera em uma faixa onde a consistência aparece mais rápido.';
+    if (v === '100-200')     return 'Com <b>R$ 100 a R$ 200</b> dá para validar o processo antes de aumentar o risco.';
+    if (v === '201-500')     return 'Com <b>R$ 201 a R$ 500</b> você tem margem para operar com gestão de risco de verdade.';
+    if (v === '501-1000')    return 'Com <b>R$ 501 a R$ 1.000</b> você já opera em uma faixa onde a consistência aparece bem mais rápido.';
     if (v === 'sem-capital') return 'Sem capital agora, o passo certo é <b>construir base</b> — aprender primeiro, capitalizar depois.';
     return '';
   }
