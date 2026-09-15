@@ -104,22 +104,47 @@ Para acrescentar uma alternativa, basta adicioná-la ao array `opcoes`: as letra
 
 ---
 
-## Rastreamento
+## Rastreamento — Meta Pixel
 
-O quiz já dispara eventos, sem precisar de configuração:
+O Pixel **já está instalado** no `index.html`, com o ID `1057320473675949`:
+o snippet fica no topo do `<head>` e a tag `<noscript>` logo após o `<body>`.
+Não precisa colar nada.
 
-| Evento             | Quando acontece                                  |
-| ------------------ | ------------------------------------------------ |
-| `quiz_visualizado` | página carregou                                  |
-| `quiz_iniciado`    | clique em "Começar agora"                        |
-| `quiz_resposta`    | cada resposta (envia pergunta, valor e perfil)   |
-| `quiz_finalizado`  | tela de resultado (destino, score, perfil e trilha) |
-| `quiz_cta_clique`  | clique no botão final                            |
+Eventos disparados automaticamente:
 
-Eles vão para `window.dataLayer` (GTM), `gtag` (GA4) e `fbq` (Meta Pixel) quando
-esses scripts existirem na página. Para ativar o Pixel, cole o snippet da Meta
-dentro do `<head>` — o resto funciona sozinho. No Meta, `quiz_cta_clique` é
-enviado como evento padrão **Lead**.
+| Evento | Tipo no Meta | Quando acontece |
+| ------ | ------------ | --------------- |
+| `PageView` | padrão | página carregou |
+| `quiz_visualizado` | personalizado | página carregou |
+| `quiz_iniciado` | personalizado | clique em "Começar agora" |
+| `quiz_resposta` | personalizado | cada resposta (pergunta, valor e perfil) |
+| `QuizCompleto` | personalizado | tela de resultado (destino, score, perfil e trilha) |
+| **`Lead`** | **padrão** | **clique no botão final** |
+
+**Use `Lead` como evento de otimização das campanhas.** É o único que marca
+o lead chegando no WhatsApp ou na comunidade. Os personalizados servem para
+públicos e para ver onde o funil perde gente — dá para criar um público de
+quem completou o quiz e não clicou, por exemplo.
+
+Para trocar o ID do Pixel, troque nos **dois** lugares: no `fbq('init', ...)`
+dentro do `<head>` e no `src` da imagem no `<noscript>`.
+
+### A espera antes do redirect
+
+O clique no CTA sai da página imediatamente, e um navegador que troca de
+página costuma cancelar requisições em andamento — inclusive a do `Lead`.
+Resultado: a conversão acontece e não aparece no gerenciador.
+
+Por isso o clique é segurado por 350 ms, tempo suficiente para a requisição
+partir, e só então redireciona. Está em `CONFIG.esperaPixelMs` — baixe ou
+suba se quiser, ou coloque `0` para desligar a espera.
+
+A navegação nunca depende do Pixel: se ele estiver bloqueado por adblock ou
+falhar ao carregar, o redirect acontece do mesmo jeito. Abrir o link em nova
+aba (Ctrl/Cmd + clique) também continua funcionando normalmente.
+
+Os mesmos eventos também vão para `window.dataLayer` (GTM) e `gtag` (GA4)
+quando esses scripts existirem na página.
 
 ---
 

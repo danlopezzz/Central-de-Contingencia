@@ -8,6 +8,21 @@
 <meta name="description" content="Responda 4 perguntas rápidas e descubra o caminho mais curto para operar com consistência." />
 <meta name="robots" content="noindex, nofollow" />
 
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1057320473675949');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->
+
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Descubra seu Perfil de Trader" />
 <meta property="og:description" content="4 perguntas. Menos de 60 segundos. Descubra o caminho mais curto para operar com consistência." />
@@ -537,6 +552,12 @@ h1 .hl{
 </head>
 <body>
 
+<!-- Meta Pixel Code (noscript) -->
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
 <!-- ===== SPRITE DA LOGO ===== -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <symbol id="logo-mark" viewBox="0 0 120 120">
@@ -707,7 +728,10 @@ h1 .hl{
     // Redirecionar sozinho depois de X segundos (0 = desligado, só no clique)
     autoRedirectSegundos: 0,
     // Duração da tela de análise (ms)
-    tempoAnalise: 3400
+    tempoAnalise: 3400,
+    // Tempo dado ao Pixel para enviar o Lead antes de redirecionar (ms).
+    // 0 desliga a espera e o clique navega na hora.
+    esperaPixelMs: 350
   };
 
   /* =========================================================
@@ -1243,11 +1267,31 @@ h1 .hl{
     }
   }
 
-  $('#ctaBtn').addEventListener('click', function(){
+  $('#ctaBtn').addEventListener('click', function(ev){
+    var destino = (respostas[3] && respostas[3].destino) || 'comunidade';
     rastrear('quiz_cta_clique', {
-      destino: (respostas[3] && respostas[3].destino) || 'comunidade',
+      destino: destino,
       perfil: respostas[0] ? respostas[0].valor : null
     });
+
+    // Sem essa espera o navegador sai da página antes de o Pixel conseguir
+    // enviar o Lead, e a conversão se perde. Segura o clique por um instante,
+    // só o suficiente para a requisição partir.
+    var abrindoEmOutraAba = ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button === 1;
+    if (abrindoEmOutraAba || !CONFIG.esperaPixelMs) return;
+    if (typeof window.fbq !== 'function') return;
+
+    var url = this.href;
+    if (!url || url.indexOf('http') !== 0) return;
+
+    ev.preventDefault();
+    var jaFoi = false;
+    var seguir = function(){
+      if (jaFoi) return;
+      jaFoi = true;
+      window.location.href = url;
+    };
+    window.setTimeout(seguir, CONFIG.esperaPixelMs);
   });
 
 
