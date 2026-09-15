@@ -1,4 +1,4 @@
-# Quiz de Qualificação — Trader Pro
+# Quiz de Qualificação — Trading Pro
 
 Quiz interativo de pré-sell em **arquivo único** (`index.html`). Não depende de build,
 framework, backend ou de qualquer outro projeto deste repositório.
