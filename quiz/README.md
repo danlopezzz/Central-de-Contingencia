@@ -357,6 +357,34 @@ O envio é assíncrono: o banco enfileira a requisição e um processo em segund
 plano manda. O evento é gravado na hora, sem esperar resposta. Se o webhook
 estiver fora do ar ou devolver erro, o registro acontece do mesmo jeito.
 
+### As respostas no link do especialista
+
+Quando o lead clica em falar com o especialista, as respostas dele vão junto
+no link, como parâmetros:
+
+- `text`: a mensagem inteira já escrita, na voz do lead. `text` é o nome que o
+  WhatsApp usa para pré-preencher a conversa
+- `perfil`, `score`, `destino`, `sessao`
+- `p1` a `p5`: cada resposta, uma por parâmetro
+- as UTMs que vieram do anúncio
+
+O que acontece a partir daí depende do MassFlow. Se ele repassar esses
+parâmetros para a mensagem do WhatsApp, ela chega pronta e a equipe já abre a
+conversa sabendo tudo. Se ignorar, o redirect funciona exatamente como antes,
+sem quebrar nada.
+
+O `sessao` é o mesmo identificador que aparece no painel: serve para casar o
+lead que chegou no WhatsApp com a sessão registrada.
+
+Para desligar, mude `enviarRespostasNoLink` para `false` no `CONFIG`.
+
+O link da comunidade continua limpo, só com as UTMs.
+
+> **Limitação do WhatsApp:** mesmo com a mensagem pré-preenchida, o lead
+> precisa apertar enviar. Não existe como mandar sozinho, é trava do próprio
+> WhatsApp. Na prática a maioria envia, porque acabou de clicar em falar com
+> um especialista.
+
 ### Sobre o acesso ao painel
 
 O painel **abre sem senha**: quem tiver o endereço vê os dados. Por isso ele

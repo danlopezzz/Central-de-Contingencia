@@ -762,6 +762,11 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     // 0 desliga a espera e o clique navega na hora.
     esperaPixelMs: 350,
 
+    // Manda as respostas do lead junto no link do especialista.
+    // Se o MassFlow repassar esses parâmetros para a mensagem do WhatsApp,
+    // ela chega pronta. Se ignorar, o redirect funciona igual.
+    enviarRespostasNoLink: true,
+
     // Painel de rastreamento (Supabase). Deixe em branco para desligar.
     // Cole o que aparece em Project Settings > API do seu projeto.
     supabaseUrl: 'https://hdfkpepapdakqqbtekqw.supabase.co',
@@ -1299,7 +1304,8 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     // CTA: o mesmo destino no botão do topo e no do fim
     var destinoUrl, textoCta, iconeCta, escassez;
     if (temCapital){
-      destinoUrl = montarLink(CONFIG.redirectWhats);
+      destinoUrl = comRespostas(montarLink(CONFIG.redirectWhats),
+                               perfil.nome.replace(/<[^>]+>/g, ''), score, destino);
       textoCta   = 'FALAR COM UM ESPECIALISTA E RECEBER A TRADING PRO';
       iconeCta   = '#ico-whats';
       escassez   = 'Liberação gratuita do algoritmo por 24 horas';
@@ -1366,6 +1372,37 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
 
   /* ========================= LINK + PARÂMETROS ========================= */
+
+  // Monta a mensagem que o lead mandaria, escrita na voz dele.
+  // Ela vai no parâmetro "text", que é o nome que o WhatsApp usa para
+  // pré-preencher a conversa: se o MassFlow repassar, já chega pronta.
+  function textoDoLead(perfil, score){
+    var linhas = ['Olá! Acabei de fazer o diagnóstico e quero liberar o algoritmo.', ''];
+    linhas.push('Meu perfil: ' + perfil + ' (' + score + '/100)');
+    respostas.forEach(function(r, i){
+      if (r) linhas.push((i + 1) + '. ' + r.texto);
+    });
+    return linhas.join('\n');
+  }
+
+  function comRespostas(base, perfil, score, destino){
+    if (!CONFIG.enviarRespostasNoLink) return base;
+    try{
+      var url = new URL(base);
+      url.searchParams.set('text', textoDoLead(perfil, score));
+      url.searchParams.set('perfil', perfil);
+      url.searchParams.set('score', String(score));
+      url.searchParams.set('destino', destino);
+      url.searchParams.set('sessao', Painel.sessao());
+      respostas.forEach(function(r, i){
+        if (r) url.searchParams.set('p' + (i + 1), r.texto);
+      });
+      return url.toString();
+    }catch(e){
+      return base;
+    }
+  }
+
   function montarLink(base){
     if (!CONFIG.repassarParametros) return base;
     var entrada = window.location.search;
