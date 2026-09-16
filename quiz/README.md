@@ -158,34 +158,103 @@ quando esses scripts existirem na página.
 
 ## Painel de rastreamento
 
-Além do Pixel, o quiz pode gravar cada passo num banco próprio e mostrar tudo
-num painel ao vivo (`painel.html`). É opcional: com as credenciais em branco o
-quiz funciona exatamente como antes e não faz nenhuma chamada de rede extra.
+Além do Pixel, o quiz grava cada passo num banco próprio e mostra tudo num
+painel ao vivo (`painel.html`). É opcional: com as credenciais em branco o quiz
+funciona exatamente como antes e não faz nenhuma chamada de rede extra.
 
-### Como ligar
+### Passo a passo para configurar
 
-**1. Crie um projeto Supabase NOVO.** Não reaproveite o da Central de
-Contingência: este quiz é um projeto isolado.
+Siga na ordem. Leva uns 10 minutos.
 
-**2. Rode o `supabase-tracking.sql`** no SQL Editor. Antes de rodar, troque
-`troque-esta-senha` pela chave que vai proteger o painel.
+**1. Crie o projeto no Supabase**
 
-**3. Pegue as credenciais** em Project Settings > API: a *Project URL* e a
-chave *anon public*.
+- Entre em [supabase.com](https://supabase.com) e clique em **New project**
+- Nome: `quiz-trading-pro` (ou o que preferir)
+- Escolha uma senha de banco e guarde. Você não vai precisar dela aqui, mas o
+  Supabase exige
+- Região: **South America (São Paulo)**, que é a mais perto do seu público
+- Clique em **Create new project** e espere uns 2 minutos
 
-**4. Cole nos dois arquivos:**
+> Crie um projeto **novo**. Não use o da Central de Contingência: este quiz é
+> um projeto isolado e misturar os dois só traz confusão depois.
+
+**2. Rode o SQL**
+
+- No menu da esquerda, abra **SQL Editor**
+- Clique em **New query**
+- Abra o arquivo `supabase-tracking.sql` desta pasta, copie **tudo** e cole lá
+- Clique em **Run** (ou Ctrl+Enter)
+- Tem que aparecer *Success. No rows returned*
+
+> Se aparecer erro, copie a mensagem e me mande. Não siga para o próximo passo
+> com erro, senão o painel vai abrir vazio e você não vai saber o porquê.
+
+**3. Confira se as tabelas nasceram**
+
+- Menu **Table Editor**
+- Devem existir duas tabelas: **quiz_eventos** (vazia) e **quiz_config** (com
+  uma linha)
+
+**4. Copie as credenciais**
+
+- Menu **Project Settings** (a engrenagem) > **API**
+- Copie o **Project URL**. Fica assim: `https://abcdefgh.supabase.co`
+- Copie a chave **anon public**. É um texto longo que começa com `eyJ...`
+
+> Use a **anon public**. Nunca a `service_role`: aquela dá acesso total ao
+> banco e não pode aparecer em página nenhuma.
+
+**5. Cole nos dois arquivos**
+
+No `index.html`, procure `supabaseUrl` (fica no bloco `CONFIG`, no começo do
+`<script>`):
 
 ```js
-// no index.html, dentro de CONFIG
-supabaseUrl:   'https://seu-projeto.supabase.co',
-supabaseChave: 'a-chave-anon-public',
-
-// no painel.html, dentro de CONFIG (os mesmos valores)
-supabaseUrl:   'https://seu-projeto.supabase.co',
-supabaseChave: 'a-chave-anon-public',
+supabaseUrl:   'https://abcdefgh.supabase.co',
+supabaseChave: 'eyJhbGciOi...',
 ```
 
-**5. Publique.** O painel fica em `/painel` e pede a chave para abrir.
+No `painel.html`, procure `supabaseUrl` (logo no começo do `<script>`) e cole
+**os mesmos dois valores**.
+
+> É o erro mais comum: preencher só um dos arquivos. Se preencher só o quiz, o
+> painel abre vazio. Se preencher só o painel, nada é gravado.
+
+**6. Publique**
+
+Suba a pasta na Netlify ou Vercel, como você já faz. Vão existir dois
+endereços:
+
+- `seusite.app` — o quiz
+- `seusite.app/painel` — o painel
+
+**7. Teste antes de ligar o tráfego**
+
+1. Abra o quiz e responda até o fim, clicando no botão final
+2. Abra o painel
+3. Em até 15 segundos sua sessão tem que aparecer na tabela, com as respostas
+   que você deu
+
+Deu certo? Pode ligar o tráfego.
+
+### Se o painel mostrar erro
+
+O painel diz na tela o que houve. Os três casos:
+
+| O que aparece | O que fazer |
+| ------------- | ----------- |
+| *Faltam as credenciais do Supabase* | Você não colou a URL e a chave no `painel.html` (passo 5) |
+| *A tabela quiz_eventos não existe nesse projeto* | O SQL não rodou, ou rodou em outro projeto (passo 2) |
+| *A chave anon não tem permissão* | O SQL rodou pela metade. Rode de novo, inteiro |
+
+Se o painel abrir sem erro mas vazio, é porque ninguém respondeu o quiz ainda
+no período escolhido. Troque o período no seletor do topo.
+
+### Conferir o painel sem ligar nada
+
+Abra `painel.html?demo=1` para ver o painel funcionando com dados gerados na
+hora. Nada é salvo e nenhuma credencial é necessária. Serve para mostrar para a
+diretoria antes de configurar.
 
 ### O que o painel mostra
 
@@ -196,32 +265,36 @@ supabaseChave: 'a-chave-anon-public',
   quantos foram ao WhatsApp e o tempo médio até o fim.
 - **Distribuição das respostas**, uma lista por pergunta. Como as perguntas 2
   e 3 mudam por trilha, elas aparecem separadas por trilha, nunca somadas.
-- **Tabela de sessões**: cada pessoa, o que respondeu, onde parou, o perfil,
-  a campanha e o aparelho. Atualiza sozinha a cada 15 segundos.
+- **Tabela de sessões**: cada pessoa, o que respondeu, onde parou, o perfil, a
+  campanha e o aparelho. Atualiza sozinha a cada 15 segundos.
 - **Filtro por campanha** e **download em CSV**.
-
-### Como os dados são protegidos
-
-A chave anon do Supabase é pública por natureza: ela fica visível no código do
-quiz. Por isso o banco foi montado assim:
-
-- O anônimo só consegue **inserir** evento. Não existe policy de leitura, então
-  nem com a chave em mãos alguém lê a tabela direto.
-- A leitura acontece por funções `security definer` que exigem a chave do
-  painel. Sem ela, o banco recusa.
-- A tabela de configuração não tem policy nenhuma: só as funções a acessam.
 
 ### Webhook
 
 O campo no fim do painel guarda a URL e quando disparar (só quem conclui, ou
-todo evento). O disparo acontece **no servidor**, por um trigger no banco, então
-a URL nunca aparece no navegador e ninguém de fora consegue disparar em nome
-dela.
+todo evento). O disparo acontece **no servidor**, por um trigger no banco,
+então a URL nunca aparece no navegador.
 
-Para ativar: habilite a extensão `pg_net` em Database > Extensions e descomente
-o bloco do trigger no fim do `supabase-tracking.sql`. O payload chega com o
-evento, o perfil, o score, o destino, **todas as respostas da sessão** e a
-origem completa.
+Para ativar, depois que tiver a URL:
+
+1. No Supabase, vá em **Database > Extensions** e habilite **pg_net**
+2. No **SQL Editor**, rode as três últimas linhas do `supabase-tracking.sql`
+   (o `create trigger`, que está comentado)
+3. No painel, cole a URL e escolha quando disparar
+
+O payload chega com o evento, o perfil, o score, o destino, **todas as
+respostas da sessão** e a origem completa.
+
+### Sobre o acesso ao painel
+
+O painel **abre sem senha**: quem tiver o endereço vê os dados. O endereço não
+é divulgado em lugar nenhum e a página é `noindex`, então não aparece no
+Google, mas trate o link como interno.
+
+Os dados são anônimos: nenhum nome, telefone ou e-mail é coletado. A sessão é
+um identificador aleatório gerado no navegador de quem responde.
+
+Se um dia quiser trancar, dá para religar uma tela de acesso.
 
 ### O que ele não faz
 
@@ -230,13 +303,8 @@ origem completa.
 - **Bloqueadores existem.** Parte do tráfego bloqueia rastreamento. Como os
   dados vão para o seu Supabase e não para um domínio de anúncio, o bloqueio é
   bem menor que o do Pixel, mas não é zero.
-- **O lead é anônimo.** Nenhum nome, telefone ou e-mail é coletado. A sessão é
-  um identificador aleatório gerado no navegador.
-
-### Conferir sem ligar o banco
-
-Abra `painel.html?demo=1` para ver o painel funcionando com dados gerados na
-hora. Nada é salvo e nenhuma credencial é necessária.
+- **O lead é anônimo até o WhatsApp.** Para casar a sessão do painel com a
+  pessoa que chega na conversa, seria preciso o código curto no fim do quiz.
 
 ---
 

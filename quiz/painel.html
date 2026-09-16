@@ -176,23 +176,6 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
 .respostas-cel b{color:var(--text);font-weight:600;}
 .vazio{text-align:center;color:var(--text-3);padding:38px 12px;font-size:13.5px;}
 
-/* ---------- acesso ---------- */
-.acesso{
-  min-height:100dvh;display:grid;place-items:center;padding:24px;
-}
-.acesso-caixa{
-  width:100%;max-width:400px;text-align:center;
-  background:var(--painel);border:1px solid var(--stroke);
-  border-radius:24px;padding:34px 26px;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-}
-.acesso-caixa svg{width:62px;height:62px;margin:0 auto 18px;display:block;filter:drop-shadow(0 0 22px var(--glow));}
-.acesso-caixa h1{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:-.6px;margin-bottom:7px;}
-.acesso-caixa p{font-size:13.5px;color:var(--text-3);margin-bottom:22px;line-height:1.5;}
-.acesso-caixa input{width:100%;margin-bottom:11px;text-align:center;padding:13px;font-size:15px;}
-.acesso-caixa .btn{width:100%;padding:13px;font-size:15px;}
-.erro{color:var(--vermelho);font-size:12.5px;margin-top:12px;min-height:18px;}
-
 /* ---------- webhook ---------- */
 .webhook-linha{display:flex;gap:9px;flex-wrap:wrap;align-items:center;}
 .webhook-linha input{flex:1;min-width:220px;}
@@ -226,22 +209,8 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
   <symbol id="ico-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></symbol>
 </svg>
 
-<!-- ===================== ACESSO ===================== -->
-<div class="acesso" id="tela-acesso">
-  <div class="acesso-caixa">
-    <svg><use href="#logo"/></svg>
-    <h1>Painel do Quiz</h1>
-    <p>Acesso restrito. Informe a chave do painel para continuar.</p>
-    <form id="form-acesso">
-      <input class="campo" type="password" id="chave" placeholder="Chave do painel" autocomplete="current-password" />
-      <button class="btn" type="submit" id="btn-entrar">ENTRAR</button>
-    </form>
-    <div class="erro" id="erro-acesso"></div>
-  </div>
-</div>
-
 <!-- ===================== PAINEL ===================== -->
-<div class="wrap" id="tela-painel" hidden>
+<div class="wrap" id="tela-painel">
 
   <header class="topo">
     <div class="marca">
@@ -261,9 +230,14 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
       </select>
       <select class="campo" id="filtro-campanha"><option value="">Todas as campanhas</option></select>
       <button class="btn fantasma" id="btn-csv" type="button">Baixar CSV</button>
-      <button class="btn fantasma" id="btn-sair" type="button">Sair</button>
     </div>
   </header>
+
+  <div class="cartao" id="faixa-erro" hidden
+       style="border-color:rgba(228,87,76,.4);background:rgba(228,87,76,.07);margin-bottom:14px">
+    <h2 style="color:var(--vermelho)">Não consegui ler os dados</h2>
+    <p class="sub" id="texto-erro" style="margin:0"></p>
+  </div>
 
   <div class="grade kpis" id="kpis"></div>
 
@@ -338,8 +312,6 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
   var $  = function(s,c){ return (c||document).querySelector(s); };
   var $$ = function(s,c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
 
-  var CHAVE_LOCAL = 'painel_quiz_chave';
-  var chave = '';
   var eventos = [];
   var sessoesVistas = {};
   var temporizador = null;
@@ -357,66 +329,63 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
     { id:'clicou',    nome:'Clicou no botão final' }
   ];
 
-  /* ========================= ACESSO ========================= */
-  function mostrarPainel(){
-    $('#tela-acesso').hidden = true;
-    $('#tela-painel').hidden = false;
-  }
-
-  $('#form-acesso').addEventListener('submit', function(ev){
-    ev.preventDefault();
-    var digitada = $('#chave').value.trim();
-    if (!digitada && !demo){ $('#erro-acesso').textContent = 'Informe a chave.'; return; }
-    $('#btn-entrar').textContent = 'VERIFICANDO...';
-    $('#erro-acesso').textContent = '';
-    entrar(digitada);
-  });
-
-  function entrar(digitada){
-    buscarEventos(digitada).then(function(lista){
-      chave = digitada;
-      try { localStorage.setItem(CHAVE_LOCAL, chave); } catch(e){}
-      eventos = lista;
-      mostrarPainel();
-      desenharTudo(true);
-      carregarWebhook();
-      iniciarAtualizacao();
-    }).catch(function(erro){
-      $('#btn-entrar').textContent = 'ENTRAR';
-      $('#erro-acesso').textContent = erro && erro.mensagem ? erro.mensagem : 'Chave inválida.';
-    });
-  }
-
-  $('#btn-sair').addEventListener('click', function(){
-    try { localStorage.removeItem(CHAVE_LOCAL); } catch(e){}
-    location.reload();
-  });
-
   /* ========================= DADOS ========================= */
   function horas(){ return Number($('#periodo').value) || 168; }
 
-  function buscarEventos(usarChave){
+  function cabecalhos(){
+    return {
+      'Content-Type': 'application/json',
+      'apikey': CONFIG.supabaseChave,
+      'Authorization': 'Bearer ' + CONFIG.supabaseChave
+    };
+  }
+
+  function mostrarErro(texto){
+    $('#texto-erro').textContent = texto;
+    $('#faixa-erro').hidden = false;
+  }
+  function limparErro(){ $('#faixa-erro').hidden = true; }
+
+  // O Supabase corta a resposta em mil linhas por padrão, então buscamos
+  // em blocos até acabar. Assim o painel nunca "trava" em 1000 sessões.
+  function buscarEventos(){
     if (demo) return Promise.resolve(gerarDemo());
 
     if (!CONFIG.supabaseUrl || !CONFIG.supabaseChave){
-      return Promise.reject({ mensagem: 'Faltam as credenciais do Supabase no topo do painel.html.' });
+      return Promise.reject(new Error(
+        'Faltam as credenciais do Supabase. Abra o painel.html e preencha supabaseUrl e supabaseChave no topo do arquivo.'));
     }
-    var url = CONFIG.supabaseUrl.replace(/\/+$/,'') + '/rest/v1/rpc/quiz_painel';
-    return fetch(url, {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'apikey': CONFIG.supabaseChave,
-        'Authorization':'Bearer ' + CONFIG.supabaseChave
-      },
-      body: JSON.stringify({ p_chave: usarChave, p_horas: horas() })
-    }).then(function(r){
-      if (r.status === 401 || r.status === 403) throw { mensagem:'Chave inválida.' };
-      if (!r.ok) return r.text().then(function(t){
-        throw { mensagem: /chave invalida/i.test(t) ? 'Chave inválida.' : 'Erro ao consultar o banco.' };
+
+    var desde = new Date(Date.now() - horas() * 3600 * 1000).toISOString();
+    var base = CONFIG.supabaseUrl.replace(/\/+$/,'')
+             + '/rest/v1/quiz_eventos'
+             + '?select=*&criado_em=gte.' + encodeURIComponent(desde)
+             + '&order=criado_em.desc';
+    var bloco = 1000, limite = 60000;
+    var tudo = [];
+
+    function pagina(de){
+      var cab = Object.assign({}, cabecalhos());
+      cab['Range-Unit'] = 'items';
+      cab['Range'] = de + '-' + (de + bloco - 1);
+      return fetch(base, { headers: cab }).then(function(r){
+        if (r.status === 401 || r.status === 403){
+          throw new Error('A chave anon não tem permissão. Confira se você rodou o supabase-tracking.sql inteiro, inclusive o bloco 3 (PERMISSÕES).');
+        }
+        if (r.status === 404){
+          throw new Error('A tabela quiz_eventos não existe nesse projeto. Rode o supabase-tracking.sql no SQL Editor.');
+        }
+        if (!r.ok && r.status !== 206){
+          return r.text().then(function(t){ throw new Error('O banco respondeu ' + r.status + ': ' + t.slice(0,160)); });
+        }
+        return r.json();
+      }).then(function(lista){
+        tudo = tudo.concat(lista);
+        if (lista.length === bloco && tudo.length < limite) return pagina(de + bloco);
+        return tudo;
       });
-      return r.json();
-    });
+    }
+    return pagina(0);
   }
 
   function iniciarAtualizacao(){
@@ -426,18 +395,29 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
 
   function atualizar(){
     if (document.visibilityState === 'hidden') return;
-    buscarEventos(chave).then(function(lista){
+    buscarEventos().then(function(lista){
+      limparErro();
       eventos = lista;
       desenharTudo(false);
       var t = $('#txt-vivo');
       t.textContent = 'atualizado agora';
       setTimeout(function(){ t.textContent = 'ao vivo'; }, 2500);
-    }).catch(function(){});
+    }).catch(function(e){ mostrarErro(e.message || 'Erro ao consultar o banco.'); });
   }
 
-  $('#periodo').addEventListener('change', function(){
-    buscarEventos(chave).then(function(l){ eventos = l; desenharTudo(true); }).catch(function(){});
-  });
+  function carregar(primeiraVez){
+    buscarEventos().then(function(lista){
+      limparErro();
+      eventos = lista;
+      desenharTudo(true);
+      if (primeiraVez){ carregarWebhook(); iniciarAtualizacao(); }
+    }).catch(function(e){
+      mostrarErro(e.message || 'Erro ao consultar o banco.');
+      desenharTudo(true);
+    });
+  }
+
+  $('#periodo').addEventListener('change', function(){ carregar(false); });
   $('#filtro-campanha').addEventListener('change', function(){ desenharTudo(false); });
 
   /* ========================= AGREGAÇÃO ========================= */
@@ -729,20 +709,8 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
   });
 
   /* ========================= WEBHOOK ========================= */
-  function rpc(nome, corpo){
-    var url = CONFIG.supabaseUrl.replace(/\/+$/,'') + '/rest/v1/rpc/' + nome;
-    return fetch(url, {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'apikey': CONFIG.supabaseChave,
-        'Authorization':'Bearer ' + CONFIG.supabaseChave
-      },
-      body: JSON.stringify(corpo)
-    }).then(function(r){
-      if (!r.ok) return r.text().then(function(t){ throw new Error(t); });
-      return r.status === 204 ? null : r.json();
-    });
+  function urlConfig(){
+    return CONFIG.supabaseUrl.replace(/\/+$/,'') + '/rest/v1/quiz_config?id=eq.1';
   }
 
   function carregarWebhook(){
@@ -751,12 +719,15 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
       $('#webhook-quando').value = 'resultado';
       return;
     }
-    rpc('quiz_config_ler', { p_chave: chave }).then(function(dados){
-      var c = Array.isArray(dados) ? dados[0] : dados;
-      if (!c) return;
-      $('#webhook-url').value = c.webhook_url || '';
-      $('#webhook-quando').value = c.webhook_quando || 'nunca';
-    }).catch(function(){});
+    if (!CONFIG.supabaseUrl) return;
+    fetch(urlConfig() + '&select=webhook_url,webhook_quando', { headers: cabecalhos() })
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(lista){
+        var c = lista && lista[0];
+        if (!c) return;
+        $('#webhook-url').value = c.webhook_url || '';
+        $('#webhook-quando').value = c.webhook_quando || 'nunca';
+      }).catch(function(){});
   }
 
   $('#btn-webhook').addEventListener('click', function(){
@@ -776,16 +747,26 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
     }
     msg.style.color = 'var(--text-3)';
     msg.textContent = 'Salvando...';
-    rpc('quiz_config_salvar', { p_chave: chave, p_url: url, p_quando: quando })
-      .then(function(){
-        msg.style.color = 'var(--green-bright)';
-        msg.textContent = 'Salvo.';
-        setTimeout(function(){ msg.textContent = ''; }, 3000);
+
+    var cab = Object.assign({}, cabecalhos());
+    cab['Prefer'] = 'return=minimal';
+    fetch(urlConfig(), {
+      method: 'PATCH',
+      headers: cab,
+      body: JSON.stringify({
+        webhook_url: url || null,
+        webhook_quando: quando,
+        atualizado_em: new Date().toISOString()
       })
-      .catch(function(e){
-        msg.style.color = 'var(--vermelho)';
-        msg.textContent = 'Não deu para salvar: ' + String(e.message || '').slice(0, 120);
-      });
+    }).then(function(r){
+      if (!r.ok) return r.text().then(function(t){ throw new Error(t.slice(0,140)); });
+      msg.style.color = 'var(--green-bright)';
+      msg.textContent = 'Salvo.';
+      setTimeout(function(){ msg.textContent = ''; }, 3000);
+    }).catch(function(e){
+      msg.style.color = 'var(--vermelho)';
+      msg.textContent = 'Não deu para salvar: ' + (e.message || '');
+    });
   });
 
   /* ========================= DEMONSTRAÇÃO =========================
@@ -881,14 +862,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
   }
 
   /* ========================= INÍCIO ========================= */
-  if (demo){
-    $('#chave').value = 'demonstracao';
-    entrar('demonstracao');
-  } else {
-    var salva = null;
-    try { salva = localStorage.getItem(CHAVE_LOCAL); } catch(e){}
-    if (salva){ $('#chave').value = salva; entrar(salva); }
-  }
+  carregar(true);
 
 })();
 </script>

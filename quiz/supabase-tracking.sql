@@ -40,111 +40,52 @@ create index if not exists quiz_eventos_evento_idx   on quiz_eventos (evento);
 create index if not exists quiz_eventos_campanha_idx on quiz_eventos (utm_campaign);
 
 -- ------------------------------------------------------------
--- 2. CONFIGURAÇÃO: chave do painel e webhook
+-- 2. CONFIGURAÇÃO: o webhook
 -- ------------------------------------------------------------
 create table if not exists quiz_config (
   id             int primary key default 1,
-  chave_painel   text not null,
   webhook_url    text,
-  webhook_quando text not null default 'resultado',  -- nunca | resultado | tudo
+  webhook_quando text not null default 'nunca',      -- nunca | resultado | tudo
   atualizado_em  timestamptz default now(),
   constraint quiz_config_linha_unica check (id = 1),
   constraint quiz_config_quando_valido check (webhook_quando in ('nunca','resultado','tudo'))
 );
 
--- TROQUE A SENHA ABAIXO ANTES DE RODAR.
-insert into quiz_config (id, chave_painel)
-values (1, 'troque-esta-senha')
-on conflict (id) do nothing;
+insert into quiz_config (id) values (1) on conflict (id) do nothing;
 
 -- ------------------------------------------------------------
--- 3. SEGURANÇA
---    A chave anon do Supabase é pública: ela fica visível no
---    código do quiz. Por isso o anônimo só pode INSERIR evento.
---    Ler os dados exige a senha do painel, e a leitura acontece
---    pelas funções abaixo, nunca direto na tabela.
+-- 3. PERMISSÕES
+--
+--    O painel abre sem senha, então a leitura fica liberada para
+--    quem tiver o link e a chave anon (que é pública por natureza).
+--    Quem souber o endereço do painel vê os dados.
+--
+--    Os dados são anônimos: nenhum nome, telefone ou e-mail é
+--    coletado, só o comportamento no quiz.
+--
+--    Se um dia quiser trancar, é só remover a policy de select
+--    abaixo e me chamar para religar a tela de acesso.
 -- ------------------------------------------------------------
 alter table quiz_eventos enable row level security;
 alter table quiz_config  enable row level security;
 
 drop policy if exists quiz_eventos_insercao on quiz_eventos;
-create policy quiz_eventos_insercao
-  on quiz_eventos for insert to anon, authenticated
-  with check (true);
+drop policy if exists quiz_eventos_leitura  on quiz_eventos;
+create policy quiz_eventos_insercao on quiz_eventos
+  for insert to anon, authenticated with check (true);
+create policy quiz_eventos_leitura on quiz_eventos
+  for select to anon, authenticated using (true);
 
--- Sem policy de select: ninguém lê a tabela direto, nem com a chave anon.
--- quiz_config não tem policy nenhuma: só as funções abaixo a acessam.
-
--- ------------------------------------------------------------
--- 4. LEITURA DO PAINEL
--- ------------------------------------------------------------
-create or replace function quiz_painel(p_chave text, p_horas int default 168)
-returns setof quiz_eventos
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if not exists (select 1 from quiz_config where id = 1 and chave_painel = p_chave) then
-    raise exception 'chave invalida' using errcode = '28000';
-  end if;
-
-  return query
-    select * from quiz_eventos
-    where criado_em >= now() - make_interval(hours => greatest(1, least(p_horas, 2160)))
-    order by criado_em desc
-    limit 50000;
-end;
-$$;
-
-create or replace function quiz_config_ler(p_chave text)
-returns table (webhook_url text, webhook_quando text)
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if not exists (select 1 from quiz_config where id = 1 and chave_painel = p_chave) then
-    raise exception 'chave invalida' using errcode = '28000';
-  end if;
-  return query select c.webhook_url, c.webhook_quando from quiz_config c where c.id = 1;
-end;
-$$;
-
-create or replace function quiz_config_salvar(p_chave text, p_url text, p_quando text)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if not exists (select 1 from quiz_config where id = 1 and chave_painel = p_chave) then
-    raise exception 'chave invalida' using errcode = '28000';
-  end if;
-  if p_quando not in ('nunca','resultado','tudo') then
-    raise exception 'valor de webhook_quando invalido';
-  end if;
-  if p_url is not null and p_url <> '' and p_url !~ '^https://' then
-    raise exception 'o webhook precisa comecar com https://';
-  end if;
-
-  update quiz_config
-     set webhook_url = nullif(p_url, ''),
-         webhook_quando = p_quando,
-         atualizado_em = now()
-   where id = 1;
-end;
-$$;
-
-revoke all on function quiz_painel(text,int)              from public;
-revoke all on function quiz_config_ler(text)              from public;
-revoke all on function quiz_config_salvar(text,text,text) from public;
-grant execute on function quiz_painel(text,int)              to anon, authenticated;
-grant execute on function quiz_config_ler(text)              to anon, authenticated;
-grant execute on function quiz_config_salvar(text,text,text) to anon, authenticated;
+-- ninguém pode alterar nem apagar evento pela chave pública
+drop policy if exists quiz_config_leitura   on quiz_config;
+drop policy if exists quiz_config_alteracao on quiz_config;
+create policy quiz_config_leitura on quiz_config
+  for select to anon, authenticated using (true);
+create policy quiz_config_alteracao on quiz_config
+  for update to anon, authenticated using (id = 1) with check (id = 1);
 
 -- ------------------------------------------------------------
--- 5. WEBHOOK (opcional, ligue quando quiser)
+-- 4. WEBHOOK (opcional, ligue quando quiser)
 --
 --    Dispara do servidor, não do navegador: a URL do webhook
 --    nunca aparece no código do quiz e ninguém de fora consegue
@@ -225,7 +166,7 @@ $$;
 --   for each row execute function quiz_disparar_webhook();
 
 -- ------------------------------------------------------------
--- 6. LIMPEZA (opcional)
+-- 5. LIMPEZA (opcional)
 --    Mantém a base enxuta apagando evento com mais de 180 dias.
 --    Agende em Database > Cron, se quiser.
 -- ------------------------------------------------------------
