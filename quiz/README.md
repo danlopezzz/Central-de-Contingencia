@@ -156,6 +156,90 @@ quando esses scripts existirem na página.
 
 ---
 
+## Painel de rastreamento
+
+Além do Pixel, o quiz pode gravar cada passo num banco próprio e mostrar tudo
+num painel ao vivo (`painel.html`). É opcional: com as credenciais em branco o
+quiz funciona exatamente como antes e não faz nenhuma chamada de rede extra.
+
+### Como ligar
+
+**1. Crie um projeto Supabase NOVO.** Não reaproveite o da Central de
+Contingência: este quiz é um projeto isolado.
+
+**2. Rode o `supabase-tracking.sql`** no SQL Editor. Antes de rodar, troque
+`troque-esta-senha` pela chave que vai proteger o painel.
+
+**3. Pegue as credenciais** em Project Settings > API: a *Project URL* e a
+chave *anon public*.
+
+**4. Cole nos dois arquivos:**
+
+```js
+// no index.html, dentro de CONFIG
+supabaseUrl:   'https://seu-projeto.supabase.co',
+supabaseChave: 'a-chave-anon-public',
+
+// no painel.html, dentro de CONFIG (os mesmos valores)
+supabaseUrl:   'https://seu-projeto.supabase.co',
+supabaseChave: 'a-chave-anon-public',
+```
+
+**5. Publique.** O painel fica em `/painel` e pede a chave para abrir.
+
+### O que o painel mostra
+
+- **Funil completo**, da abertura da página ao clique no botão, com a
+  porcentagem que some em cada etapa. É aqui que você descobre qual pergunta
+  está derrubando o quiz.
+- **KPIs**: sessões, quantos começaram, quantos concluíram, cliques no CTA,
+  quantos foram ao WhatsApp e o tempo médio até o fim.
+- **Distribuição das respostas**, uma lista por pergunta. Como as perguntas 2
+  e 3 mudam por trilha, elas aparecem separadas por trilha, nunca somadas.
+- **Tabela de sessões**: cada pessoa, o que respondeu, onde parou, o perfil,
+  a campanha e o aparelho. Atualiza sozinha a cada 15 segundos.
+- **Filtro por campanha** e **download em CSV**.
+
+### Como os dados são protegidos
+
+A chave anon do Supabase é pública por natureza: ela fica visível no código do
+quiz. Por isso o banco foi montado assim:
+
+- O anônimo só consegue **inserir** evento. Não existe policy de leitura, então
+  nem com a chave em mãos alguém lê a tabela direto.
+- A leitura acontece por funções `security definer` que exigem a chave do
+  painel. Sem ela, o banco recusa.
+- A tabela de configuração não tem policy nenhuma: só as funções a acessam.
+
+### Webhook
+
+O campo no fim do painel guarda a URL e quando disparar (só quem conclui, ou
+todo evento). O disparo acontece **no servidor**, por um trigger no banco, então
+a URL nunca aparece no navegador e ninguém de fora consegue disparar em nome
+dela.
+
+Para ativar: habilite a extensão `pg_net` em Database > Extensions e descomente
+o bloco do trigger no fim do `supabase-tracking.sql`. O payload chega com o
+evento, o perfil, o score, o destino, **todas as respostas da sessão** e a
+origem completa.
+
+### O que ele não faz
+
+- **Abandono é inferido.** Quem fecha a aba dispara um evento de saída, mas
+  navegador é imprevisível: o número é uma boa aproximação, não um relógio.
+- **Bloqueadores existem.** Parte do tráfego bloqueia rastreamento. Como os
+  dados vão para o seu Supabase e não para um domínio de anúncio, o bloqueio é
+  bem menor que o do Pixel, mas não é zero.
+- **O lead é anônimo.** Nenhum nome, telefone ou e-mail é coletado. A sessão é
+  um identificador aleatório gerado no navegador.
+
+### Conferir sem ligar o banco
+
+Abra `painel.html?demo=1` para ver o painel funcionando com dados gerados na
+hora. Nada é salvo e nenhuma credencial é necessária.
+
+---
+
 ## Detalhes de implementação
 
 - Fundo com candlesticks em `<canvas>`, gerados por código e em movimento contínuo.

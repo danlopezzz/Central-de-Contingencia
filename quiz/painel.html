@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#050A06" />
+<title>Painel do Quiz — Trading Pro</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='26' fill='%23070D08'/><path d='M16 100 L44 64 L62 86 L104 26' stroke='%237CD61A' stroke-width='18' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>" />
+
+<style>
+:root{
+  --green:#7CD61A; --green-bright:#A6F23C; --green-deep:#4E9A08;
+  --glow:rgba(124,214,26,.35);
+  --bg:#050A06; --painel:rgba(13,21,13,.72); --painel-2:rgba(19,31,18,.86);
+  --stroke:rgba(255,255,255,.09); --stroke-on:rgba(124,214,26,.32);
+  --text:#EDF5EA; --text-2:#9BAA96; --text-3:#68775F;
+  --vermelho:#E4574C; --ambar:#E8B93B;
+  --fd:'Sora',system-ui,sans-serif; --fb:'Inter',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:var(--fb);background:var(--bg);color:var(--text);
+  min-height:100dvh;-webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% -10%,rgba(124,214,26,.10),transparent 70%),
+    linear-gradient(rgba(124,214,26,.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,214,26,.028) 1px,transparent 1px);
+  background-size:auto,54px 54px,54px 54px;
+}
+.wrap{max-width:1240px;margin:0 auto;padding:0 18px 60px;}
+
+/* ---------- cabeçalho ---------- */
+.topo{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  flex-wrap:wrap;padding:22px 0 18px;
+}
+.marca{display:flex;align-items:center;gap:11px;}
+.marca svg{width:36px;height:36px;filter:drop-shadow(0 0 12px var(--glow));}
+.marca b{font-family:var(--fd);font-weight:800;font-size:15px;letter-spacing:-.3px;display:block;line-height:1.15;}
+.marca span{font-size:10px;color:var(--text-3);letter-spacing:2.2px;text-transform:uppercase;font-weight:600;}
+.controles{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+
+.chip-vivo{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11.5px;font-weight:700;letter-spacing:.4px;color:var(--green-bright);
+  background:rgba(124,214,26,.09);border:1px solid rgba(124,214,26,.24);
+  padding:8px 12px;border-radius:999px;white-space:nowrap;
+}
+.ponto{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulsa 2s infinite;}
+@keyframes pulsa{
+  0%{box-shadow:0 0 0 0 rgba(124,214,26,.6)}
+  70%{box-shadow:0 0 0 8px rgba(124,214,26,0)}
+  100%{box-shadow:0 0 0 0 rgba(124,214,26,0)}
+}
+
+select,input,button{font-family:var(--fb);}
+.campo{
+  background:var(--painel);border:1px solid var(--stroke);color:var(--text);
+  padding:9px 12px;border-radius:11px;font-size:13.5px;outline:none;
+  transition:border-color .2s var(--ease);
+}
+.campo:focus{border-color:var(--stroke-on);}
+.btn{
+  background:linear-gradient(120deg,var(--green-deep),var(--green));
+  color:#06120A;border:none;padding:10px 16px;border-radius:11px;
+  font-family:var(--fd);font-weight:700;font-size:13.5px;cursor:pointer;
+  transition:transform .2s var(--ease),filter .2s var(--ease);
+}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.07);}
+.btn:active{transform:scale(.98);}
+.btn.fantasma{
+  background:var(--painel);color:var(--text-2);border:1px solid var(--stroke);
+}
+.btn.fantasma:hover{color:var(--text);border-color:var(--stroke-on);}
+
+/* ---------- cartões ---------- */
+.cartao{
+  background:var(--painel);border:1px solid var(--stroke);border-radius:18px;
+  padding:20px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.cartao h2{
+  font-family:var(--fd);font-size:14px;font-weight:700;letter-spacing:-.2px;
+  margin-bottom:4px;
+}
+.cartao .sub{font-size:12.5px;color:var(--text-3);margin-bottom:18px;line-height:1.45;}
+
+.grade{display:grid;gap:14px;}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(168px,1fr));margin-bottom:14px;}
+.duas{grid-template-columns:1.25fr 1fr;align-items:start;}
+@media(max-width:940px){.duas{grid-template-columns:1fr;}}
+
+.kpi{
+  background:var(--painel);border:1px solid var(--stroke);border-radius:16px;padding:16px 17px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.kpi .rotulo{
+  font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:9px;display:block;
+}
+.kpi .valor{font-family:var(--fd);font-size:30px;font-weight:800;letter-spacing:-1.2px;line-height:1;}
+.kpi .valor small{font-size:15px;color:var(--text-3);font-weight:600;letter-spacing:0;}
+.kpi .nota{font-size:11.5px;color:var(--text-3);margin-top:8px;}
+.kpi.destaque{
+  border-color:rgba(124,214,26,.3);
+  background:linear-gradient(160deg,rgba(124,214,26,.10),rgba(255,255,255,.02));
+}
+.kpi.destaque .valor{color:var(--green-bright);}
+
+/* ---------- funil ---------- */
+.etapa{margin-bottom:13px;}
+.etapa:last-child{margin-bottom:0;}
+.etapa-topo{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin-bottom:6px;font-size:13.5px;
+}
+.etapa-nome{font-weight:500;}
+.etapa-num{font-family:var(--fd);font-weight:700;font-size:14px;}
+.etapa-pct{font-size:12px;color:var(--text-3);margin-left:7px;font-weight:500;}
+.barra{height:26px;border-radius:9px;background:rgba(255,255,255,.05);overflow:hidden;position:relative;}
+.barra i{
+  display:block;height:100%;border-radius:9px;
+  background:linear-gradient(90deg,var(--green-deep),var(--green));
+  width:0;transition:width .8s var(--ease);
+}
+.queda{
+  font-size:11.5px;color:var(--vermelho);margin-top:5px;font-weight:500;
+  display:flex;align-items:center;gap:5px;
+}
+.queda.ok{color:var(--text-3);}
+.queda b{font-weight:700;}
+
+/* ---------- distribuição de respostas ---------- */
+.pergunta-bloco{margin-bottom:22px;}
+.pergunta-bloco:last-child{margin-bottom:0;}
+.pergunta-titulo{
+  font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:10px;
+  display:flex;align-items:baseline;gap:7px;line-height:1.4;
+}
+.pergunta-titulo span{font-size:11px;color:var(--text-3);font-weight:500;}
+.linha-resp{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px;}
+.linha-resp .rot{flex:1;min-width:0;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.linha-resp .mini{
+  width:110px;height:7px;border-radius:99px;background:rgba(255,255,255,.06);
+  overflow:hidden;flex:none;
+}
+.linha-resp .mini i{display:block;height:100%;background:var(--green);border-radius:99px;width:0;transition:width .7s var(--ease);}
+.linha-resp .qtd{width:78px;text-align:right;font-family:var(--fd);font-weight:600;font-size:12.5px;flex:none;white-space:nowrap;}
+@media(max-width:560px){.linha-resp .mini{width:64px;}}
+
+/* ---------- tabela ---------- */
+.tabela-caixa{overflow-x:auto;margin:0 -4px;}
+table{width:100%;border-collapse:collapse;font-size:12.8px;min-width:720px;}
+th{
+  text-align:left;font-size:10.5px;font-weight:600;letter-spacing:1.3px;
+  text-transform:uppercase;color:var(--text-3);padding:0 12px 10px;white-space:nowrap;
+}
+td{padding:11px 12px;border-top:1px solid rgba(255,255,255,.055);vertical-align:top;}
+tbody tr{transition:background .2s var(--ease);}
+tbody tr:hover{background:rgba(124,214,26,.045);}
+tbody tr.nova{animation:entrou 1.4s var(--ease);}
+@keyframes entrou{from{background:rgba(124,214,26,.18)}to{background:transparent}}
+.selo{
+  display:inline-block;padding:3px 9px;border-radius:99px;
+  font-size:10.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap;
+}
+.selo.whats{background:rgba(124,214,26,.16);color:var(--green-bright);}
+.selo.comunidade{background:rgba(232,185,59,.15);color:var(--ambar);}
+.selo.andando{background:rgba(255,255,255,.07);color:var(--text-2);}
+.selo.saiu{background:rgba(228,87,76,.14);color:var(--vermelho);}
+.respostas-cel{color:var(--text-2);line-height:1.55;max-width:420px;white-space:normal;}
+.respostas-cel b{color:var(--text);font-weight:600;}
+.vazio{text-align:center;color:var(--text-3);padding:38px 12px;font-size:13.5px;}
+
+/* ---------- acesso ---------- */
+.acesso{
+  min-height:100dvh;display:grid;place-items:center;padding:24px;
+}
+.acesso-caixa{
+  width:100%;max-width:400px;text-align:center;
+  background:var(--painel);border:1px solid var(--stroke);
+  border-radius:24px;padding:34px 26px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.acesso-caixa svg{width:62px;height:62px;margin:0 auto 18px;display:block;filter:drop-shadow(0 0 22px var(--glow));}
+.acesso-caixa h1{font-family:var(--fd);font-size:22px;font-weight:800;letter-spacing:-.6px;margin-bottom:7px;}
+.acesso-caixa p{font-size:13.5px;color:var(--text-3);margin-bottom:22px;line-height:1.5;}
+.acesso-caixa input{width:100%;margin-bottom:11px;text-align:center;padding:13px;font-size:15px;}
+.acesso-caixa .btn{width:100%;padding:13px;font-size:15px;}
+.erro{color:var(--vermelho);font-size:12.5px;margin-top:12px;min-height:18px;}
+
+/* ---------- webhook ---------- */
+.webhook-linha{display:flex;gap:9px;flex-wrap:wrap;align-items:center;}
+.webhook-linha input{flex:1;min-width:220px;}
+.aviso-box{
+  display:flex;gap:10px;align-items:flex-start;margin-top:14px;
+  font-size:12px;line-height:1.55;color:var(--text-3);
+  background:rgba(255,255,255,.03);border:1px solid var(--stroke);
+  border-radius:12px;padding:12px 13px;
+}
+.aviso-box svg{width:15px;height:15px;flex:none;margin-top:2px;stroke:var(--green);fill:none;stroke-width:2.2;}
+.ok-msg{color:var(--green-bright);font-size:12.5px;margin-top:10px;min-height:17px;}
+
+.rodape{text-align:center;font-size:11px;color:#3D4A38;padding:26px 0 0;line-height:1.6;}
+[hidden]{display:none !important;}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <symbol id="logo" viewBox="0 0 120 120">
+    <defs><linearGradient id="lg" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#5CB70C"/><stop offset=".55" stop-color="#7CD61A"/><stop offset="1" stop-color="#AEF945"/>
+    </linearGradient></defs>
+    <path d="M15 101 L43 63 L61 85 L103 27" fill="none" stroke="url(#lg)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="skewX(-9)" fill="url(#lg)">
+      <rect x="20" y="48" width="29" height="36" rx="8"/>
+      <rect x="53" y="28" width="29" height="36" rx="8"/>
+      <rect x="86" y="2"  width="29" height="46" rx="8"/>
+    </g>
+  </symbol>
+  <symbol id="ico-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></symbol>
+</svg>
+
+<!-- ===================== ACESSO ===================== -->
+<div class="acesso" id="tela-acesso">
+  <div class="acesso-caixa">
+    <svg><use href="#logo"/></svg>
+    <h1>Painel do Quiz</h1>
+    <p>Acesso restrito. Informe a chave do painel para continuar.</p>
+    <form id="form-acesso">
+      <input class="campo" type="password" id="chave" placeholder="Chave do painel" autocomplete="current-password" />
+      <button class="btn" type="submit" id="btn-entrar">ENTRAR</button>
+    </form>
+    <div class="erro" id="erro-acesso"></div>
+  </div>
+</div>
+
+<!-- ===================== PAINEL ===================== -->
+<div class="wrap" id="tela-painel" hidden>
+
+  <header class="topo">
+    <div class="marca">
+      <svg><use href="#logo"/></svg>
+      <div>
+        <b>PAINEL DO QUIZ</b>
+        <span>Trading Pro</span>
+      </div>
+    </div>
+    <div class="controles">
+      <span class="chip-vivo" id="chip-vivo"><i class="ponto"></i> <span id="txt-vivo">ao vivo</span></span>
+      <select class="campo" id="periodo">
+        <option value="24">Últimas 24 horas</option>
+        <option value="72">Últimos 3 dias</option>
+        <option value="168" selected>Últimos 7 dias</option>
+        <option value="720">Últimos 30 dias</option>
+      </select>
+      <select class="campo" id="filtro-campanha"><option value="">Todas as campanhas</option></select>
+      <button class="btn fantasma" id="btn-csv" type="button">Baixar CSV</button>
+      <button class="btn fantasma" id="btn-sair" type="button">Sair</button>
+    </div>
+  </header>
+
+  <div class="grade kpis" id="kpis"></div>
+
+  <div class="grade duas" style="margin-bottom:14px">
+    <section class="cartao">
+      <h2>Funil do quiz</h2>
+      <p class="sub">Onde as pessoas param. A queda em vermelho é a porcentagem que some naquela etapa.</p>
+      <div id="funil"></div>
+    </section>
+
+    <section class="cartao">
+      <h2>O que respondem</h2>
+      <p class="sub">Distribuição das alternativas em cada pergunta.</p>
+      <div id="respostas"></div>
+    </section>
+  </div>
+
+  <section class="cartao" style="margin-bottom:14px">
+    <h2>Sessões</h2>
+    <p class="sub" id="sub-sessoes">Cada pessoa que entrou no quiz, com o que respondeu.</p>
+    <div class="tabela-caixa">
+      <table>
+        <thead>
+          <tr>
+            <th>Quando</th><th>Status</th><th>Chegou até</th>
+            <th>Respostas</th><th>Perfil</th><th>Origem</th><th>Aparelho</th>
+          </tr>
+        </thead>
+        <tbody id="corpo-sessoes"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="cartao">
+    <h2>Webhook</h2>
+    <p class="sub">Para onde mandar os eventos. Fica guardado no banco e dispara do servidor, então a URL nunca aparece no código do quiz.</p>
+    <div class="webhook-linha">
+      <input class="campo" type="url" id="webhook-url" placeholder="https://hook.make.com/..." />
+      <select class="campo" id="webhook-quando">
+        <option value="nunca">Desligado</option>
+        <option value="resultado">Só quem conclui</option>
+        <option value="tudo">Todo evento</option>
+      </select>
+      <button class="btn" id="btn-webhook" type="button">Salvar</button>
+    </div>
+    <div class="ok-msg" id="msg-webhook"></div>
+    <div class="aviso-box">
+      <svg><use href="#ico-info"/></svg>
+      <span>Salvar aqui só guarda a configuração. Para o disparo acontecer, habilite a extensão <b>pg_net</b> no Supabase e ative o trigger que está comentado no fim do arquivo <b>supabase-tracking.sql</b>.</span>
+    </div>
+  </section>
+
+  <p class="rodape">
+    Os dados são anônimos: nenhum nome, telefone ou e-mail é coletado.<br>
+    A sessão é um identificador aleatório gerado no navegador de quem responde.
+  </p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* =========================================================
+     CONFIGURAÇÃO — use o MESMO projeto Supabase do quiz
+     ========================================================= */
+  var CONFIG = {
+    supabaseUrl: '',
+    supabaseChave: '',
+    atualizarSegundos: 15
+  };
+
+  var $  = function(s,c){ return (c||document).querySelector(s); };
+  var $$ = function(s,c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
+
+  var CHAVE_LOCAL = 'painel_quiz_chave';
+  var chave = '';
+  var eventos = [];
+  var sessoesVistas = {};
+  var temporizador = null;
+  var demo = new URLSearchParams(location.search).has('demo');
+
+  var ETAPAS = [
+    { id:'abriu',     nome:'Abriu a página' },
+    { id:'iniciou',   nome:'Começou o quiz' },
+    { id:'p1',        nome:'Respondeu a 1ª pergunta' },
+    { id:'p2',        nome:'Respondeu a 2ª pergunta' },
+    { id:'p3',        nome:'Respondeu a 3ª pergunta' },
+    { id:'p4',        nome:'Respondeu a 4ª pergunta' },
+    { id:'p5',        nome:'Respondeu a 5ª pergunta' },
+    { id:'resultado', nome:'Viu o resultado' },
+    { id:'clicou',    nome:'Clicou no botão final' }
+  ];
+
+  /* ========================= ACESSO ========================= */
+  function mostrarPainel(){
+    $('#tela-acesso').hidden = true;
+    $('#tela-painel').hidden = false;
+  }
+
+  $('#form-acesso').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var digitada = $('#chave').value.trim();
+    if (!digitada && !demo){ $('#erro-acesso').textContent = 'Informe a chave.'; return; }
+    $('#btn-entrar').textContent = 'VERIFICANDO...';
+    $('#erro-acesso').textContent = '';
+    entrar(digitada);
+  });
+
+  function entrar(digitada){
+    buscarEventos(digitada).then(function(lista){
+      chave = digitada;
+      try { localStorage.setItem(CHAVE_LOCAL, chave); } catch(e){}
+      eventos = lista;
+      mostrarPainel();
+      desenharTudo(true);
+      carregarWebhook();
+      iniciarAtualizacao();
+    }).catch(function(erro){
+      $('#btn-entrar').textContent = 'ENTRAR';
+      $('#erro-acesso').textContent = erro && erro.mensagem ? erro.mensagem : 'Chave inválida.';
+    });
+  }
+
+  $('#btn-sair').addEventListener('click', function(){
+    try { localStorage.removeItem(CHAVE_LOCAL); } catch(e){}
+    location.reload();
+  });
+
+  /* ========================= DADOS ========================= */
+  function horas(){ return Number($('#periodo').value) || 168; }
+
+  function buscarEventos(usarChave){
+    if (demo) return Promise.resolve(gerarDemo());
+
+    if (!CONFIG.supabaseUrl || !CONFIG.supabaseChave){
+      return Promise.reject({ mensagem: 'Faltam as credenciais do Supabase no topo do painel.html.' });
+    }
+    var url = CONFIG.supabaseUrl.replace(/\/+$/,'') + '/rest/v1/rpc/quiz_painel';
+    return fetch(url, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey': CONFIG.supabaseChave,
+        'Authorization':'Bearer ' + CONFIG.supabaseChave
+      },
+      body: JSON.stringify({ p_chave: usarChave, p_horas: horas() })
+    }).then(function(r){
+      if (r.status === 401 || r.status === 403) throw { mensagem:'Chave inválida.' };
+      if (!r.ok) return r.text().then(function(t){
+        throw { mensagem: /chave invalida/i.test(t) ? 'Chave inválida.' : 'Erro ao consultar o banco.' };
+      });
+      return r.json();
+    });
+  }
+
+  function iniciarAtualizacao(){
+    if (temporizador) clearInterval(temporizador);
+    temporizador = setInterval(atualizar, CONFIG.atualizarSegundos * 1000);
+  }
+
+  function atualizar(){
+    if (document.visibilityState === 'hidden') return;
+    buscarEventos(chave).then(function(lista){
+      eventos = lista;
+      desenharTudo(false);
+      var t = $('#txt-vivo');
+      t.textContent = 'atualizado agora';
+      setTimeout(function(){ t.textContent = 'ao vivo'; }, 2500);
+    }).catch(function(){});
+  }
+
+  $('#periodo').addEventListener('change', function(){
+    buscarEventos(chave).then(function(l){ eventos = l; desenharTudo(true); }).catch(function(){});
+  });
+  $('#filtro-campanha').addEventListener('change', function(){ desenharTudo(false); });
+
+  /* ========================= AGREGAÇÃO ========================= */
+  // Transforma a lista crua de eventos em uma linha por pessoa.
+  function montarSessoes(lista){
+    var mapa = {};
+    lista.forEach(function(e){
+      var s = mapa[e.sessao];
+      if (!s){
+        s = mapa[e.sessao] = {
+          sessao: e.sessao, inicio: e.criado_em, fim: e.criado_em,
+          respostas: [], passoMax: 0, iniciou:false, analisou:false,
+          resultado:false, clicou:false, saiu:false,
+          perfil:null, score:null, destino:null, trilha:null,
+          campanha: e.utm_campaign || null, fonte: e.utm_source || null,
+          criativo: e.utm_content || null, dispositivo: e.dispositivo || null,
+          tempoTotal: 0
+        };
+      }
+      if (e.criado_em < s.inicio) s.inicio = e.criado_em;
+      if (e.criado_em > s.fim)    s.fim = e.criado_em;
+      if (!s.campanha && e.utm_campaign) s.campanha = e.utm_campaign;
+      if (!s.fonte && e.utm_source)      s.fonte = e.utm_source;
+      if (!s.criativo && e.utm_content)  s.criativo = e.utm_content;
+      if (!s.dispositivo && e.dispositivo) s.dispositivo = e.dispositivo;
+
+      if (e.evento === 'iniciou')    s.iniciou = true;
+      if (e.evento === 'analisando') s.analisou = true;
+      if (e.evento === 'saiu')       s.saiu = true;
+      if (e.evento === 'resultado'){
+        s.resultado = true;
+        s.perfil = e.perfil; s.score = e.score;
+        s.destino = e.destino; s.trilha = e.trilha || s.trilha;
+      }
+      if (e.evento === 'clicou_cta'){
+        s.clicou = true;
+        s.destino = e.destino || s.destino;
+      }
+      if (e.evento === 'respondeu'){
+        s.iniciou = true;
+        if (e.passo > s.passoMax) s.passoMax = e.passo;
+        if (e.trilha) s.trilha = e.trilha;
+        if (!s.respostas.some(function(r){ return r.passo === e.passo; })){
+          s.respostas.push({ passo:e.passo, pergunta:e.pergunta, valor:e.valor, rotulo:e.rotulo });
+        }
+        s.tempoTotal += (e.tempo_ms || 0);
+      }
+    });
+
+    return Object.keys(mapa).map(function(k){
+      var s = mapa[k];
+      s.respostas.sort(function(a,b){ return a.passo - b.passo; });
+      return s;
+    }).sort(function(a,b){ return a.fim < b.fim ? 1 : -1; });
+  }
+
+  function contarFunil(sessoes){
+    var c = {};
+    ETAPAS.forEach(function(e){ c[e.id] = 0; });
+    sessoes.forEach(function(s){
+      c.abriu++;
+      if (s.iniciou)   c.iniciou++;
+      for (var i = 1; i <= 5; i++) if (s.passoMax >= i) c['p' + i]++;
+      if (s.resultado) c.resultado++;
+      if (s.clicou)    c.clicou++;
+    });
+    return c;
+  }
+
+  // Onde cada pessoa parou, em texto curto
+  function situacao(s){
+    if (s.clicou)    return { classe:s.destino === 'whats' ? 'whats' : 'comunidade',
+                              texto: s.destino === 'whats' ? 'Foi para o WhatsApp' : 'Foi para a comunidade' };
+    if (s.resultado) return { classe:'andando', texto:'Viu o resultado, não clicou' };
+    if (s.passoMax)  return { classe:'saiu', texto:'Parou na pergunta ' + s.passoMax };
+    if (s.iniciou)   return { classe:'saiu', texto:'Começou e saiu' };
+    return { classe:'saiu', texto:'Só abriu' };
+  }
+
+  /* ========================= DESENHO ========================= */
+  function esc(t){
+    return String(t == null ? '' : t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function pct(a, b){ return b > 0 ? Math.round(a / b * 100) : 0; }
+  function minutos(ms){
+    if (!ms) return '—';
+    var s = Math.round(ms / 1000);
+    return s < 60 ? s + 's' : Math.floor(s / 60) + 'min ' + (s % 60) + 's';
+  }
+  function quando(iso){
+    var d = new Date(iso), agora = new Date();
+    var dif = Math.round((agora - d) / 60000);
+    if (dif < 1)  return 'agora';
+    if (dif < 60) return dif + ' min atrás';
+    if (d.toDateString() === agora.toDateString()){
+      return d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    }
+    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' }) + ' ' +
+           d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function sessoesFiltradas(){
+    var todas = montarSessoes(eventos);
+    var campanha = $('#filtro-campanha').value;
+    return campanha ? todas.filter(function(s){ return (s.campanha || '(sem campanha)') === campanha; }) : todas;
+  }
+
+  function desenharTudo(recomporFiltro){
+    var sessoes = sessoesFiltradas();
+    if (recomporFiltro) montarFiltroCampanha();
+    desenharKpis(sessoes);
+    desenharFunil(sessoes);
+    desenharRespostas(sessoes);
+    desenharTabela(sessoes);
+  }
+
+  function montarFiltroCampanha(){
+    var sel = $('#filtro-campanha');
+    var atual = sel.value;
+    var nomes = {};
+    montarSessoes(eventos).forEach(function(s){ nomes[s.campanha || '(sem campanha)'] = true; });
+    var lista = Object.keys(nomes).sort();
+    sel.innerHTML = '<option value="">Todas as campanhas</option>' +
+      lista.map(function(n){ return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('');
+    if (lista.indexOf(atual) > -1) sel.value = atual;
+  }
+
+  function desenharKpis(sessoes){
+    var f = contarFunil(sessoes);
+    var concluiu = f.resultado;
+    var tempos = sessoes.filter(function(s){ return s.resultado && s.tempoTotal; })
+                        .map(function(s){ return s.tempoTotal; });
+    var medio = tempos.length ? tempos.reduce(function(a,b){ return a+b; },0) / tempos.length : 0;
+    var whats = sessoes.filter(function(s){ return s.clicou && s.destino === 'whats'; }).length;
+
+    var cartoes = [
+      { rotulo:'Sessões',      valor:f.abriu,   nota:'pessoas que abriram o quiz' },
+      { rotulo:'Começaram',    valor:f.iniciou, nota: pct(f.iniciou, f.abriu) + '% de quem abriu' },
+      { rotulo:'Concluíram',   valor:concluiu,  nota: pct(concluiu, f.abriu) + '% de quem abriu' },
+      { rotulo:'Cliques no CTA', valor:f.clicou, nota: pct(f.clicou, concluiu) + '% de quem concluiu', destaque:true },
+      { rotulo:'Foram ao WhatsApp', valor:whats, nota: pct(whats, f.clicou) + '% dos cliques' },
+      { rotulo:'Tempo até o fim', valor:minutos(medio), nota:'média de quem concluiu', texto:true }
+    ];
+
+    $('#kpis').innerHTML = cartoes.map(function(c){
+      return '<div class="kpi' + (c.destaque ? ' destaque' : '') + '">'
+           +   '<span class="rotulo">' + esc(c.rotulo) + '</span>'
+           +   '<div class="valor">' + esc(c.valor) + '</div>'
+           +   '<div class="nota">' + esc(c.nota) + '</div>'
+           + '</div>';
+    }).join('');
+  }
+
+  function desenharFunil(sessoes){
+    var f = contarFunil(sessoes);
+    var base = f.abriu || 1;
+    var anterior = null;
+
+    $('#funil').innerHTML = ETAPAS.map(function(etapa){
+      var n = f[etapa.id];
+      var largura = pct(n, base);
+      var queda = '';
+      if (anterior !== null && anterior > 0){
+        var perdidos = anterior - n;
+        var pctQueda = pct(perdidos, anterior);
+        queda = perdidos > 0
+          ? '<div class="queda' + (pctQueda >= 25 ? '' : ' ok') + '">▼ <b>' + pctQueda + '%</b> saiu aqui (' + perdidos + ' pessoa' + (perdidos > 1 ? 's' : '') + ')</div>'
+          : '<div class="queda ok">ninguém saiu aqui</div>';
+      }
+      anterior = n;
+      return '<div class="etapa">'
+           +   '<div class="etapa-topo"><span class="etapa-nome">' + esc(etapa.nome) + '</span>'
+           +     '<span><span class="etapa-num">' + n + '</span><span class="etapa-pct">' + largura + '%</span></span></div>'
+           +   '<div class="barra"><i style="width:' + largura + '%"></i></div>'
+           +   queda
+           + '</div>';
+    }).join('');
+  }
+
+  function desenharRespostas(sessoes){
+    var porPasso = {};
+    sessoes.forEach(function(s){
+      s.respostas.forEach(function(r){
+        // perguntas 2 e 3 mudam conforme a trilha: agrupar só por passo
+        // misturaria perguntas diferentes no mesmo bloco
+        var k = r.passo + '|' + (r.pergunta || '');
+        if (!porPasso[k]) porPasso[k] = { passo:r.passo, pergunta:r.pergunta, total:0, opcoes:{} };
+        porPasso[k].total++;
+        var rot = r.rotulo || r.valor || '(sem rótulo)';
+        porPasso[k].opcoes[rot] = (porPasso[k].opcoes[rot] || 0) + 1;
+      });
+    });
+
+    var passos = Object.keys(porPasso).sort(function(x, y){
+      var a = porPasso[x], b = porPasso[y];
+      return a.passo !== b.passo ? a.passo - b.passo : b.total - a.total;
+    });
+    if (!passos.length){
+      $('#respostas').innerHTML = '<p class="vazio">Ninguém respondeu nada ainda.</p>';
+      return;
+    }
+
+    $('#respostas').innerHTML = passos.map(function(k){
+      var bloco = porPasso[k];
+      var linhas = Object.keys(bloco.opcoes)
+        .sort(function(a,b){ return bloco.opcoes[b] - bloco.opcoes[a]; })
+        .map(function(rot){
+          var n = bloco.opcoes[rot];
+          var p = pct(n, bloco.total);
+          return '<div class="linha-resp">'
+               +   '<span class="rot" title="' + esc(rot) + '">' + esc(rot) + '</span>'
+               +   '<span class="mini"><i style="width:' + p + '%"></i></span>'
+               +   '<span class="qtd">' + n + ' · ' + p + '%</span>'
+               + '</div>';
+        }).join('');
+      var nome = bloco.pergunta ? esc(bloco.pergunta) : 'Pergunta ' + bloco.passo;
+      return '<div class="pergunta-bloco">'
+           +   '<div class="pergunta-titulo"><span style="color:var(--green);font-weight:700">'
+           +     bloco.passo + '.</span> ' + nome + ' <span>' + bloco.total + ' resp.</span></div>'
+           +   linhas
+           + '</div>';
+    }).join('');
+  }
+
+  function desenharTabela(sessoes){
+    var corpo = $('#corpo-sessoes');
+    if (!sessoes.length){
+      corpo.innerHTML = '<tr><td colspan="7" class="vazio">Nenhuma sessão no período escolhido.</td></tr>';
+      $('#sub-sessoes').textContent = 'Cada pessoa que entrou no quiz, com o que respondeu.';
+      return;
+    }
+    $('#sub-sessoes').textContent = sessoes.length + ' sessões no período. As mais recentes primeiro.';
+
+    corpo.innerHTML = sessoes.slice(0, 200).map(function(s){
+      var st = situacao(s);
+      var nova = !sessoesVistas[s.sessao];
+      sessoesVistas[s.sessao] = true;
+
+      var respostas = s.respostas.length
+        ? s.respostas.map(function(r){ return '<b>' + r.passo + '.</b> ' + esc(r.rotulo || r.valor); }).join('<br>')
+        : '<span style="color:var(--text-3)">não respondeu</span>';
+
+      var origem = [s.fonte, s.campanha, s.criativo].filter(Boolean).map(esc).join('<br>') ||
+                   '<span style="color:var(--text-3)">direto</span>';
+
+      var perfil = s.perfil
+        ? esc(s.perfil) + (s.score ? ' <span style="color:var(--text-3)">· ' + s.score + '</span>' : '')
+        : '<span style="color:var(--text-3)">—</span>';
+
+      return '<tr' + (nova ? ' class="nova"' : '') + '>'
+           +   '<td style="white-space:nowrap">' + esc(quando(s.fim)) + '</td>'
+           +   '<td><span class="selo ' + st.classe + '">' + esc(st.texto) + '</span></td>'
+           +   '<td style="white-space:nowrap">' + (s.passoMax ? 'Pergunta ' + s.passoMax : '—') + '</td>'
+           +   '<td class="respostas-cel">' + respostas + '</td>'
+           +   '<td>' + perfil + '</td>'
+           +   '<td style="font-size:11.5px;color:var(--text-2)">' + origem + '</td>'
+           +   '<td style="color:var(--text-2)">' + esc(s.dispositivo || '—') + '</td>'
+           + '</tr>';
+    }).join('');
+  }
+
+  /* ========================= CSV ========================= */
+  $('#btn-csv').addEventListener('click', function(){
+    var sessoes = sessoesFiltradas();
+    if (!sessoes.length) return;
+    var cab = ['sessao','inicio','fim','status','chegou_ate','perfil','score','destino',
+               'utm_source','utm_campaign','utm_content','dispositivo',
+               'resposta_1','resposta_2','resposta_3','resposta_4','resposta_5'];
+    var linhas = sessoes.map(function(s){
+      var r = {};
+      s.respostas.forEach(function(x){ r[x.passo] = x.rotulo || x.valor; });
+      return [
+        s.sessao, s.inicio, s.fim, situacao(s).texto, s.passoMax || 0,
+        s.perfil || '', s.score || '', s.destino || '',
+        s.fonte || '', s.campanha || '', s.criativo || '', s.dispositivo || '',
+        r[1] || '', r[2] || '', r[3] || '', r[4] || '', r[5] || ''
+      ];
+    });
+    var csv = [cab].concat(linhas).map(function(l){
+      return l.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(';');
+    }).join('\n');
+    var url = URL.createObjectURL(new Blob(['﻿' + csv], { type:'text/csv;charset=utf-8' }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'quiz-sessoes-' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  });
+
+  /* ========================= WEBHOOK ========================= */
+  function rpc(nome, corpo){
+    var url = CONFIG.supabaseUrl.replace(/\/+$/,'') + '/rest/v1/rpc/' + nome;
+    return fetch(url, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey': CONFIG.supabaseChave,
+        'Authorization':'Bearer ' + CONFIG.supabaseChave
+      },
+      body: JSON.stringify(corpo)
+    }).then(function(r){
+      if (!r.ok) return r.text().then(function(t){ throw new Error(t); });
+      return r.status === 204 ? null : r.json();
+    });
+  }
+
+  function carregarWebhook(){
+    if (demo){
+      $('#webhook-url').value = 'https://hook.make.com/exemplo-demonstracao';
+      $('#webhook-quando').value = 'resultado';
+      return;
+    }
+    rpc('quiz_config_ler', { p_chave: chave }).then(function(dados){
+      var c = Array.isArray(dados) ? dados[0] : dados;
+      if (!c) return;
+      $('#webhook-url').value = c.webhook_url || '';
+      $('#webhook-quando').value = c.webhook_quando || 'nunca';
+    }).catch(function(){});
+  }
+
+  $('#btn-webhook').addEventListener('click', function(){
+    var msg = $('#msg-webhook');
+    var url = $('#webhook-url').value.trim();
+    var quando = $('#webhook-quando').value;
+
+    if (url && !/^https:\/\//i.test(url)){
+      msg.style.color = 'var(--vermelho)';
+      msg.textContent = 'A URL precisa começar com https://';
+      return;
+    }
+    if (demo){
+      msg.style.color = 'var(--green-bright)';
+      msg.textContent = 'Modo demonstração: nada foi salvo de verdade.';
+      return;
+    }
+    msg.style.color = 'var(--text-3)';
+    msg.textContent = 'Salvando...';
+    rpc('quiz_config_salvar', { p_chave: chave, p_url: url, p_quando: quando })
+      .then(function(){
+        msg.style.color = 'var(--green-bright)';
+        msg.textContent = 'Salvo.';
+        setTimeout(function(){ msg.textContent = ''; }, 3000);
+      })
+      .catch(function(e){
+        msg.style.color = 'var(--vermelho)';
+        msg.textContent = 'Não deu para salvar: ' + String(e.message || '').slice(0, 120);
+      });
+  });
+
+  /* ========================= DEMONSTRAÇÃO =========================
+     Gera dados falsos para você conferir o painel antes de ligar o
+     Supabase. Acesse o painel com ?demo=1 na URL.
+     ================================================================ */
+  function gerarDemo(){
+    var TRILHAS = {
+      automacao:  ['Ferramenta 100% automatizada',
+                   ['Opero de vez em quando, no manual','Já operei, mas parei em algum momento','Opero com frequência e quero automatizar o que já faço','Nunca operei, mas quero começar já automatizado'],
+                   ['Operar de forma automática pois não tenho tempo','Executar na hora certa, sem eu hesitar','Controlar o risco automaticamente','Tudo, quero o processo rodando sozinho']],
+      comecar:    ['Iniciar no mercado financeiro sem dinheiro e sem tempo',
+                   ['Não tenho capital sobrando no momento','Não sobra tempo na minha rotina','Não sei por onde começar','Tenho medo de perder o pouco que tenho'],
+                   ['Menos de 30 minutos','30 min a 1 hora','1 a 2 horas','Mais de 2 horas']],
+      liberdade:  ['Operar sem precisar olhar para o mercado sempre',
+                   ['Perco boas entradas enquanto estou ocupado','Não consigo sair na hora certa','Fico checando o gráfico o dia inteiro','Só opero quando sobra tempo'],
+                   ['Menos de 30 minutos','30 min a 1 hora','1 a 2 horas','Só consigo olhar de manhã e à noite']],
+      renda:      ['Conquistar uma nova fonte de renda',
+                   ['Uma renda extra para complementar o mês','Substituir parte da minha renda atual','Construir liberdade financeira no longo prazo','Viver do mercado um dia'],
+                   ['Nunca operei','Só estudei, nunca coloquei em prática','Já operei e não deu certo','Opero hoje, mas quero melhorar os resultados']]
+    };
+    var P4 = ['Nunca investi, quero começar da forma certa e automática','Já investi de 1.000 a 5.000','Já investi de 5.000 a 20.000','Já investi mais de 100.000'];
+    var P5 = [['Sim, tenho de R$ 100,00 a R$ 300,00','whats'],['Sim, tenho de R$ 500,00 a R$ 1.000,00','whats'],['Não tenho nenhum investimento','comunidade']];
+    var PERFIS = { automacao:'Movido por Automação', comecar:'Começando do Zero Absoluto',
+                   liberdade:'Em busca de Liberdade Operacional', renda:'Construindo uma Nova Fonte de Renda' };
+    var CAMPANHAS = [['facebook','presell-automacao','criativo-01'],['facebook','presell-automacao','criativo-02'],
+                     ['instagram','presell-renda','video-03'],[null,null,null]];
+    var APARELHOS = ['celular','celular','celular','computador','tablet'];
+
+    var P1T = 'O que mais te chamou atenção no anúncio?';
+    var P4T = 'Você já investiu?';
+    var P5T = 'Você teria de R$ 100,00 a R$ 300,00 para iniciar hoje?';
+    var TITULOS = {
+      automacao: {1:P1T, 2:'Hoje, como está a sua relação com o mercado?', 3:'O que você mais quer que a ferramenta resolva?', 4:P4T, 5:P5T},
+      comecar:   {1:P1T, 2:'O que hoje mais te impede de começar?', 3:'Quanto tempo por dia você conseguiria reservar?', 4:P4T, 5:P5T},
+      liberdade: {1:P1T, 2:'O que mais te atrapalha por não conseguir acompanhar o mercado?', 3:'Qual é a janela real que você consegue reservar por dia?', 4:P4T, 5:P5T},
+      renda:     {1:P1T, 2:'O que você espera dessa nova fonte de renda?', 3:'Você já teve alguma experiência no mercado?', 4:P4T, 5:P5T}
+    };
+    var chaves = Object.keys(TRILHAS);
+    var linhas = [];
+    var agora = Date.now();
+    var sorteia = function(a){ return a[Math.floor(Math.random() * a.length)]; };
+
+    for (var i = 0; i < 180; i++){
+      var sessao = 'demo' + i.toString(36) + Math.random().toString(36).slice(2,8);
+      var t = agora - Math.random() * 6 * 24 * 3600 * 1000;
+      var camp = sorteia(CAMPANHAS);
+      var base = {
+        sessao: sessao, utm_source: camp[0], utm_medium: camp[0] ? 'cpc' : null,
+        utm_campaign: camp[1], utm_content: camp[2], utm_term: null,
+        dispositivo: sorteia(APARELHOS), referencia: camp[0] ? 'l.facebook.com' : null,
+        passo:null, pergunta:null, valor:null, rotulo:null, trilha:null,
+        perfil:null, score:null, destino:null, tempo_ms:null
+      };
+      var por = function(ev, extra, atraso){
+        var l = Object.assign({}, base, extra || {});
+        l.evento = ev;
+        l.criado_em = new Date(t + (atraso || 0)).toISOString();
+        linhas.push(l);
+      };
+
+      por('visualizou', {}, 0);
+      if (Math.random() < 0.28){ continue; }                       // abre e sai
+      por('iniciou', {}, 4000);
+
+      var trilhaId = sorteia(chaves);
+      var trilha = TRILHAS[trilhaId];
+      var respostas = [
+        { p:1, rot: trilha[0] },
+        { p:2, rot: sorteia(trilha[1]) },
+        { p:3, rot: sorteia(trilha[2]) },
+        { p:4, rot: sorteia(P4) }
+      ];
+      var p5 = sorteia(P5);
+      var abandonaEm = Math.random();
+      var ate = abandonaEm < 0.14 ? 1 : abandonaEm < 0.24 ? 2 : abandonaEm < 0.31 ? 3 : abandonaEm < 0.36 ? 4 : 5;
+
+      for (var k = 0; k < Math.min(ate, 4); k++){
+        por('respondeu', { passo: respostas[k].p, pergunta: TITULOS[trilhaId][respostas[k].p],
+                           valor:'v' + respostas[k].p, rotulo: respostas[k].rot, trilha: trilhaId,
+                           tempo_ms: 4000 + Math.random() * 14000 }, 8000 + k * 11000);
+      }
+      if (ate < 5){ por('saiu', { passo: ate }, 8000 + ate * 11000 + 20000); continue; }
+
+      por('respondeu', { passo:5, pergunta: TITULOS[trilhaId][5], valor:'v5', rotulo:p5[0],
+                         trilha:trilhaId, tempo_ms: 6000 + Math.random() * 12000 }, 56000);
+      por('analisando', { trilha: trilhaId }, 60000);
+      var score = 70 + Math.floor(Math.random() * 28);
+      por('resultado', { perfil: PERFIS[trilhaId], score: score, destino: p5[1], trilha: trilhaId }, 64000);
+      if (Math.random() < 0.62) por('clicou_cta', { destino: p5[1], trilha: trilhaId }, 72000);
+    }
+    return linhas.sort(function(a,b){ return a.criado_em < b.criado_em ? 1 : -1; });
+  }
+
+  /* ========================= INÍCIO ========================= */
+  if (demo){
+    $('#chave').value = 'demonstracao';
+    entrar('demonstracao');
+  } else {
+    var salva = null;
+    try { salva = localStorage.getItem(CHAVE_LOCAL); } catch(e){}
+    if (salva){ $('#chave').value = salva; entrar(salva); }
+  }
+
+})();
+</script>
+</body>
+</html>

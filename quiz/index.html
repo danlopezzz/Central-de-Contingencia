@@ -760,7 +760,12 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     tempoAnalise: 3400,
     // Tempo dado ao Pixel para enviar o Lead antes de redirecionar (ms).
     // 0 desliga a espera e o clique navega na hora.
-    esperaPixelMs: 350
+    esperaPixelMs: 350,
+
+    // Painel de rastreamento (Supabase). Deixe em branco para desligar.
+    // Cole o que aparece em Project Settings > API do seu projeto.
+    supabaseUrl: '',
+    supabaseChave: ''
   };
 
   /* =========================================================
@@ -1164,6 +1169,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       resposta: o.valor,
       perfil: respostas[0] ? respostas[0].valor : null
     });
+    Painel.respondeu(passo + 1, p.titulo, o, respostas[0] ? respostas[0].valor : null);
 
     var proximo = passo + 1;
     window.setTimeout(function(){
@@ -1183,6 +1189,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
   $('#startBtn').addEventListener('click', function(){
     rastrear('quiz_iniciado', {});
+    Painel.iniciou();
     irParaPasso(0);
   });
 
@@ -1223,6 +1230,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
   /* ========================= TELA DE ANÁLISE ========================= */
   function rodarAnalise(){
+    Painel.analisando();
     var itens = $$('.check-item');
     itens.forEach(function(i){ i.classList.remove('on'); });
     var intervalo = CONFIG.tempoAnalise / (itens.length + 1);
@@ -1309,6 +1317,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     $$('.scarcity-texto').forEach(function(e){ e.textContent = escassez; });
     var cta = $('.cta-link');
 
+    Painel.resultado(perfil.nome.replace(/<[^>]+>/g, ''), score, destino, respostas[0].valor);
     rastrear('quiz_finalizado', {
       destino: destino,
       score: score,
@@ -1332,6 +1341,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       destino: destino,
       perfil: respostas[0] ? respostas[0].valor : null
     });
+    Painel.clicouCta(destino, respostas[0] ? respostas[0].valor : null);
 
     // Sem essa espera o navegador sai da página antes de o Pixel conseguir
     // enviar o Lead, e a conversão se perde. Segura o clique por um instante,
@@ -1384,6 +1394,129 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       if (typeof window.gtag === 'function') window.gtag('event', evento, dados || {});
     }catch(e){}
   }
+
+  /* ========================= PAINEL: ENVIO DE EVENTOS =========================
+     Cada passo vira uma linha no Supabase. É o que alimenta o painel e o
+     webhook. Tudo aqui é à prova de falha: se o Supabase estiver fora ou
+     bloqueado, o quiz continua funcionando normalmente.
+     ========================================================================= */
+  var Painel = (function(){
+    var ligado = !!(CONFIG.supabaseUrl && CONFIG.supabaseChave);
+    var endpoint = ligado ? CONFIG.supabaseUrl.replace(/\/+$/, '') + '/rest/v1/quiz_eventos' : '';
+    var sessao = gerarSessao();
+    var origem = lerOrigem();
+    var marcaPasso = Date.now();
+    var ultimoPasso = 0;
+    var jaAvisouSaida = false;
+
+    function gerarSessao(){
+      var chave = 'quiz_sessao';
+      try {
+        var atual = window.sessionStorage.getItem(chave);
+        if (atual) return atual;
+      } catch(e){}
+      var id = 'q' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+      try { window.sessionStorage.setItem(chave, id); } catch(e){}
+      return id;
+    }
+
+    function dispositivo(){
+      var ua = navigator.userAgent || '';
+      if (/iPad|Tablet|PlayBook|Silk/i.test(ua)) return 'tablet';
+      if (/Mobi|Android|iPhone|iPod/i.test(ua)) return 'celular';
+      return 'computador';
+    }
+
+    function lerOrigem(){
+      var q = {};
+      try {
+        new URLSearchParams(window.location.search).forEach(function(v, k){
+          q[k.toLowerCase()] = String(v).slice(0, 120);
+        });
+      } catch(e){}
+      var ref = '';
+      try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch(e){}
+      return {
+        utm_source:   q.utm_source   || null,
+        utm_medium:   q.utm_medium   || null,
+        utm_campaign: q.utm_campaign || null,
+        utm_content:  q.utm_content  || null,
+        utm_term:     q.utm_term     || null,
+        dispositivo:  dispositivo(),
+        referencia:   ref || null
+      };
+    }
+
+    function enviar(dados, urgente){
+      if (!ligado) return;
+      var linha = Object.assign({ sessao: sessao }, origem, dados);
+      var corpo = JSON.stringify([linha]);
+      var cabecalhos = {
+        'Content-Type': 'application/json',
+        'apikey': CONFIG.supabaseChave,
+        'Authorization': 'Bearer ' + CONFIG.supabaseChave,
+        'Prefer': 'return=minimal'
+      };
+      try {
+        // keepalive garante a entrega mesmo quando a página está saindo
+        window.fetch(endpoint, {
+          method: 'POST',
+          headers: cabecalhos,
+          body: corpo,
+          keepalive: true,
+          mode: 'cors'
+        }).catch(function(){});
+      } catch(e){}
+    }
+
+    return {
+      sessao: function(){ return sessao; },
+
+      visualizou: function(){ enviar({ evento: 'visualizou' }); },
+
+      iniciou: function(){
+        marcaPasso = Date.now();
+        enviar({ evento: 'iniciou' });
+      },
+
+      respondeu: function(passo, pergunta, opcao, trilha){
+        var agora = Date.now();
+        ultimoPasso = passo;
+        enviar({
+          evento: 'respondeu',
+          passo: passo,
+          pergunta: pergunta,
+          valor: opcao.valor,
+          rotulo: (opcao.titulo || '').slice(0, 180),
+          trilha: trilha || null,
+          tempo_ms: Math.min(agora - marcaPasso, 3600000)
+        });
+        marcaPasso = agora;
+      },
+
+      analisando: function(){ enviar({ evento: 'analisando' }); },
+
+      resultado: function(perfil, score, destino, trilha){
+        enviar({ evento: 'resultado', perfil: perfil, score: score, destino: destino, trilha: trilha });
+      },
+
+      clicouCta: function(destino, trilha){
+        enviar({ evento: 'clicou_cta', destino: destino, trilha: trilha }, true);
+      },
+
+      saiu: function(){
+        if (jaAvisouSaida || !ultimoPasso) return;
+        jaAvisouSaida = true;
+        enviar({ evento: 'saiu', passo: ultimoPasso }, true);
+      }
+    };
+  })();
+
+  // registra o abandono quando a aba some, que é como a maioria some
+  window.addEventListener('pagehide', function(){ Painel.saiu(); });
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'hidden') Painel.saiu();
+  });
 
   /* ========================= FUNDO: CANDLES ========================= */
   (function fundoAnimado(){
@@ -1527,6 +1660,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
   /* ========================= INÍCIO ========================= */
   atualizarProgresso();
   rastrear('quiz_visualizado', {});
+  Painel.visualizou();
 
   // pré-carrega os destinos para o redirecionamento sair instantâneo
   [CONFIG.redirectWhats, CONFIG.redirectComunidade].forEach(function(u){
