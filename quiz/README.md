@@ -85,7 +85,7 @@ Tudo que você normalmente vai querer alterar está no bloco `CONFIG`, no topo d
 
 ```js
 var CONFIG = {
-  redirectWhats:        'https://app.massflow.tech/api/go/whats-trading-pro-h91aeoh9k8',
+  redirectWhats:        'https://app.massflow.tech/api/r/vanessa',
   redirectComunidade:   'https://app.massflow.tech/api/go/comunidade-traderpro-tpnra3ppsd',
   repassarParametros:   true,   // repassa utm_source, utm_campaign etc. para o destino
   autoRedirectSegundos: 0,      // 0 = só redireciona no clique. Ex: 12 = redireciona sozinho
