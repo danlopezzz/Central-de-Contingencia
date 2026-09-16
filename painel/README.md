@@ -30,6 +30,13 @@ painel lendo.
 
 Para ver o painel funcionando sem banco nenhum, abra com `?demo=1` no fim.
 
+## Webhook
+
+Configura-se no Supabase, em Table Editor > `quiz_config`, não por esta página.
+A chave usada aqui é a mesma que fica no código do quiz, que é público: se o
+webhook fosse editável daqui, qualquer um que lesse aquele código poderia
+redirecionar os leads.
+
 ## Quem consegue entrar
 
 Qualquer pessoa com o endereço. Não há senha, foi uma escolha para simplificar.

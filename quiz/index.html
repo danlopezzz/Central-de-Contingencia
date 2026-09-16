@@ -1476,7 +1476,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       };
     }
 
-    function enviar(dados, urgente){
+    function enviar(dados){
       if (!ligado) return;
       // o Pixel grava o _fbc alguns instantes depois de carregar,
       // então relemos os cookies a cada envio em vez de fixar no início
@@ -1534,13 +1534,13 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       },
 
       clicouCta: function(destino, trilha){
-        enviar({ evento: 'clicou_cta', destino: destino, trilha: trilha }, true);
+        enviar({ evento: 'clicou_cta', destino: destino, trilha: trilha });
       },
 
       saiu: function(){
         if (jaAvisouSaida || !ultimoPasso) return;
         jaAvisouSaida = true;
-        enviar({ evento: 'saiu', passo: ultimoPasso }, true);
+        enviar({ evento: 'saiu', passo: ultimoPasso });
       }
     };
   })();

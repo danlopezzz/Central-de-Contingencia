@@ -81,12 +81,16 @@ create policy quiz_eventos_leitura on quiz_eventos
   for select to anon, authenticated using (true);
 
 -- ninguém pode alterar nem apagar evento pela chave pública
-drop policy if exists quiz_config_leitura   on quiz_config;
-drop policy if exists quiz_config_alteracao on quiz_config;
-create policy quiz_config_leitura on quiz_config
-  for select to anon, authenticated using (true);
-create policy quiz_config_alteracao on quiz_config
-  for update to anon, authenticated using (id = 1) with check (id = 1);
+
+-- quiz_config fica SEM policy nenhuma, de propósito.
+--
+-- A chave anon aparece no codigo-fonte do quiz, que é uma pagina publica.
+-- Se o anonimo pudesse escrever aqui, qualquer pessoa que lesse esse
+-- codigo poderia trocar a URL do webhook e passar a receber os seus leads.
+--
+-- Por isso o webhook se configura pelo painel do Supabase, em
+-- Table Editor > quiz_config. É uma vez só, e fica fora do alcance de quem
+-- tem a chave publica.
 
 -- ------------------------------------------------------------
 -- 4. WEBHOOK (opcional, ligue quando quiser)

@@ -273,16 +273,20 @@ diretoria antes de configurar.
 
 ### Webhook
 
-O campo no fim do painel guarda a URL e quando disparar (só quem conclui, ou
-todo evento). O disparo acontece **no servidor**, por um trigger no banco,
-então a URL nunca aparece no navegador.
+O webhook se configura **dentro do Supabase**, não pelo painel. O motivo é
+concreto: a chave que o painel usa é a mesma que fica no código do quiz, que é
+uma página pública. Se desse para editar o webhook pelo painel, qualquer pessoa
+que lesse o código-fonte do quiz poderia apontar os seus leads para o servidor
+dela.
 
-Para ativar, depois que tiver a URL:
+Como configurar, quando tiver a URL:
 
-1. No Supabase, vá em **Database > Extensions** e habilite **pg_net**
-2. No **SQL Editor**, rode as três últimas linhas do `supabase-tracking.sql`
-   (o `create trigger`, que está comentado)
-3. No painel, cole a URL e escolha quando disparar
+1. **Table Editor > quiz_config** > edite a única linha
+   - `webhook_url`: a URL, começando com `https://`
+   - `webhook_quando`: `nunca`, `resultado` (só quem conclui) ou `tudo`
+2. **Database > Extensions** > habilite **pg_net**
+3. **SQL Editor** > rode o bloco do `create trigger` que está comentado no fim
+   do `supabase-tracking.sql`
 
 O payload chega com o evento, o perfil, o score, o destino, **todas as
 respostas da sessão** e a origem completa.

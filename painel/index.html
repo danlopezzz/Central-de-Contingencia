@@ -172,6 +172,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
 .selo.comunidade{background:rgba(232,185,59,.15);color:var(--ambar);}
 .selo.andando{background:rgba(255,255,255,.07);color:var(--text-2);}
 .selo.saiu{background:rgba(228,87,76,.14);color:var(--vermelho);}
+.selo.vivo{background:rgba(124,214,26,.16);color:var(--green-bright);}
 .selo.meta{background:rgba(24,119,242,.18);color:#6FB2FF;margin-bottom:4px;}
 .respostas-cel{color:var(--text-2);line-height:1.55;max-width:420px;white-space:normal;}
 .respostas-cel b{color:var(--text);font-weight:600;}
@@ -274,20 +275,20 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
 
   <section class="cartao">
     <h2>Webhook</h2>
-    <p class="sub">Para onde mandar os eventos. Fica guardado no banco e dispara do servidor, então a URL nunca aparece no código do quiz.</p>
-    <div class="webhook-linha">
-      <input class="campo" type="url" id="webhook-url" placeholder="https://hook.make.com/..." />
-      <select class="campo" id="webhook-quando">
-        <option value="nunca">Desligado</option>
-        <option value="resultado">Só quem conclui</option>
-        <option value="tudo">Todo evento</option>
-      </select>
-      <button class="btn" id="btn-webhook" type="button">Salvar</button>
-    </div>
-    <div class="ok-msg" id="msg-webhook"></div>
+    <p class="sub">Para onde mandar os eventos. Dispara do servidor, então a URL nunca aparece em página nenhuma.</p>
     <div class="aviso-box">
       <svg><use href="#ico-info"/></svg>
-      <span>Salvar aqui só guarda a configuração. Para o disparo acontecer, habilite a extensão <b>pg_net</b> no Supabase e ative o trigger que está comentado no fim do arquivo <b>supabase-tracking.sql</b>.</span>
+      <span>
+        O webhook se configura <b>direto no Supabase</b>, não aqui. A chave usada por esta
+        página é a mesma que fica no código do quiz, que é público: se desse para editar o
+        webhook daqui, qualquer pessoa que lesse o código do quiz poderia apontar os seus
+        leads para o servidor dela.<br><br>
+        <b>Como configurar:</b> Supabase &gt; Table Editor &gt; <b>quiz_config</b> &gt; edite a
+        linha e preencha <b>webhook_url</b> (tem que começar com https://) e
+        <b>webhook_quando</b> (<i>nunca</i>, <i>resultado</i> ou <i>tudo</i>).<br><br>
+        <b>Para o disparo acontecer:</b> habilite a extensão <b>pg_net</b> em Database &gt;
+        Extensions e descomente o bloco do trigger no fim do <b>supabase-tracking.sql</b>.
+      </span>
     </div>
   </section>
 
@@ -354,18 +355,29 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
 
   // O Supabase corta a resposta em mil linhas por padrão, então buscamos
   // em blocos até acabar. Assim o painel nunca "trava" em 1000 sessões.
-  function buscarEventos(){
-    if (demo) return Promise.resolve(gerarDemo());
+  // marca d'água: o evento mais novo que já temos em mãos
+  function maisRecente(){
+    var topo = null;
+    for (var i = 0; i < eventos.length; i++){
+      if (!topo || eventos[i].criado_em > topo) topo = eventos[i].criado_em;
+    }
+    return topo;
+  }
+
+  function buscarEventos(desdeIso){
+    if (demo) return Promise.resolve(desdeIso ? [] : gerarDemo());
 
     if (!CONFIG.supabaseUrl || !CONFIG.supabaseChave){
       return Promise.reject(new Error(
         'Faltam as credenciais do Supabase. Abra o painel.html e preencha supabaseUrl e supabaseChave no topo do arquivo.'));
     }
 
-    var desde = new Date(Date.now() - horas() * 3600 * 1000).toISOString();
+    var desde = desdeIso || new Date(Date.now() - horas() * 3600 * 1000).toISOString();
+    // gt e não gte: sem isso o evento da fronteira voltaria duplicado
+    var operador = desdeIso ? 'gt.' : 'gte.';
     var base = baseSupabase()
              + '/rest/v1/quiz_eventos'
-             + '?select=*&criado_em=gte.' + encodeURIComponent(desde)
+             + '?select=*&criado_em=' + operador + encodeURIComponent(desde)
              + '&order=criado_em.desc';
     var bloco = 1000, limite = 60000;
     var tudo = [];
@@ -399,11 +411,15 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
     temporizador = setInterval(atualizar, CONFIG.atualizarSegundos * 1000);
   }
 
+  // A cada 15 segundos buscamos só o que chegou desde a última consulta.
+  // Rebaixar tudo de novo custaria dezenas de requisições por minuto assim
+  // que o volume crescer, e deixaria o painel lento sem motivo.
   function atualizar(){
     if (document.visibilityState === 'hidden') return;
-    buscarEventos().then(function(lista){
+    var novosDesde = maisRecente();
+    buscarEventos(novosDesde).then(function(novos){
       limparErro();
-      eventos = lista;
+      if (novos.length) eventos = novos.concat(eventos);
       desenharTudo(false);
       var t = $('#txt-vivo');
       t.textContent = 'atualizado agora';
@@ -416,7 +432,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
       limparErro();
       eventos = lista;
       desenharTudo(true);
-      if (primeiraVez){ carregarWebhook(); iniciarAtualizacao(); }
+      if (primeiraVez) iniciarAtualizacao();
     }).catch(function(e){
       mostrarErro(e.message || 'Erro ao consultar o banco.');
       desenharTudo(true);
@@ -502,6 +518,13 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
     if (s.clicou)    return { classe:s.destino === 'whats' ? 'whats' : 'comunidade',
                               texto: s.destino === 'whats' ? 'Foi para o WhatsApp' : 'Foi para a comunidade' };
     if (s.resultado) return { classe:'andando', texto:'Viu o resultado, não clicou' };
+
+    // sem isso, quem está respondendo neste instante aparecia como se
+    // tivesse desistido, o que num painel ao vivo é informação errada
+    var agoraMesmo = (Date.now() - new Date(s.fim).getTime()) < 3 * 60 * 1000;
+    if (!s.saiu && agoraMesmo){
+      return { classe:'vivo', texto: s.passoMax ? 'Respondendo agora (pergunta ' + s.passoMax + ')' : 'Na página agora' };
+    }
     if (s.passoMax)  return { classe:'saiu', texto:'Parou na pergunta ' + s.passoMax };
     if (s.iniciou)   return { classe:'saiu', texto:'Começou e saiu' };
     return { classe:'saiu', texto:'Só abriu' };
@@ -530,26 +553,31 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
            d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
   }
 
-  function sessoesFiltradas(){
-    var todas = montarSessoes(eventos);
-    var campanha = $('#filtro-campanha').value;
-    return campanha ? todas.filter(function(s){ return (s.campanha || '(sem campanha)') === campanha; }) : todas;
-  }
+  // guardada no último desenho, para o CSV não precisar remontar tudo
+  var ultimasSessoes = [];
+  function sessoesFiltradas(){ return ultimasSessoes; }
 
   function desenharTudo(recomporFiltro){
-    var sessoes = sessoesFiltradas();
-    if (recomporFiltro) montarFiltroCampanha();
+    // uma volta só pelos eventos: montar as sessões duas vezes por desenho
+    // dobrava o custo à toa
+    var todas = montarSessoes(eventos);
+    if (recomporFiltro) montarFiltroCampanha(todas);
+    var alvo = $('#filtro-campanha').value;
+    var sessoes = alvo
+      ? todas.filter(function(s){ return (s.campanha || '(sem campanha)') === alvo; })
+      : todas;
+    ultimasSessoes = sessoes;
     desenharKpis(sessoes);
     desenharFunil(sessoes);
     desenharRespostas(sessoes);
     desenharTabela(sessoes);
   }
 
-  function montarFiltroCampanha(){
+  function montarFiltroCampanha(todas){
     var sel = $('#filtro-campanha');
     var atual = sel.value;
     var nomes = {};
-    montarSessoes(eventos).forEach(function(s){ nomes[s.campanha || '(sem campanha)'] = true; });
+    todas.forEach(function(s){ nomes[s.campanha || '(sem campanha)'] = true; });
     var lista = Object.keys(nomes).sort();
     sel.innerHTML = '<option value="">Todas as campanhas</option>' +
       lista.map(function(n){ return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('');
@@ -725,67 +753,6 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
     a.download = 'quiz-sessoes-' + new Date().toISOString().slice(0,10) + '.csv';
     a.click();
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-  });
-
-  /* ========================= WEBHOOK ========================= */
-  function urlConfig(){
-    return baseSupabase() + '/rest/v1/quiz_config?id=eq.1';
-  }
-
-  function carregarWebhook(){
-    if (demo){
-      $('#webhook-url').value = 'https://hook.make.com/exemplo-demonstracao';
-      $('#webhook-quando').value = 'resultado';
-      return;
-    }
-    if (!CONFIG.supabaseUrl) return;
-    fetch(urlConfig() + '&select=webhook_url,webhook_quando', { headers: cabecalhos() })
-      .then(function(r){ return r.ok ? r.json() : []; })
-      .then(function(lista){
-        var c = lista && lista[0];
-        if (!c) return;
-        $('#webhook-url').value = c.webhook_url || '';
-        $('#webhook-quando').value = c.webhook_quando || 'nunca';
-      }).catch(function(){});
-  }
-
-  $('#btn-webhook').addEventListener('click', function(){
-    var msg = $('#msg-webhook');
-    var url = $('#webhook-url').value.trim();
-    var quando = $('#webhook-quando').value;
-
-    if (url && !/^https:\/\//i.test(url)){
-      msg.style.color = 'var(--vermelho)';
-      msg.textContent = 'A URL precisa começar com https://';
-      return;
-    }
-    if (demo){
-      msg.style.color = 'var(--green-bright)';
-      msg.textContent = 'Modo demonstração: nada foi salvo de verdade.';
-      return;
-    }
-    msg.style.color = 'var(--text-3)';
-    msg.textContent = 'Salvando...';
-
-    var cab = Object.assign({}, cabecalhos());
-    cab['Prefer'] = 'return=minimal';
-    fetch(urlConfig(), {
-      method: 'PATCH',
-      headers: cab,
-      body: JSON.stringify({
-        webhook_url: url || null,
-        webhook_quando: quando,
-        atualizado_em: new Date().toISOString()
-      })
-    }).then(function(r){
-      if (!r.ok) return r.text().then(function(t){ throw new Error(t.slice(0,140)); });
-      msg.style.color = 'var(--green-bright)';
-      msg.textContent = 'Salvo.';
-      setTimeout(function(){ msg.textContent = ''; }, 3000);
-    }).catch(function(e){
-      msg.style.color = 'var(--vermelho)';
-      msg.textContent = 'Não deu para salvar: ' + (e.message || '');
-    });
   });
 
   /* ========================= DEMONSTRAÇÃO =========================
