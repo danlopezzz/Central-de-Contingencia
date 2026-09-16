@@ -765,7 +765,9 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     // Manda as respostas do lead junto no link do especialista.
     // Se o MassFlow repassar esses parâmetros para a mensagem do WhatsApp,
     // ela chega pronta. Se ignorar, o redirect funciona igual.
-    enviarRespostasNoLink: true,
+    // DESLIGADO em 16/09: o parâmetro "text" pode ter colidido com a mensagem
+    // automática já configurada no MassFlow. Religar só depois de confirmar.
+    enviarRespostasNoLink: false,
 
     // Painel de rastreamento (Supabase). Deixe em branco para desligar.
     // Cole o que aparece em Project Settings > API do seu projeto.
