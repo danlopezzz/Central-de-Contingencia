@@ -374,7 +374,8 @@ h1 .hl{
   width:100%;
   font-family:var(--font-display);
   font-size:16px;font-weight:700;letter-spacing:-.2px;
-  padding:18px 22px;border:none;border-radius:16px;
+  line-height:1.25;text-align:center;text-wrap:balance;
+  padding:17px 14px;border:none;border-radius:16px;
   cursor:pointer;overflow:hidden;
   text-decoration:none;
   color:#06120A;
@@ -394,7 +395,9 @@ h1 .hl{
 .btn:active{transform:scale(.98);}
 .btn:focus-visible{outline:2px solid var(--green-bright);outline-offset:4px;}
 .btn svg{width:19px;height:19px;flex:none;position:relative;z-index:1;}
-.btn span{position:relative;z-index:1;}
+.btn span{position:relative;z-index:1;min-width:0;flex:0 1 auto;text-align:center;}
+/* limita a linha para o texto quebrar antes da borda: assim ícone e texto ficam centralizados juntos */
+.btn .cta-texto{max-width:16.5em;}
 
 .btn-ghost{
   display:inline-flex;align-items:center;gap:7px;
@@ -560,7 +563,7 @@ h1 .hl{
   .opt{padding:15px 13px;font-size:14.6px;gap:11px;}
   .opt-key{width:32px;height:32px;border-radius:10px;font-size:13px;}
   .options.grid-2{gap:9px;}
-  .btn{font-size:15px;padding:17px 18px;}
+  .btn{font-size:14.5px;padding:16px 10px;gap:8px;}
 }
 @media(min-width:720px){
   .shell{padding:0 24px;}
@@ -643,7 +646,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
         <div style="text-align:center">
           <span class="eyebrow"><i class="pulse-dot"></i> Diagnóstico gratuito</span>
         </div>
-        <h1 style="text-align:center">Descubra em menos de 1 minuto o seu <span class="hl">perfil de trader</span></h1>
+        <h1 style="text-align:center">Descubra em menos de 1 minuto se <span class="hl">esse algoritmo</span> é pra você ou não</h1>
         <p class="lede" style="text-align:center;margin-left:auto;margin-right:auto">
           São <strong>5 perguntas rápidas</strong>. No final você recebe o caminho exato para o seu
           momento, sem enrolação e sem teoria que não cabe na sua rotina.
@@ -1289,7 +1292,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     var destinoUrl, textoCta, iconeCta, escassez;
     if (temCapital){
       destinoUrl = montarLink(CONFIG.redirectWhats);
-      textoCta   = 'FALAR COM UM ESPECIALISTA';
+      textoCta   = 'FALAR COM UM ESPECIALISTA E RECEBER A TRADING PRO';
       iconeCta   = '#ico-whats';
       escassez   = 'Liberação gratuita do algoritmo por 24 horas';
     } else {
