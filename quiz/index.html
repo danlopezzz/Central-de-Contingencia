@@ -1387,9 +1387,20 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push(Object.assign({ event: evento }, dados || {}));
       if (typeof window.fbq === 'function'){
-        if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', dados);
-        else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', dados);
-        else window.fbq('trackCustom', evento, dados);
+        // eventID amarra o evento do Meta à sessão do painel. Serve para
+        // cruzar os dois relatórios e é o que a Conversions API usa para
+        // não contar a mesma conversão duas vezes, se um dia entrar.
+        // o sufixo separa as respostas entre si: sem ele o Meta trata
+        // as cinco como o mesmo evento e conta só uma
+        var id = {};
+        try {
+          var sufixo = evento === 'quiz_resposta' && dados && dados.pergunta ? '-' + dados.pergunta : '';
+          id.eventID = Painel.sessao() + '-' + evento + sufixo;
+        } catch(e){}
+
+        if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', dados, id);
+        else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', dados, id);
+        else window.fbq('trackCustom', evento, dados, id);
       }
       if (typeof window.gtag === 'function') window.gtag('event', evento, dados || {});
     }catch(e){}
@@ -1433,6 +1444,13 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       return 'computador';
     }
 
+    function lerCookie(nome){
+      try {
+        var achado = document.cookie.split('; ').find(function(c){ return c.indexOf(nome + '=') === 0; });
+        return achado ? achado.slice(nome.length + 1).slice(0, 180) : null;
+      } catch(e){ return null; }
+    }
+
     function lerOrigem(){
       var q = {};
       try {
@@ -1443,6 +1461,11 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       var ref = '';
       try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch(e){}
       return {
+        // identificadores do Meta: é o que liga uma sessão do painel
+        // ao clique no anúncio e ao evento que o Pixel enviou
+        fbclid: q.fbclid || null,
+        fbp:    lerCookie('_fbp'),
+        fbc:    lerCookie('_fbc'),
         utm_source:   q.utm_source   || null,
         utm_medium:   q.utm_medium   || null,
         utm_campaign: q.utm_campaign || null,
@@ -1455,6 +1478,10 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
     function enviar(dados, urgente){
       if (!ligado) return;
+      // o Pixel grava o _fbc alguns instantes depois de carregar,
+      // então relemos os cookies a cada envio em vez de fixar no início
+      if (!origem.fbp) origem.fbp = lerCookie('_fbp');
+      if (!origem.fbc) origem.fbc = lerCookie('_fbc');
       var linha = Object.assign({ sessao: sessao }, origem, dados);
       var corpo = JSON.stringify([linha]);
       var cabecalhos = {

@@ -27,6 +27,9 @@ create table if not exists quiz_eventos (
   utm_term     text,
   dispositivo  text,                          -- celular | tablet | computador
   referencia   text,                          -- de onde a pessoa veio
+  fbclid       text,                          -- id do clique no anúncio do Meta
+  fbp          text,                          -- cookie do navegador, criado pelo Pixel
+  fbc          text,                          -- cookie do clique, criado pelo Pixel
   criado_em    timestamptz not null default now(),
 
   constraint quiz_eventos_evento_valido check (evento in
@@ -38,6 +41,7 @@ create index if not exists quiz_eventos_criado_idx   on quiz_eventos (criado_em 
 create index if not exists quiz_eventos_sessao_idx   on quiz_eventos (sessao);
 create index if not exists quiz_eventos_evento_idx   on quiz_eventos (evento);
 create index if not exists quiz_eventos_campanha_idx on quiz_eventos (utm_campaign);
+create index if not exists quiz_eventos_fbclid_idx   on quiz_eventos (fbclid);
 
 -- ------------------------------------------------------------
 -- 2. CONFIGURAÇÃO: o webhook

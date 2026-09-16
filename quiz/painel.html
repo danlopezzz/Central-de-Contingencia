@@ -172,6 +172,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
 .selo.comunidade{background:rgba(232,185,59,.15);color:var(--ambar);}
 .selo.andando{background:rgba(255,255,255,.07);color:var(--text-2);}
 .selo.saiu{background:rgba(228,87,76,.14);color:var(--vermelho);}
+.selo.meta{background:rgba(24,119,242,.18);color:#6FB2FF;margin-bottom:4px;}
 .respostas-cel{color:var(--text-2);line-height:1.55;max-width:420px;white-space:normal;}
 .respostas-cel b{color:var(--text);font-weight:600;}
 .vazio{text-align:center;color:var(--text-3);padding:38px 12px;font-size:13.5px;}
@@ -439,6 +440,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
           perfil:null, score:null, destino:null, trilha:null,
           campanha: e.utm_campaign || null, fonte: e.utm_source || null,
           criativo: e.utm_content || null, dispositivo: e.dispositivo || null,
+          fbclid: e.fbclid || null, fbp: e.fbp || null, fbc: e.fbc || null,
           tempoTotal: 0
         };
       }
@@ -448,6 +450,9 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
       if (!s.fonte && e.utm_source)      s.fonte = e.utm_source;
       if (!s.criativo && e.utm_content)  s.criativo = e.utm_content;
       if (!s.dispositivo && e.dispositivo) s.dispositivo = e.dispositivo;
+      if (!s.fbclid && e.fbclid) s.fbclid = e.fbclid;
+      if (!s.fbp && e.fbp) s.fbp = e.fbp;
+      if (!s.fbc && e.fbc) s.fbc = e.fbc;
 
       if (e.evento === 'iniciou')    s.iniciou = true;
       if (e.evento === 'analisando') s.analisou = true;
@@ -558,6 +563,11 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
                         .map(function(s){ return s.tempoTotal; });
     var medio = tempos.length ? tempos.reduce(function(a,b){ return a+b; },0) / tempos.length : 0;
     var whats = sessoes.filter(function(s){ return s.clicou && s.destino === 'whats'; }).length;
+    // clique vindo do Meta: o fbclid vem na URL do anúncio, o fbc é o
+    // cookie que o Pixel grava a partir dele
+    var doMeta = sessoes.filter(function(s){ return s.fbclid || s.fbc; }).length;
+    // se ninguém tem _fbp, o Pixel não está carregando na página
+    var comPixel = sessoes.some(function(s){ return s.fbp; });
 
     var cartoes = [
       { rotulo:'Sessões',      valor:f.abriu,   nota:'pessoas que abriram o quiz' },
@@ -565,7 +575,9 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
       { rotulo:'Concluíram',   valor:concluiu,  nota: pct(concluiu, f.abriu) + '% de quem abriu' },
       { rotulo:'Cliques no CTA', valor:f.clicou, nota: pct(f.clicou, concluiu) + '% de quem concluiu', destaque:true },
       { rotulo:'Foram ao WhatsApp', valor:whats, nota: pct(whats, f.clicou) + '% dos cliques' },
-      { rotulo:'Tempo até o fim', valor:minutos(medio), nota:'média de quem concluiu', texto:true }
+      { rotulo:'Tempo até o fim', valor:minutos(medio), nota:'média de quem concluiu', texto:true },
+      { rotulo:'Vieram de anúncio', valor:doMeta,
+        nota: pct(doMeta, f.abriu) + '% com clique do Meta' + (comPixel ? '' : ' · Pixel sem sinal') }
     ];
 
     $('#kpis').innerHTML = cartoes.map(function(c){
@@ -666,8 +678,10 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
         ? s.respostas.map(function(r){ return '<b>' + r.passo + '.</b> ' + esc(r.rotulo || r.valor); }).join('<br>')
         : '<span style="color:var(--text-3)">não respondeu</span>';
 
-      var origem = [s.fonte, s.campanha, s.criativo].filter(Boolean).map(esc).join('<br>') ||
-                   '<span style="color:var(--text-3)">direto</span>';
+      var partes = [s.fonte, s.campanha, s.criativo].filter(Boolean).map(esc);
+      if (s.fbclid || s.fbc) partes.unshift('<span class="selo meta">clique do Meta</span>');
+      var origem = partes.length ? partes.join('<br>')
+                                 : '<span style="color:var(--text-3)">direto</span>';
 
       var perfil = s.perfil
         ? esc(s.perfil) + (s.score ? ' <span style="color:var(--text-3)">· ' + s.score + '</span>' : '')
@@ -690,7 +704,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
     var sessoes = sessoesFiltradas();
     if (!sessoes.length) return;
     var cab = ['sessao','inicio','fim','status','chegou_ate','perfil','score','destino',
-               'utm_source','utm_campaign','utm_content','dispositivo',
+               'utm_source','utm_campaign','utm_content','dispositivo','fbclid',
                'resposta_1','resposta_2','resposta_3','resposta_4','resposta_5'];
     var linhas = sessoes.map(function(s){
       var r = {};
@@ -698,7 +712,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
       return [
         s.sessao, s.inicio, s.fim, situacao(s).texto, s.passoMax || 0,
         s.perfil || '', s.score || '', s.destino || '',
-        s.fonte || '', s.campanha || '', s.criativo || '', s.dispositivo || '',
+        s.fonte || '', s.campanha || '', s.criativo || '', s.dispositivo || '', s.fbclid || '',
         r[1] || '', r[2] || '', r[3] || '', r[4] || '', r[5] || ''
       ];
     });
@@ -823,6 +837,9 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
         sessao: sessao, utm_source: camp[0], utm_medium: camp[0] ? 'cpc' : null,
         utm_campaign: camp[1], utm_content: camp[2], utm_term: null,
         dispositivo: sorteia(APARELHOS), referencia: camp[0] ? 'l.facebook.com' : null,
+        fbclid: camp[0] === 'facebook' ? 'IwAR' + Math.random().toString(36).slice(2,18) : null,
+        fbp: 'fb.1.' + Date.now() + '.' + Math.floor(Math.random()*1e10),
+        fbc: camp[0] === 'facebook' ? 'fb.1.' + Date.now() + '.IwAR' + Math.random().toString(36).slice(2,12) : null,
         passo:null, pergunta:null, valor:null, rotulo:null, trilha:null,
         perfil:null, score:null, destino:null, tempo_ms:null
       };
