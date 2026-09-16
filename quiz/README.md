@@ -159,7 +159,7 @@ quando esses scripts existirem na página.
 ## Painel de rastreamento
 
 Além do Pixel, o quiz grava cada passo num banco próprio e mostra tudo num
-painel ao vivo (`painel.html`). É opcional: com as credenciais em branco o quiz
+painel ao vivo, que fica na pasta `painel/` e é publicado como site separado. É opcional: com as credenciais em branco o quiz
 funciona exatamente como antes e não faz nenhuma chamada de rede extra.
 
 ### Passo a passo para configurar
@@ -214,19 +214,21 @@ supabaseUrl:   'https://abcdefgh.supabase.co',
 supabaseChave: 'eyJhbGciOi...',
 ```
 
-No `painel.html`, procure `supabaseUrl` (logo no começo do `<script>`) e cole
-**os mesmos dois valores**.
+No `painel/index.html`, procure `supabaseUrl` (logo no começo do `<script>`) e
+cole **os mesmos dois valores**.
 
 > É o erro mais comum: preencher só um dos arquivos. Se preencher só o quiz, o
 > painel abre vazio. Se preencher só o painel, nada é gravado.
 
-**6. Publique**
+**6. Publique os dois sites, separados**
 
-Suba a pasta na Netlify ou Vercel, como você já faz. Vão existir dois
-endereços:
+O quiz e o painel são **dois sites diferentes**, de propósito. O quiz é
+divulgado no tráfego; se o painel morasse no mesmo endereço, qualquer pessoa
+que recebesse o anúncio poderia tentar `/painel` e ver a lista de leads.
 
-- `seusite.app` — o quiz
-- `seusite.app/painel` — o painel
+- Suba a pasta `quiz/` no site que você já usa para o quiz
+- Suba a pasta `painel/` como um **site novo** na Netlify, com um nome que não
+  tenha relação com o do quiz. As instruções estão no `painel/README.md`
 
 **7. Teste antes de ligar o tráfego**
 
@@ -243,7 +245,7 @@ O painel diz na tela o que houve. Os três casos:
 
 | O que aparece | O que fazer |
 | ------------- | ----------- |
-| *Faltam as credenciais do Supabase* | Você não colou a URL e a chave no `painel.html` (passo 5) |
+| *Faltam as credenciais do Supabase* | Você não colou a URL e a chave no `painel/index.html` (passo 5) |
 | *A tabela quiz_eventos não existe nesse projeto* | O SQL não rodou, ou rodou em outro projeto (passo 2) |
 | *A chave anon não tem permissão* | O SQL rodou pela metade. Rode de novo, inteiro |
 
@@ -252,7 +254,7 @@ no período escolhido. Troque o período no seletor do topo.
 
 ### Conferir o painel sem ligar nada
 
-Abra `painel.html?demo=1` para ver o painel funcionando com dados gerados na
+Abra o painel com `?demo=1` no fim do endereço para ver o painel funcionando com dados gerados na
 hora. Nada é salvo e nenhuma credencial é necessária. Serve para mostrar para a
 diretoria antes de configurar.
 
@@ -287,9 +289,10 @@ respostas da sessão** e a origem completa.
 
 ### Sobre o acesso ao painel
 
-O painel **abre sem senha**: quem tiver o endereço vê os dados. O endereço não
-é divulgado em lugar nenhum e a página é `noindex`, então não aparece no
-Google, mas trate o link como interno.
+O painel **abre sem senha**: quem tiver o endereço vê os dados. Por isso ele
+vive num site separado, com endereço que não tem relação com o do quiz, e é
+`noindex`. Quem recebe o link do anúncio não tem como chegar nele. Ainda assim,
+trate o endereço como interno.
 
 Os dados são anônimos: nenhum nome, telefone ou e-mail é coletado. A sessão é
 um identificador aleatório gerado no navegador de quem responde.
