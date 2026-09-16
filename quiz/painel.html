@@ -304,8 +304,8 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
      CONFIGURAÇÃO — use o MESMO projeto Supabase do quiz
      ========================================================= */
   var CONFIG = {
-    supabaseUrl: '',
-    supabaseChave: '',
+    supabaseUrl: 'https://hdfkpepapdakqqbtekqw.supabase.co',
+    supabaseChave: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZmtwZXBhcGRha3FxYnRla3F3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1ODY0NjMsImV4cCI6MjEwNTE2MjQ2M30.RhvXY-s4yhTUwDGCCIQrGZ9mRVwc7Mu_KM0fm2wtfBU',
     atualizarSegundos: 15
   };
 
@@ -332,6 +332,11 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
   /* ========================= DADOS ========================= */
   function horas(){ return Number($('#periodo').value) || 168; }
 
+  // aceita tanto a URL do projeto quanto a do endpoint REST
+  function baseSupabase(){
+    return CONFIG.supabaseUrl.replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+  }
+
   function cabecalhos(){
     return {
       'Content-Type': 'application/json',
@@ -357,7 +362,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
     }
 
     var desde = new Date(Date.now() - horas() * 3600 * 1000).toISOString();
-    var base = CONFIG.supabaseUrl.replace(/\/+$/,'')
+    var base = baseSupabase()
              + '/rest/v1/quiz_eventos'
              + '?select=*&criado_em=gte.' + encodeURIComponent(desde)
              + '&order=criado_em.desc';
@@ -710,7 +715,7 @@ tbody tr.nova{animation:entrou 1.4s var(--ease);}
 
   /* ========================= WEBHOOK ========================= */
   function urlConfig(){
-    return CONFIG.supabaseUrl.replace(/\/+$/,'') + '/rest/v1/quiz_config?id=eq.1';
+    return baseSupabase() + '/rest/v1/quiz_config?id=eq.1';
   }
 
   function carregarWebhook(){

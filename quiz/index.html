@@ -764,8 +764,8 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
     // Painel de rastreamento (Supabase). Deixe em branco para desligar.
     // Cole o que aparece em Project Settings > API do seu projeto.
-    supabaseUrl: '',
-    supabaseChave: ''
+    supabaseUrl: 'https://hdfkpepapdakqqbtekqw.supabase.co',
+    supabaseChave: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZmtwZXBhcGRha3FxYnRla3F3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1ODY0NjMsImV4cCI6MjEwNTE2MjQ2M30.RhvXY-s4yhTUwDGCCIQrGZ9mRVwc7Mu_KM0fm2wtfBU'
   };
 
   /* =========================================================
@@ -1402,7 +1402,13 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
      ========================================================================= */
   var Painel = (function(){
     var ligado = !!(CONFIG.supabaseUrl && CONFIG.supabaseChave);
-    var endpoint = ligado ? CONFIG.supabaseUrl.replace(/\/+$/, '') + '/rest/v1/quiz_eventos' : '';
+    var endpoint = ligado ? baseSupabase() + '/rest/v1/quiz_eventos' : '';
+
+    // aceita tanto a URL do projeto quanto a do endpoint REST,
+    // que é um engano fácil de cometer ao copiar do painel do Supabase
+    function baseSupabase(){
+      return CONFIG.supabaseUrl.replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+    }
     var sessao = gerarSessao();
     var origem = lerOrigem();
     var marcaPasso = Date.now();
