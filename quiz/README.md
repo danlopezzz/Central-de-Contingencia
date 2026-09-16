@@ -46,7 +46,7 @@ As 4 trilhas, conforme a resposta da pergunta 1:
 
 | Respondeu na pergunta 1 | Perfil no resultado | Pergunta 2 | Pergunta 3 |
 | ----------------------- | ------------------- | ---------- | ---------- |
-| Operar de forma automática pois não tenho tempo | Movido por Automação | Como está sua relação com o mercado hoje | O que quer que a ferramenta resolva |
+| Ferramenta 100% automatizada | Movido por Automação | Como está sua relação com o mercado hoje | O que quer que a ferramenta resolva |
 | Iniciar sem dinheiro e sem tempo | Começando do Zero Absoluto | O que mais te impede de começar | Tempo que conseguiria reservar |
 | Operar sem olhar o mercado sempre | Em busca de Liberdade Operacional | O que te atrapalha por não acompanhar | Janela real por dia |
 | Conquistar uma nova fonte de renda | Construindo uma Nova Fonte de Renda | O que espera dessa renda | Já teve experiência no mercado |
