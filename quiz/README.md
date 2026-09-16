@@ -74,9 +74,9 @@ respostas seguintes são descartadas, porque pertenciam ao perfil antigo.
 ### Sobre o botão no resultado
 
 O botão aparece **logo abaixo do nome do perfil**, antes do score e do
-diagnóstico, para ninguém precisar rolar até achá-lo. O mesmo botão se repete
-no fim da página, para quem leu tudo. Os dois apontam para o mesmo destino e
-disparam o mesmo evento.
+diagnóstico, para ninguém precisar rolar até achá-lo. É o único CTA da
+página: o score, o texto e a recapitulação vêm depois dele e servem para
+sustentar quem não clicou de primeira.
 
 ## Onde mexer
 
