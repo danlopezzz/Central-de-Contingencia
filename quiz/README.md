@@ -271,25 +271,91 @@ diretoria antes de configurar.
   campanha e o aparelho. Atualiza sozinha a cada 15 segundos.
 - **Filtro por campanha** e **download em CSV**.
 
-### Webhook
+### Webhook: passo a passo
 
-O webhook se configura **dentro do Supabase**, não pelo painel. O motivo é
-concreto: a chave que o painel usa é a mesma que fica no código do quiz, que é
-uma página pública. Se desse para editar o webhook pelo painel, qualquer pessoa
-que lesse o código-fonte do quiz poderia apontar os seus leads para o servidor
-dela.
+O quiz **manda** webhook, não recebe. Cada vez que alguém conclui, o banco
+dispara um POST para a URL que você escolher, com o lead inteiro dentro.
 
-Como configurar, quando tiver a URL:
+Vem desligado. Para ligar:
 
-1. **Table Editor > quiz_config** > edite a única linha
-   - `webhook_url`: a URL, começando com `https://`
-   - `webhook_quando`: `nunca`, `resultado` (só quem conclui) ou `tudo`
-2. **Database > Extensions** > habilite **pg_net**
-3. **SQL Editor** > rode o bloco do `create trigger` que está comentado no fim
-   do `supabase-tracking.sql`
+**1. Tenha a URL em mãos**
 
-O payload chega com o evento, o perfil, o score, o destino, **todas as
-respostas da sessão** e a origem completa.
+No Make, n8n ou Zapier, crie o cenário e copie a URL do gatilho. Tem que
+começar com `https://`.
+
+> Para testar antes de plugar no Make, pegue uma URL grátis em
+> [webhook.site](https://webhook.site). Você vê o payload chegando na hora.
+
+**2. Habilite a extensão pg_net**
+
+Supabase > **Database** > **Extensions** > busque `pg_net` > ligue a chave.
+
+É ela que dá ao banco a capacidade de fazer requisição para fora. Sem ela o
+passo seguinte falha.
+
+**3. Rode o `supabase-ativar-webhook.sql`**
+
+Abra o arquivo, **troque a linha `COLE_A_SUA_URL_AQUI`** pela sua URL, e rode
+tudo numa aba nova do SQL Editor.
+
+Ele faz três coisas: grava a URL, liga o gatilho e mostra o resultado para
+você conferir. A última linha tem que devolver a sua URL e `resultado`.
+
+**4. Teste**
+
+Responda o quiz até o fim e clique no botão. O webhook deve receber dois
+disparos: um no `resultado` e outro no `clicou_cta`.
+
+Se nada chegar, confira nesta ordem: a extensão está mesmo ligada, a URL está
+correta na tabela `quiz_config`, e o gatilho existe (rode
+`select tgname from pg_trigger where tgname = 'quiz_eventos_webhook';` — tem
+que voltar uma linha).
+
+**Para desligar** a qualquer momento, rode o `supabase-desligar-webhook.sql`.
+Os eventos continuam sendo gravados normalmente, só param de ser enviados.
+
+#### resultado ou tudo?
+
+| Valor | O que manda | Quando usar |
+| ----- | ----------- | ----------- |
+| `resultado` | Só quem conclui: 2 disparos por lead | **Recomendado** |
+| `tudo` | Cada passo: 10 disparos por sessão | Só se quiser acompanhar abandono fora do painel |
+| `nunca` | Nada | Desligado |
+
+Com `resultado`, oito dos dez eventos param no filtro antes de montar
+qualquer coisa. Com `tudo` são cinco vezes mais disparos para uma informação
+que o evento final já traz inteira, e a fila de envio disputa recursos com as
+consultas do painel.
+
+#### O que chega no payload
+
+```json
+{
+  "evento": "resultado",
+  "sessao": "qmu4k0qmf6a16hslqd2",
+  "trilha": "automacao",
+  "perfil": "Movido por Automação",
+  "score": 87,
+  "destino": "whats",
+  "respostas": [
+    { "passo": 1, "pergunta": "O que mais te chamou atenção no anúncio?",
+      "valor": "automacao", "rotulo": "Ferramenta 100% automatizada" },
+    { "passo": 2, "pergunta": "...", "valor": "...", "rotulo": "..." }
+  ],
+  "origem": {
+    "utm_source": "facebook", "utm_medium": "cpc",
+    "utm_campaign": "presell01", "utm_content": "criativo-07", "utm_term": null
+  },
+  "dispositivo": "celular",
+  "criado_em": "2026-09-16T20:24:10.155Z"
+}
+```
+
+#### Nada disso trava o quiz
+
+O envio é assíncrono: o banco enfileira a requisição e um processo em segundo
+plano manda. O evento é gravado na hora, sem esperar resposta. Se o webhook
+estiver fora do ar ou devolver erro, o registro acontece do mesmo jeito.
 
 ### Sobre o acesso ao painel
 
