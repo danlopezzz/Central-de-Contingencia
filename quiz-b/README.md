@@ -99,6 +99,23 @@ dá pra comparar nada.
 
 Para conferir: menu → **Table Editor**. Devem existir `quiz_eventos` e `quiz_config`.
 
+### 2b. Criar a tabela do popup
+
+Ainda no **SQL Editor**, **New query** (outra aba), cole o
+`supabase-popup-b.sql` inteiro e **Run**.
+
+Isso cria a tabela `quiz_leads` (nome e WhatsApp), libera o evento `lead`
+no funil e cria a função de resumo que o painel usa.
+
+> **Por que duas tabelas:** a chave anon fica visível no HTML do quiz, que é
+> público. Se ela pudesse **ler** `quiz_leads`, qualquer pessoa que abrisse o
+> código-fonte baixaria a lista de nomes e telefones dos seus leads. Por isso
+> o anon só **escreve** nessa tabela e nunca lê.
+>
+> Para ver os leads: Supabase → **Table Editor** → `quiz_leads`, logado. Dá
+> para exportar CSV por lá. O painel mostra só a **contagem**, nunca os dados
+> pessoais.
+
 ### 3. Pegar as credenciais
 
 1. Menu → **Project Settings** (engrenagem) → **API**.
@@ -158,8 +175,41 @@ Nunca junte os dois no mesmo site: a URL do anúncio é pública, a do painel n�
 | Arquivo | O que é |
 |---|---|
 | `index.html` | o quiz inteiro, sem build, sem dependência |
-| `supabase-tracking-b.sql` | cria as tabelas, os índices e as regras de acesso |
+| `supabase-tracking-b.sql` | cria as tabelas de evento, os índices e as regras de acesso |
+| `supabase-popup-b.sql` | cria a tabela de leads do popup (rode depois do de cima) |
 | `README.md` | este guia |
+
+---
+
+## Popup de captura
+
+Trava a página na abertura e só libera o quiz depois do nome e do WhatsApp.
+Segue o mesmo desenho que o time do diretor usa nas outras LPs.
+
+Liga e desliga no `var CONFIG`, sem mexer em mais nada:
+
+```js
+popupLigado: true,      // false desliga o popup inteiro
+popupAtrasoMs: 0,       // 0 = abre junto com a página
+popupLembrarDias: 0,    // 0 = trava sempre. 7 = lembra por 7 dias
+popupAvisaMeta: false,  // a entrada do popup não vira evento na Meta
+```
+
+Onde cada coisa é gravada:
+
+| | Onde | Anon pode |
+|---|---|---|
+| Nome e WhatsApp | `quiz_leads` | só escrever |
+| Evento `lead` (sem dado pessoal) | `quiz_eventos` | escrever e ler |
+
+O popup nunca trava o funil por causa do rastreamento: se o Supabase estiver
+fora do ar ou sem credencial, ele espera no máximo 2 segundos e libera a
+pessoa assim mesmo.
+
+**Atenção ao teste A/B:** o quiz A não tem popup. Com o popup só no B, a
+diferença de conversão entre os dois passa a medir o popup, não o layout.
+Para o teste seguir comparando layout, o popup precisa estar nos dois ou em
+nenhum.
 
 ---
 

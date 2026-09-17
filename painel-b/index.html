@@ -299,6 +299,7 @@ tbody tr.nova{animation:chegou 1.5s var(--curva);}
 
   var ETAPAS = [
     { id:'abriu',     nome:'Abriu a página' },
+    { id:'lead',      nome:'Preencheu o popup' },
     { id:'iniciou',   nome:'Começou o quiz' },
     { id:'p1',        nome:'Respondeu o objetivo' },
     { id:'p2',        nome:'Respondeu a 2ª pergunta' },
@@ -397,7 +398,7 @@ tbody tr.nova{animation:chegou 1.5s var(--curva);}
       if (!s){
         s = mapa[e.sessao] = {
           sessao:e.sessao, inicio:e.criado_em, fim:e.criado_em, respostas:[],
-          passoMax:0, iniciou:false, resultado:false, clicou:false, saiu:false,
+          passoMax:0, lead:false, iniciou:false, resultado:false, clicou:false, saiu:false,
           perfil:null, score:null, destino:null, trilha:null,
           campanha:e.utm_campaign||null, fonte:e.utm_source||null, criativo:e.utm_content||null,
           dispositivo:e.dispositivo||null, fbclid:e.fbclid||null, fbc:e.fbc||null, fbp:e.fbp||null,
@@ -414,6 +415,7 @@ tbody tr.nova{animation:chegou 1.5s var(--curva);}
       if (!s.fbc && e.fbc) s.fbc = e.fbc;
       if (!s.fbp && e.fbp) s.fbp = e.fbp;
 
+      if (e.evento === 'lead')    s.lead = true;
       if (e.evento === 'iniciou') s.iniciou = true;
       if (e.evento === 'saiu')    s.saiu = true;
       if (e.evento === 'resultado'){
@@ -442,6 +444,7 @@ tbody tr.nova{animation:chegou 1.5s var(--curva);}
     ETAPAS.forEach(function(e){ c[e.id] = 0; });
     sessoes.forEach(function(s){
       c.abriu++;
+      if (s.lead) c.lead++;
       if (s.iniciou) c.iniciou++;
       for (var i = 1; i <= 5; i++) if (s.passoMax >= i) c['p' + i]++;
       if (s.resultado) c.resultado++;
@@ -518,7 +521,9 @@ tbody tr.nova{animation:chegou 1.5s var(--curva);}
 
     var itens = [
       { r:'Sessões',        v:f.abriu,    n:'abriram o quiz B' },
-      { r:'Começaram',      v:f.iniciou,  n:pct(f.iniciou, f.abriu) + '% de quem abriu' },
+      { r:'Leads no popup', v:f.lead,     n:pct(f.lead, f.abriu) + '% de quem abriu' },
+      { r:'Começaram',      v:f.iniciou,  n:pct(f.iniciou, f.lead || f.abriu)
+                                            + '% de quem ' + (f.lead ? 'preencheu' : 'abriu') },
       { r:'Concluíram',     v:f.resultado,n:pct(f.resultado, f.abriu) + '% de quem abriu' },
       { r:'Cliques no CTA', v:f.clicou,   n:pct(f.clicou, f.resultado) + '% de quem concluiu', viva:true },
       { r:'Ao especialista',v:especialista,n:pct(especialista, f.clicou) + '% dos cliques' },
@@ -700,7 +705,10 @@ tbody tr.nova{animation:chegou 1.5s var(--curva);}
         linhas.push(l);
       };
       por('visualizou', {}, 0);
-      if (Math.random() < 0.26) continue;
+      // popup: parte das pessoas desiste na trava, antes mesmo do quiz
+      if (Math.random() < 0.34) continue;
+      por('lead', {}, 2500);
+      if (Math.random() < 0.06) continue;
       por('iniciou', {}, 4000);
       var id = sorteia(chaves), tr = T[id];
       var passos = [

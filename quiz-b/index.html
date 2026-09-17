@@ -521,6 +521,91 @@ h1 mark::after{
   font-size:11.5px;line-height:1.65;color:#3E5249;
 }
 
+/* ---------- popup de captura (tela de bloqueio) ---------- */
+.trava{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  background:rgba(3,10,8,.86);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  overflow-y:auto;
+  animation:travaEntra .3s var(--curva) both;
+}
+.trava[hidden]{display:none;}
+@keyframes travaEntra{from{opacity:0;}to{opacity:1;}}
+.trava.saindo{animation:travaSai .26s ease-in both;}
+@keyframes travaSai{from{opacity:1;}to{opacity:0;}}
+
+.trava-caixa{
+  width:100%;max-width:400px;margin:auto;
+  background:var(--painel);
+  border:1px solid var(--traco-2);
+  border-radius:var(--r-g);
+  padding:26px 22px 22px;
+  display:flex;flex-direction:column;gap:var(--e3);
+  box-shadow:0 28px 70px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(0,224,164,.10);
+  animation:caixaEntra .42s var(--curva-volta) both;
+}
+@keyframes caixaEntra{
+  from{opacity:0;transform:translateY(18px) scale(.97);}
+  to{opacity:1;transform:none;}
+}
+.trava-caixa > .selo{align-self:flex-start;}
+.trava-caixa h2{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(23px,6.2vw,28px);line-height:1.16;letter-spacing:-.02em;
+  margin:0;text-wrap:balance;
+}
+.trava-caixa > p{
+  margin:0;color:var(--texto-2);font-size:14.3px;line-height:1.55;
+}
+.trava-form{display:flex;flex-direction:column;gap:var(--e3);margin-top:var(--e1);}
+
+.campo{display:flex;flex-direction:column;gap:6px;}
+.campo > span{
+  font-family:var(--mono);font-size:10px;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--texto-3);
+}
+.campo input{
+  width:100%;
+  font-family:var(--corpo);font-size:16px;  /* 16px evita o zoom do iOS */
+  color:var(--texto);
+  background:#061511;
+  border:1px solid var(--traco-2);
+  border-radius:var(--r);
+  padding:14px 14px;
+  transition:border-color .18s, box-shadow .18s, background .18s;
+  -webkit-appearance:none;appearance:none;
+}
+.campo input::placeholder{color:#4A5F58;}
+.campo input:focus{
+  outline:none;border-color:var(--verde);
+  background:#071A14;
+  box-shadow:0 0 0 3px rgba(0,224,164,.16);
+}
+.campo.ruim input{border-color:#FF6B5B;box-shadow:0 0 0 3px rgba(255,107,91,.14);}
+.campo-erro{
+  font-style:normal;font-size:12px;color:#FF8B7E;min-height:0;
+}
+.campo-erro:empty{display:none;}
+
+.trava-caixa .acao{margin-top:var(--e1);}
+.trava-caixa .acao[disabled]{opacity:.62;pointer-events:none;}
+
+.trava-nota{
+  display:flex;align-items:center;gap:8px;justify-content:center;
+  margin:0;font-size:12px;color:var(--texto-3);
+}
+.trava-nota svg{
+  width:13px;height:13px;flex:none;
+  stroke:var(--verde);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+
+@media(max-width:380px){
+  .trava{padding:14px;}
+  .trava-caixa{padding:22px 18px 18px;}
+}
+
 /* ---------- telas estreitas ---------- */
 @media(max-width:380px){
   .palco{padding:0 16px;}
@@ -578,6 +663,40 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 <div class="brilho-base" aria-hidden="true"></div>
 <canvas id="ondas" aria-hidden="true"></canvas>
 
+<!-- ============ POPUP DE CAPTURA (tela de bloqueio) ============ -->
+<div class="trava" id="trava" hidden>
+  <div class="trava-caixa" role="dialog" aria-modal="true" aria-labelledby="travaTitulo">
+    <span class="selo"><i class="batida"></i> Diagnóstico gratuito</span>
+    <h2 id="travaTitulo">Libere seu diagnóstico</h2>
+    <p>Preencha os dados abaixo para começar o diagnóstico gratuito e receber o resultado no final.</p>
+
+    <form class="trava-form" id="travaForm" novalidate>
+      <label class="campo" id="campoNome">
+        <span>Seu nome</span>
+        <input id="travaNome" type="text" name="nome" autocomplete="given-name"
+               placeholder="Como podemos te chamar?" maxlength="80"
+               aria-describedby="erroNome" required>
+        <em class="campo-erro" id="erroNome"></em>
+      </label>
+
+      <label class="campo" id="campoZap">
+        <span>WhatsApp</span>
+        <input id="travaZap" type="tel" name="whatsapp" autocomplete="tel-national"
+               inputmode="numeric" placeholder="(11) 90000-0000" maxlength="16"
+               aria-describedby="erroZap" required>
+        <em class="campo-erro" id="erroZap"></em>
+      </label>
+
+      <button class="acao centro" type="submit" id="travaEnviar">
+        <span class="acao-texto"><span class="cta-texto">Começar agora</span></span>
+        <svg><use href="#i-seta"/></svg>
+      </button>
+    </form>
+
+    <p class="trava-nota"><svg><use href="#i-escudo"/></svg> Seus dados estão protegidos</p>
+  </div>
+</div>
+
 <main class="palco">
 
   <header class="cabeca">
@@ -607,7 +726,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
           <div class="fatos">
             <div class="fato"><svg><use href="#i-relogio"/></svg> <span>Leva <b>menos de 1 minuto</b></span></div>
             <div class="fato"><svg><use href="#i-alvo"/></svg> <span>São <b>5 perguntas</b>, uma por tela</span></div>
-            <div class="fato"><svg><use href="#i-escudo"/></svg> <span><b>Sem cadastro</b>, sem e-mail, sem telefone</span></div>
+            <div class="fato"><svg><use href="#i-escudo"/></svg> <span><b>Seus dados protegidos</b>, usados só para o seu diagnóstico</span></div>
           </div>
           <div>
             <button class="acao centro" id="comecar" type="button">
@@ -615,7 +734,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
               <svg><use href="#i-seta"/></svg>
             </button>
           </div>
-          <p class="rodape-nota">É só responder. Nenhum dado seu é pedido.</p>
+          <p class="rodape-nota">Resultado na hora, no final das 5 perguntas.</p>
         </div>
       </section>
 
@@ -711,7 +830,18 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
     supabaseChave: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtZnhpdmtnYmxkY25nb2FyanR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NzYyNTMsImV4cCI6MjEwNTI1MjI1M30.ifv63q63VKMQAKpl9zx74ucnF7y6tlRlYF8rIggLNeg',
 
     // Identifica esta variação nos dados, para nunca misturar com a outra
-    variacao: 'B'
+    variacao: 'B',
+
+    // ---- Popup de captura (trava a página na abertura) ----
+    // Ligar/desligar sem mexer em mais nada.
+    popupLigado: true,
+    // Quando abrir, em ms. 0 = junto com a página.
+    popupAtrasoMs: 0,
+    // 0 = trava sempre. Maior que 0 = lembra de quem já preencheu, por N dias.
+    popupLembrarDias: 0,
+    // A entrada do popup NÃO vira evento na Meta, seguindo o padrão da
+    // dashboard do diretor. O Lead continua saindo só no clique do CTA.
+    popupAvisaMeta: false
   };
 
   /* =========================================================
@@ -1413,9 +1543,36 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       } catch(e){}
     }
 
+    // grava o lead na tabela separada. Nome e WhatsApp NAO vao para
+    // quiz_eventos: la fica so o passo do funil, sem dado pessoal.
+    function enviarLead(nome, whatsapp){
+      if (!ligado) return Promise.resolve();
+      var linha = Object.assign({ sessao: sessao }, origem, {
+        nome: String(nome).slice(0, 120),
+        whatsapp: String(whatsapp).slice(0, 11)
+      });
+      try {
+        return window.fetch(base + '/rest/v1/quiz_leads', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'apikey': CONFIG.supabaseChave,
+            'Authorization':'Bearer ' + CONFIG.supabaseChave,
+            'Prefer':'return=minimal'
+          },
+          body: JSON.stringify([linha]),
+          keepalive:true, mode:'cors'
+        }).catch(function(){});
+      } catch(e){ return Promise.resolve(); }
+    }
+
     return {
       sessao: function(){ return sessao; },
       visualizou: function(){ enviar({ evento:'visualizou' }); },
+      lead: function(nome, whatsapp){
+        enviar({ evento:'lead' });
+        return enviarLead(nome, whatsapp);
+      },
       iniciou: function(){ marca = Date.now(); enviar({ evento:'iniciou' }); },
       respondeu: function(p, pergunta, opcao, trilha){
         var agora = Date.now();
@@ -1444,6 +1601,167 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
   document.addEventListener('visibilitychange', function(){
     if (document.visibilityState === 'hidden') Painel.saiu();
   });
+
+  /* ========================= POPUP DE CAPTURA ========================= */
+  // Trava a pagina na abertura e so libera o quiz depois do nome + WhatsApp.
+  // Se o Supabase estiver desligado, o popup continua funcionando: ele nunca
+  // pode impedir alguem de entrar no funil por causa do rastreamento.
+  var Trava = (function(){
+    var caixa   = $('#trava');
+    if (!caixa) return { abrir:function(){} };
+
+    var form    = $('#travaForm');
+    var inNome  = $('#travaNome');
+    var inZap   = $('#travaZap');
+    var botao   = $('#travaEnviar');
+    var CHAVE   = 'quizb_lead';
+    var aberto  = false;
+    var enviando= false;
+    var scrollY = 0;
+
+    function so(v){ return String(v || '').replace(/\D/g, ''); }
+
+    // (11) 90000-0000
+    function mascara(v){
+      var d = so(v).slice(0, 11);
+      if (!d) return '';
+      if (d.length <= 2)  return '(' + d;
+      if (d.length <= 6)  return '(' + d.slice(0,2) + ') ' + d.slice(2);
+      if (d.length <= 10) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + '-' + d.slice(6);
+      return '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7);
+    }
+
+    function nomeValido(v){
+      var t = String(v || '').trim();
+      return t.length >= 2 && /[A-Za-zÀ-ÿ]/.test(t);
+    }
+
+    function zapValido(d){
+      if (d.length !== 10 && d.length !== 11) return false;
+      var ddd = parseInt(d.slice(0, 2), 10);
+      if (!(ddd >= 11 && ddd <= 99)) return false;
+      if (d.length === 11 && d.charAt(2) !== '9') return false;   // celular
+      return true;
+    }
+
+    function erro(campo, alvo, msg){
+      $('#' + campo).classList.toggle('ruim', !!msg);
+      $('#' + alvo).textContent = msg || '';
+    }
+
+    function jaPreencheu(){
+      if (!(CONFIG.popupLembrarDias > 0)) return false;
+      try {
+        var bruto = window.localStorage.getItem(CHAVE);
+        if (!bruto) return false;
+        var quando = parseInt(bruto, 10);
+        if (!quando) return false;
+        return (Date.now() - quando) < CONFIG.popupLembrarDias * 86400000;
+      } catch(e){ return false; }
+    }
+
+    function lembrar(){
+      if (!(CONFIG.popupLembrarDias > 0)) return;
+      try { window.localStorage.setItem(CHAVE, String(Date.now())); } catch(e){}
+    }
+
+    function travarRolagem(){
+      scrollY = window.scrollY || 0;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    }
+
+    function soltarRolagem(){
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      try { window.scrollTo(0, scrollY); } catch(e){}
+    }
+
+    function abrir(){
+      if (aberto) return;
+      aberto = true;
+      caixa.hidden = false;
+      travarRolagem();
+      // no celular o teclado subindo na hora atrapalha: espera o desenho
+      window.setTimeout(function(){
+        try { if (!/Mobi|Android|iPhone/i.test(navigator.userAgent)) inNome.focus(); } catch(e){}
+      }, 380);
+    }
+
+    function fechar(){
+      if (!aberto) return;
+      aberto = false;
+      caixa.classList.add('saindo');
+      window.setTimeout(function(){
+        caixa.hidden = true;
+        caixa.classList.remove('saindo');
+        soltarRolagem();
+        try { $('#comecar').focus({ preventScroll:true }); } catch(e){}
+      }, semMovimento ? 0 : 240);
+    }
+
+    // mascara enquanto digita, sem perder a posicao do cursor no fim
+    inZap.addEventListener('input', function(){
+      var antes = this.value;
+      var depois = mascara(antes);
+      if (antes !== depois) this.value = depois;
+      if ($('#campoZap').classList.contains('ruim')) erro('campoZap', 'erroZap', '');
+    });
+    inNome.addEventListener('input', function(){
+      if ($('#campoNome').classList.contains('ruim')) erro('campoNome', 'erroNome', '');
+    });
+
+    // a tecla Esc nao fecha: e uma trava, nao um aviso
+    caixa.addEventListener('keydown', function(ev){
+      if (ev.key === 'Escape') ev.preventDefault();
+    });
+
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      if (enviando) return;
+
+      var nome = String(inNome.value || '').trim().replace(/\s+/g, ' ');
+      var zap  = so(inZap.value);
+      var ok = true;
+
+      if (!nomeValido(nome)){ erro('campoNome', 'erroNome', 'Escreva o seu nome'); ok = false; }
+      else erro('campoNome', 'erroNome', '');
+
+      if (!zapValido(zap)){ erro('campoZap', 'erroZap', 'Confira o número com o DDD'); ok = false; }
+      else erro('campoZap', 'erroZap', '');
+
+      if (!ok){
+        vibrar(18);
+        (nomeValido(nome) ? inZap : inNome).focus();
+        return;
+      }
+
+      enviando = true;
+      botao.setAttribute('disabled', 'disabled');
+      $('#travaEnviar .cta-texto').textContent = 'Liberando...';
+      vibrar(12);
+
+      if (CONFIG.popupAvisaMeta) rastrear('quiz_lead', {});
+
+      // um lead vale uma espera curta. Passou de 2s, libera assim mesmo:
+      // nunca segurar a pessoa na porta por causa do rastreamento.
+      var liberou = false;
+      function liberar(){
+        if (liberou) return;
+        liberou = true;
+        lembrar();
+        fechar();
+      }
+      window.setTimeout(liberar, 2000);
+      try {
+        var envio = Painel.lead(nome, zap);
+        if (envio && typeof envio.then === 'function') envio.then(liberar, liberar);
+        else liberar();
+      } catch(e){ liberar(); }
+    });
+
+    return { abrir: abrir, jaPreencheu: jaPreencheu };
+  })();
 
   /* ========================= FUNDO: LINHA DE TENDÊNCIA ========================= */
   (function fundo(){
@@ -1502,6 +1820,11 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
   pintarTrilha();
   rastrear('quiz_visualizado', {});
   Painel.visualizou();
+
+  if (CONFIG.popupLigado && !Trava.jaPreencheu()){
+    if (CONFIG.popupAtrasoMs > 0) window.setTimeout(Trava.abrir, CONFIG.popupAtrasoMs);
+    else Trava.abrir();
+  }
 
   [CONFIG.redirectWhats, CONFIG.redirectComunidade].forEach(function(u){
     var l = document.createElement('link');
