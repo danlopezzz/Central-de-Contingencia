@@ -17,16 +17,24 @@ como estavam.
 
 | | Versão A | Versão B |
 |---|---|---|
-| Verde | `#00E08A` neon | `#00D68F` esmeralda, fundo mais fechado |
-| Fontes | Sora + Inter | Outfit + DM Sans |
-| Estrutura | cartões centralizados | trilha vertical de etapas + linhas largas |
-| Transição | vertical (sobe/desce) | horizontal (desliza pro lado) |
-| Fundo | grade + partículas | arcos de sonar + linha de tendência |
-| Análise | barra de progresso | log de terminal em fonte monoespaçada |
+| Verde | `#00E08A` neon | `#00E0A4` esmeralda, fundo mais fechado |
+| Fontes | Sora + Inter | Outfit + DM Sans (+ mono do sistema) |
+| Cabeçalho | some ao rolar | fixo no topo, com barra de 5 segmentos |
+| Alternativas | cartões translúcidos | cartões sólidos com crachá A/B/C/D |
+| Superfícies | translúcidas | **sólidas** (contraste melhor no celular) |
+| Fundo | grade + partículas | malha de pontos + linha de tendência |
+| Análise | barra de progresso | log de terminal que acende linha a linha |
 | Resultado | barra horizontal | anel/velocímetro em SVG |
 | Perguntas | todas diferentes | todas diferentes |
 | Capa (copy) | **igual** | **igual** |
 | Redirects | **iguais** | **iguais** |
+
+O layout segue uma escala única de espaçamento (`--e1` a `--e6`) aplicada por
+`gap` num container só. Nada de margem solta por elemento: é o que mantém o
+ritmo vertical igual em toda tela, de 320px a desktop.
+
+Não existe nada fixo no rodapé, de propósito: a barra de etapas vive dentro do
+cabeçalho. Assim nenhum texto passa por baixo de nada em tela nenhuma.
 
 O que **não** muda, de propósito:
 
