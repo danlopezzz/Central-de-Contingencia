@@ -43,24 +43,31 @@ Rastreamento nunca derruba o funil.
    - **Region**: `South America (São Paulo)`
 4. **Create new project** e espere uns 2 minutos até ficar verde.
 
-### 2. Criar as tabelas — nesta ordem
+### 2. Criar as tabelas — um arquivo só, uma vez
 
-Menu da esquerda → **SQL Editor**. Para cada arquivo: **New query** (aba
-nova, nunca cole embaixo de outra coisa), cole o arquivo **inteiro**, **Run**.
+Menu da esquerda → **SQL Editor** → **New query** (aba nova, não cole
+embaixo de nada). Cole o **`supabase-c.sql` inteiro** e **Run**.
+
 Tem que aparecer *Success*. Se vier erro em vermelho, me manda a mensagem
-antes de seguir.
+antes de fazer qualquer outra coisa.
 
-| Ordem | Arquivo | O que cria |
-|---|---|---|
-| 1º | `supabase-tracking-c.sql` | `quiz_eventos` (o funil) e `quiz_config` |
-| 2º | `supabase-popup-c.sql` | `quiz_leads` (nome e WhatsApp) e a função de resumo |
-| 3º | `supabase-ftd-c.sql` | `quiz_depositos` e o resumo de FTD — **opcional** |
+É um arquivo só de propósito: num projeto vazio não existe motivo pra
+dividir. Ele cria tudo de uma vez:
 
-O 3º só faz sentido quando alguém for gravar os depósitos no banco. Sem ele
-o painel funciona igual, só esconde o bloco de FTD.
+| Tabela | O que guarda |
+|---|---|
+| `quiz_eventos` | o funil, passo a passo. Sem nome, sem telefone. |
+| `quiz_leads` | nome e WhatsApp do popup. O anon **só escreve**. |
+| `quiz_depositos` | os primeiros depósitos (FTD). O anon não toca. |
+| `quiz_config` | o webhook, editável só por você, logado. |
 
-Conferência: **Table Editor** → têm que existir `quiz_eventos`, `quiz_config`
-e `quiz_leads`.
+Mais as duas funções de resumo que o painel usa pra ver números sem nunca
+ver um nome ou um telefone.
+
+**Rodar de novo é seguro.** Tudo é `create if not exists` ou `create or
+replace`, e nada apaga dado — testei rodando três vezes com dado dentro.
+
+Conferência: **Table Editor** → têm que existir as quatro tabelas.
 
 > **Por que os leads ficam numa tabela separada:** a chave anon fica visível
 > no HTML do quiz, que é público. Se ela pudesse **ler** `quiz_leads`,
@@ -214,7 +221,5 @@ Se o Supabase estiver fora do ar ou sem credencial, o popup espera no máximo
 | Arquivo | O que é |
 |---|---|
 | `index.html` | o quiz inteiro, sem build, sem dependência |
-| `supabase-tracking-c.sql` | 1º — tabelas de evento, índices e regras de acesso |
-| `supabase-popup-c.sql` | 2º — tabela de leads do popup e o resumo do painel |
-| `supabase-ftd-c.sql` | 3º, opcional — depósitos (FTD) e o resumo por telefone |
+| `supabase-c.sql` | o banco inteiro: tabelas, permissões e resumos. Rode uma vez. |
 | `README.md` | este guia |

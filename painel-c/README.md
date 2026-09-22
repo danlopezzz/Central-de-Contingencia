@@ -68,7 +68,7 @@ O funil conta o **evento**; a conferência conta a **linha gravada** em
 descobre no mesmo dia, não no fim do mês.
 
 **FTD (primeiro depósito)**
-Aparece só se o `supabase-ftd-c.sql` tiver sido rodado e houver depósito
+Aparece assim que houver depósito
 gravado. Mostra leads, quantos viraram FTD, receita, ticket, horas até o
 primeiro depósito e a quebra por campanha. O cruzamento lead ↔ depósito é
 pelo **telefone normalizado**. Sem o SQL, o bloco simplesmente não aparece —

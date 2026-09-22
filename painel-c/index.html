@@ -359,7 +359,7 @@ tbody tr.nova{animation:chegou 1.5s var(--curva);}
         qualquer pessoa que lesse aquele código poderia redirecionar os seus leads.<br><br>
         <b>Como:</b> Supabase &gt; Table Editor &gt; <b>quiz_config</b> &gt; preencha
         <b>webhook_url</b> e <b>webhook_quando</b>. Depois habilite <b>pg_net</b> em Database &gt;
-        Extensions e descomente o trigger no fim do <b>supabase-tracking-c.sql</b>.
+        Extensions e descomente o trigger no fim do <b>supabase-c.sql</b>.
       </span>
     </div>
   </section>
@@ -448,9 +448,9 @@ tbody tr.nova{animation:chegou 1.5s var(--curva);}
       cab['Range'] = de + '-' + (de + bloco - 1);
       return fetch(url, { headers: cab }).then(function(r){
         if (r.status === 401 || r.status === 403)
-          throw new Error('A chave anon não tem permissão. Rode o supabase-tracking-c.sql inteiro, inclusive o bloco 3.');
+          throw new Error('A chave anon não tem permissão. Rode o supabase-c.sql inteiro, do começo ao fim.');
         if (r.status === 404)
-          throw new Error('A tabela quiz_eventos não existe nesse projeto. Rode o supabase-tracking-c.sql.');
+          throw new Error('A tabela quiz_eventos não existe nesse projeto. Rode o supabase-c.sql.');
         if (!r.ok && r.status !== 206)
           return r.text().then(function(t){ throw new Error('O banco respondeu ' + r.status + ': ' + t.slice(0,160)); });
         return r.json();
