@@ -1,3 +1,10 @@
+-- >>>>>>>>>>>>>>>>  INICIO DO ARQUIVO — ESTA E A LINHA 1  <<<<<<<<<<<<<<<<
+--
+-- Se a primeira linha que voce colou no Supabase NAO for esta, a colagem
+-- veio incompleta. Apague tudo do editor e cole de novo: abra o arquivo,
+-- Ctrl+A (ou Cmd+A) para selecionar TUDO, Ctrl+C, e cole.
+-- No fim, o editor tem que mostrar cerca de 478 linhas.
+--
 -- ============================================================
 -- Quiz Trading Pro — VARIAÇÃO C — banco completo
 --
@@ -451,3 +458,20 @@ revoke all on function quiz_limpar_antigos() from public;
 -- Gravar um depósito na mão:
 -- insert into quiz_depositos (telefone, valor, tipo, ocorrido_em, origem)
 -- values ('5511987654321', 250.00, 'ftd', now(), 'manual');
+
+
+-- ============================================================
+-- 11. PROVA DE QUE RODOU INTEIRO
+--
+-- Este select roda por ultimo e aparece no painel Results la embaixo.
+-- Se ele disser "4 de 4 tabelas", deu tudo certo.
+-- Se nem aparecer, a colagem veio incompleta: recole o arquivo do inicio.
+-- ============================================================
+select 'Banco do quiz C pronto: '
+       || count(*) || ' de 4 tabelas criadas ('
+       || string_agg(tablename, ', ' order by tablename) || ')' as resultado
+from pg_tables
+where schemaname = 'public'
+  and tablename in ('quiz_eventos','quiz_leads','quiz_depositos','quiz_config');
+
+-- >>>>>>>>>>>>>>>>>>>>>>  FIM DO ARQUIVO  <<<<<<<<<<<<<<<<<<<<<<
