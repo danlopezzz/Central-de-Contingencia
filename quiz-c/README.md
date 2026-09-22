@@ -16,7 +16,7 @@ com o A nem com o B.
 
 | Variação | Projeto Supabase | Painel |
 |---|---|---|
-| A | `hdfkpepapdakqqbtekqw` | `painel/` |
+| A | *(apagado — liberou a vaga no plano free)* | `painel/` |
 | B | `gmfxivkgbldcngoarjtv` | `painel-b/` |
 | C | **o novo, que você vai criar** | `painel-c/` |
 

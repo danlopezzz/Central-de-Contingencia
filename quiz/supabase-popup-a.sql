@@ -2,7 +2,11 @@
 -- Quiz Trading Pro — QUIZ A — popup de captura
 --
 -- Rode DEPOIS do supabase-tracking.sql, no MESMO projeto do
--- quiz A (hdfkpepapdakqqbtekqw (o projeto do quiz A)). Aba nova no SQL Editor.
+-- quiz A. Aba nova no SQL Editor.
+--
+-- O projeto antigo do quiz A foi apagado em 22/09 para liberar vaga no
+-- plano free. Quando for religar o A, crie um projeto novo e rode este
+-- arquivo nele.
 --
 -- Dois lugares, de propósito:
 --   quiz_leads   -> nome e WhatsApp (dado pessoal). Anon só ESCREVE.
