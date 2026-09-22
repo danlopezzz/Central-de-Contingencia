@@ -62,6 +62,21 @@ as $$
   from s;
 $$;
 
+-- Toda funcao nasce executavel por QUALQUER UM no Postgres, inclusive pela
+-- chave anon que fica visivel no HTML do quiz. Aqui a gente tira o acesso
+-- publico e devolve so para o anon, que PRECISA dela:
+--
+-- existe um indice por expressao em quiz_leads (fone_chave(whatsapp)), e o
+-- Postgres checa EXECUTE na hora da insercao para manter esse indice. Sem o
+-- grant abaixo, o popup falha com "permission denied for function
+-- fone_chave" — e falha EM SILENCIO, porque o envio do quiz e a prova de
+-- falha e nao mostra erro na tela. Testado: o lead simplesmente nao grava.
+--
+-- Dar EXECUTE aqui nao abre nada: a funcao e pura, so normaliza um texto,
+-- nao le tabela nenhuma e nao muda nada.
+revoke all on function fone_chave(text) from public;
+grant  execute on function fone_chave(text) to anon, authenticated;
+
 
 -- ============================================================
 -- 2. EVENTOS — uma linha por passo que a pessoa dá no quiz
@@ -396,6 +411,10 @@ exception when others then
 end;
 $$;
 
+-- Fora do alcance publico. Funcao de trigger nao roda chamada direto, mas
+-- nao ha motivo para ela ficar listada como executavel pela chave do quiz.
+revoke all on function quiz_disparar_webhook() from public;
+
 -- Descomente para ativar:
 -- drop trigger if exists quiz_eventos_webhook on quiz_eventos;
 -- create trigger quiz_eventos_webhook
@@ -410,6 +429,14 @@ create or replace function quiz_limpar_antigos()
 returns void language sql security definer set search_path = public as $$
   delete from quiz_eventos where criado_em < now() - interval '180 days';
 $$;
+
+-- IMPORTANTE. Esta funcao APAGA linha, e roda com privilegio do dono. Sem o
+-- revoke abaixo ela fica executavel pela chave anon, que esta visivel no HTML
+-- publico do quiz: qualquer pessoa poderia chamar
+--   POST /rest/v1/rpc/quiz_limpar_antigos
+-- e apagar o seu historico. Quem limpa e voce, logado no SQL Editor:
+--   select quiz_limpar_antigos();
+revoke all on function quiz_limpar_antigos() from public;
 
 
 -- ============================================================

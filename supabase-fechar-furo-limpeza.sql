@@ -1,0 +1,41 @@
+-- ============================================================
+-- CORREÇÃO DE SEGURANÇA — uma linha, para o banco do quiz B
+--   (projeto gmfxivkgbldcngoarjtv)
+--
+-- O QUE É O PROBLEMA
+--   O supabase-tracking-b.sql criou a função quiz_limpar_antigos(), que
+--   APAGA eventos com mais de 180 dias e roda com privilégio do dono
+--   (security definer).
+--
+--   No Postgres, toda função nasce executável por QUALQUER UM. A chave
+--   anon do seu quiz fica visível no HTML, que é público. Então hoje
+--   qualquer pessoa que abra o código-fonte do quiz B pode chamar
+--
+--     POST https://gmfxivkgbldcngoarjtv.supabase.co/rest/v1/rpc/quiz_limpar_antigos
+--
+--   e apagar o seu histórico de eventos com mais de 180 dias.
+--
+--   Testei o ataque num banco local montado com os seus três SQL do B:
+--   funciona. E testei a correção abaixo: fecha.
+--
+-- O QUE ESTA CORREÇÃO FAZ, E O QUE NÃO FAZ
+--   ✅ Tira a função do alcance da chave pública.
+--   ❌ Não apaga dado. Não muda tabela, coluna, índice ou policy.
+--   ❌ Não mexe no quiz, no painel, nem no rastreamento.
+--   ❌ Não interfere em nada da performance.
+--
+--   Você continua podendo limpar quando quiser, logado no SQL Editor:
+--     select quiz_limpar_antigos();
+--
+-- COMO RODAR
+--   Supabase do quiz B → SQL Editor → New query → cole → Run.
+--   Leva menos de um segundo e pode ser feito com o tráfego rodando.
+-- ============================================================
+
+revoke all on function quiz_limpar_antigos() from public;
+
+-- Conferência: a linha do anon tem que sair como 'f' (false).
+-- select p.proname,
+--        has_function_privilege('anon', p.oid, 'execute') as anon_executa
+-- from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+-- where n.nspname = 'public' and p.proname = 'quiz_limpar_antigos';
