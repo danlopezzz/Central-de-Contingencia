@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#07100D" />
 <title>Descubra seu Perfil de Trader</title>
-<meta name="description" content="Responda 5 perguntas rápidas e descubra o caminho mais curto para operar com consistência." />
+<meta name="description" content="Quiz de 5 perguntas sobre sua rotina e seus objetivos. Leva menos de 1 minuto." />
 <meta name="robots" content="noindex, nofollow" />
 
 <!-- Meta Pixel Code -->
@@ -18,14 +18,17 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1057320473675949');
+// autoConfig ANTES do init: sem isso o Pixel lê sozinho o texto de todo botão
+// clicado, e os botões deste quiz SÃO as respostas.
+fbq('set', 'autoConfig', false, '1598167835188754');
+fbq('init', '1598167835188754');
 fbq('track', 'PageView');
 </script>
 <!-- End Meta Pixel Code -->
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Descubra seu Perfil de Trader" />
-<meta property="og:description" content="5 perguntas. Menos de 1 minuto. Descubra o caminho mais curto para operar com consistência." />
+<meta property="og:description" content="Quiz de 5 perguntas sobre sua rotina e seus objetivos. Leva menos de 1 minuto." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -626,7 +629,7 @@ h1 mark::after{
 
 <!-- noscript do Pixel -->
 <noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
+src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
 /></noscript>
 
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
@@ -816,7 +819,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
      ========================================================= */
   var CONFIG = {
     // Tem valor para iniciar hoje -> especialista
-    redirectWhats: 'https://app.massflow.tech/api/r/vanessa',
+    redirectWhats: 'https://app.massflow.tech/api/r/redirecionamento',
     // Não tem valor para iniciar -> comunidade
     redirectComunidade: 'https://app.massflow.tech/api/go/comunidade-traderpro-tpnra3ppsd',
     repassarParametros: true,
@@ -1030,17 +1033,17 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
   /* ---------- Pergunta 5: a última, decide o destino ---------- */
   var PERGUNTA_HOJE = {
     indice:'Agora', icone:'relogio',
-    chamada:'Vou liberar o algoritmo por <b>24 horas</b> para você testar sem pagar nada. Última pergunta:',
-    titulo:'Você tem entre R$ 100 e R$ 300 disponíveis para começar hoje?',
-    apoio:'Esse valor fica na sua conta e você saca quando quiser.',
-    aviso:'A liberação é gratuita, mas o algoritmo precisa de algum valor na sua conta para operar nela de forma automática. É por isso que perguntamos se você tem qualquer valor acima de R$ 100. O dinheiro continua sendo seu, na sua conta, e pode ser sacado a qualquer momento. Operamos em corretoras com mais de 10 anos de mercado.',
+    chamada:'Vou liberar gratuitamente esse algoritmo por <b>24 horas</b> para você testar. Me responde a última pergunta:',
+    titulo:'Você teria de R$ 100,00 a R$ 300,00 para iniciar hoje?',
+    apoio:'Esse valor fica na sua conta e você pode sacar a qualquer momento.',
+    aviso:'Como o algoritmo é liberado de forma gratuita, você precisa ter algum valor na sua conta para que a Trading Pro opere nela de forma automática. Por isso perguntamos se você tem qualquer valor acima de R$ 100,00 para iniciar. Esse valor fica na sua conta e você pode sacar a qualquer momento. Operamos em corretoras com mais de 10 anos de mercado e segurança.',
     opcoes:[
-      { valor:'100-300', pontos:20, destino:'whats', titulo:'Sim, tenho entre R$ 100 e R$ 300', sub:'Pronto para começar hoje',
-        recap:'Você tem <b>entre R$ 100 e R$ 300</b> disponíveis: o suficiente para liberar o algoritmo hoje.' },
-      { valor:'mais-300', pontos:26, destino:'whats', titulo:'Sim, tenho mais de R$ 300', sub:'Margem confortável',
-        recap:'Você tem <b>mais de R$ 300</b> disponíveis: margem confortável para o algoritmo trabalhar desde o primeiro dia.' },
-      { valor:'nada', pontos:8, destino:'comunidade', titulo:'Não tenho nada disponível agora', sub:'Quero aprender primeiro',
-        recap:'Sem valor disponível agora, o passo certo é <b>construir base</b>: aprender o processo e capitalizar depois.' }
+      { valor:'100-300', pontos:20, destino:'whats', titulo:'Sim, tenho de R$ 100,00 a R$ 300,00', sub:'Pronto para iniciar hoje',
+        recap:'Você tem <b>de R$ 100,00 a R$ 300,00</b> disponíveis, o suficiente para liberar o algoritmo e começar hoje.' },
+      { valor:'500-1000', pontos:26, destino:'whats', titulo:'Sim, tenho de R$ 500,00 a R$ 1.000,00', sub:'Margem maior para operar',
+        recap:'Você tem <b>de R$ 500,00 a R$ 1.000,00</b> disponíveis, margem confortável para o algoritmo trabalhar desde o primeiro dia.' },
+      { valor:'sem-capital', pontos:8, destino:'comunidade', titulo:'Não tenho nenhum investimento', sub:'Quero aprender primeiro',
+        recap:'Sem valor disponível agora, o passo certo é <b>construir base</b>: aprender o processo primeiro e capitalizar depois.' }
     ]
   };
 
@@ -1448,22 +1451,25 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
   }
 
   /* ========================= RASTREAMENTO ========================= */
-  function rastrear(evento, dados){
+  // As respostas do quiz NUNCA vão para a Meta. Quanto a pessoa tem para
+  // investir, quanto já investiu e o destino dela são dados sobre a situação
+  // financeira dela: é o tipo de informação que a Meta trata como proibida nas
+  // ferramentas de negócio, e que leva o pixel para Core Setup.
+  // Tudo isso continua indo para o painel do Supabase, que é banco nosso.
+  //
+  // Aqui saem 3 eventos, TODOS sem nenhum parâmetro. O segundo argumento
+  // (dados) é recebido e ignorado de propósito, para os pontos de chamada
+  // continuarem iguais e ninguém reintroduzir dado sem perceber.
+  function rastrear(evento /* , dados — ignorado de propósito */){
     try{
-      var carga = Object.assign({ variacao: CONFIG.variacao }, dados || {});
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push(Object.assign({ event: evento }, carga));
-      if (typeof window.fbq === 'function'){
-        var id = {};
-        try {
-          var sufixo = evento === 'quiz_resposta' && dados && dados.pergunta ? '-' + dados.pergunta : '';
-          id.eventID = Painel.sessao() + '-' + evento + sufixo;
-        } catch(e){}
-        if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', carga, id);
-        else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', carga, id);
-        else window.fbq('trackCustom', evento, carga, id);
-      }
-      if (typeof window.gtag === 'function') window.gtag('event', evento, carga);
+      if (typeof window.fbq !== 'function') return;
+      var id = {};
+      try { id.eventID = Painel.sessao() + '-' + evento; } catch(e){}
+
+      if (evento === 'quiz_iniciado')        window.fbq('trackCustom', 'quiz_iniciado', {}, id);
+      else if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', {}, id);
+      else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', {}, id);
+      // quiz_visualizado (duplica o PageView) e quiz_resposta: não vão para a Meta.
     }catch(e){}
   }
 
@@ -1754,6 +1760,28 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       }
       window.setTimeout(liberar, 2000);
       try {
+        // TrackFather: mesmo lead para o painel do parceiro.
+        try {
+          var pTF = new URLSearchParams(window.location.search);
+          fetch('https://meueditor.manager01.39digital.com.br/webhook/quiztrading-lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            keepalive: true,
+            mode: 'cors',
+            body: JSON.stringify({
+              nome: nome,
+              telefone: (zap.indexOf('55') === 0 && zap.length > 11) ? zap : ('55' + zap),
+              pagina: window.location.href,
+              data_envio: new Date().toISOString(),
+              utm_source: pTF.get('utm_source') || '',
+              utm_medium: pTF.get('utm_medium') || '',
+              utm_campaign: pTF.get('utm_campaign') || '',
+              utm_content: pTF.get('utm_content') || '',
+              utm_term: pTF.get('utm_term') || ''
+            })
+          }).catch(function(){});
+        } catch (e) {}
+
         var envio = Painel.lead(nome, zap);
         if (envio && typeof envio.then === 'function') envio.then(liberar, liberar);
         else liberar();
@@ -1834,5 +1862,6 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
 })();
 </script>
+<script src="https://api-dash.trackfather.com.br/quiztrading-track.js"></script>
 </body>
 </html>
