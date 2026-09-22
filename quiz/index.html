@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#050A06" />
 <title>Descubra seu Perfil de Trader</title>
-<meta name="description" content="Responda 5 perguntas rápidas e descubra o caminho mais curto para operar com consistência." />
+<meta name="description" content="Quiz de 5 perguntas sobre sua rotina e seus objetivos. Leva menos de 1 minuto." />
 <meta name="robots" content="noindex, nofollow" />
 
 <!-- Meta Pixel Code -->
@@ -18,14 +18,17 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1057320473675949');
+// autoConfig ANTES do init: sem isto o Pixel lê sozinho o texto de todo botão
+// clicado, e os botões deste quiz SÃO as respostas.
+fbq('set', 'autoConfig', false, '1598167835188754');
+fbq('init', '1598167835188754');
 fbq('track', 'PageView');
 </script>
 <!-- End Meta Pixel Code -->
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Descubra seu Perfil de Trader" />
-<meta property="og:description" content="5 perguntas. Menos de 1 minuto. Descubra o caminho mais curto para operar com consistência." />
+<meta property="og:description" content="Quiz de 5 perguntas sobre sua rotina e seus objetivos. Leva menos de 1 minuto." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -573,13 +576,99 @@ h1 .hl{
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.12s!important;}
   #bg-canvas{display:none;}
 }
+/* ---------- popup de captura (tela de bloqueio) ---------- */
+.trava{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(3,7,4,.87);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  overflow-y:auto;
+  animation:travaEntra .3s var(--ease) both;
+}
+.trava[hidden]{display:none;}
+@keyframes travaEntra{from{opacity:0;}to{opacity:1;}}
+.trava.saindo{animation:travaSai .26s ease-in both;}
+@keyframes travaSai{from{opacity:1;}to{opacity:0;}}
+
+.trava-caixa{
+  width:100%;max-width:400px;margin:auto;
+  background:var(--bg-2);
+  border:1px solid var(--stroke);
+  border-radius:var(--radius-lg);
+  padding:26px 22px 22px;
+  display:flex;flex-direction:column;gap:14px;
+  box-shadow:0 28px 70px -20px rgba(0,0,0,.85), 0 0 0 1px rgba(124,214,26,.12);
+  animation:caixaEntra .42s var(--ease-back) both;
+}
+@keyframes caixaEntra{
+  from{opacity:0;transform:translateY(18px) scale(.97);}
+  to{opacity:1;transform:none;}
+}
+.trava-selo{
+  align-self:flex-start;display:inline-flex;align-items:center;gap:8px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--green-bright);
+  background:rgba(124,214,26,.10);
+  border:1px solid var(--stroke-strong);
+  border-radius:999px;padding:7px 14px 7px 12px;
+}
+.trava-ponto{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 0 0 var(--green-glow);animation:travaPulsa 2s infinite;flex:none;
+}
+@keyframes travaPulsa{70%{box-shadow:0 0 0 9px rgba(124,214,26,0);}100%{box-shadow:0 0 0 0 rgba(124,214,26,0);}}
+.trava-caixa h2{
+  font-family:var(--font-display);font-weight:800;
+  font-size:clamp(23px,6.2vw,28px);line-height:1.16;letter-spacing:-.02em;
+  margin:0;color:var(--text);
+}
+.trava-caixa > p{margin:0;color:var(--text-2);font-size:14.3px;line-height:1.55;}
+.trava-form{display:flex;flex-direction:column;gap:14px;margin-top:4px;}
+
+.campo{display:flex;flex-direction:column;gap:6px;}
+.campo > span{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--text-3);
+}
+.campo input{
+  width:100%;font-family:var(--font-body);font-size:16px;  /* 16px evita zoom do iOS */
+  color:var(--text);background:#040803;
+  border:1px solid var(--stroke);border-radius:var(--radius);
+  padding:14px;transition:border-color .18s, box-shadow .18s, background .18s;
+  -webkit-appearance:none;appearance:none;
+}
+.campo input::placeholder{color:#4A5942;}
+.campo input:focus{
+  outline:none;border-color:var(--green);background:#060D04;
+  box-shadow:0 0 0 3px rgba(124,214,26,.16);
+}
+.campo.ruim input{border-color:#FF6B5B;box-shadow:0 0 0 3px rgba(255,107,91,.14);}
+.campo-erro{font-style:normal;font-size:12px;color:#FF8B7E;}
+.campo-erro:empty{display:none;}
+
+.trava-caixa .btn{width:100%;justify-content:center;margin-top:4px;}
+.trava-caixa .btn[disabled]{opacity:.62;pointer-events:none;}
+.trava-nota{
+  display:flex;align-items:center;gap:8px;justify-content:center;
+  margin:0;font-size:12px;color:var(--text-3);
+}
+.trava-nota svg{
+  width:13px;height:13px;flex:none;stroke:var(--green);fill:none;
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+@media(max-width:380px){
+  .trava{padding:14px;}
+  .trava-caixa{padding:22px 18px 18px;}
+}
+
 </style>
 </head>
 <body>
 
 <!-- Meta Pixel Code (noscript) -->
 <noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
+src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
 
@@ -619,6 +708,42 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 <div class="bg-glow b" aria-hidden="true"></div>
 <div class="bg-vignette" aria-hidden="true"></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
+
+<!-- ============ POPUP DE CAPTURA (tela de bloqueio) ============ -->
+<div class="trava" id="trava" hidden>
+  <div class="trava-caixa" role="dialog" aria-modal="true" aria-labelledby="travaTitulo">
+    <span class="trava-selo"><i class="trava-ponto"></i> Diagnóstico gratuito</span>
+    <h2 id="travaTitulo">Libere seu diagnóstico</h2>
+    <p>Preencha os dados abaixo para começar o diagnóstico gratuito e receber o resultado no final.</p>
+
+    <form class="trava-form" id="travaForm" novalidate>
+      <label class="campo" id="campoNome">
+        <span>Seu nome</span>
+        <input id="travaNome" type="text" name="nome" autocomplete="given-name"
+               placeholder="Como podemos te chamar?" maxlength="80"
+               aria-describedby="erroNome" required>
+        <em class="campo-erro" id="erroNome"></em>
+      </label>
+
+      <label class="campo" id="campoZap">
+        <span>WhatsApp</span>
+        <input id="travaZap" type="tel" name="whatsapp" autocomplete="tel-national"
+               inputmode="numeric" placeholder="(11) 90000-0000" maxlength="16"
+               aria-describedby="erroZap" required>
+        <em class="campo-erro" id="erroZap"></em>
+      </label>
+
+      <button class="btn" type="submit" id="travaEnviar">
+        <span id="travaTextoBotao">COMEÇAR AGORA</span>
+        <svg><use href="#ico-arrow" stroke="currentColor" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
+
+    <p class="trava-nota">
+      <svg><use href="#ico-lock"/></svg> Seus dados estão protegidos
+    </p>
+  </div>
+</div>
 
 <main class="shell">
 
@@ -662,7 +787,7 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
             <svg><use href="#ico-arrow" stroke="currentColor" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
-        <p class="note">Sem cadastro. Sem e-mail. É só responder.</p>
+        <p class="note">Seus dados são usados só para o seu diagnóstico.</p>
       </div>
     </section>
 
@@ -749,7 +874,14 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
      ========================================================= */
   var CONFIG = {
     // Tem valor para iniciar hoje (R$ 100 a 300 ou R$ 500 a 1.000) -> especialista
-    redirectWhats: 'https://app.massflow.tech/api/r/vanessa',
+    redirectWhats: 'https://app.massflow.tech/api/r/redirecionamento',
+
+    // ---- Popup de captura (trava a página na abertura) ----
+    popupLigado: true,
+    popupAtrasoMs: 0,        // 0 = abre junto com a página
+    popupLembrarDias: 0,     // 0 = trava sempre
+    popupAvisaMeta: false,   // a entrada do popup não vira evento na Meta
+
     // Não tem valor para iniciar -> comunidade
     redirectComunidade: 'https://app.massflow.tech/api/go/comunidade-traderpro-tpnra3ppsd',
     // Repassar utm_source, utm_campaign, etc. para o link de destino
@@ -1421,27 +1553,25 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
   }
 
   /* ========================= RASTREAMENTO ========================= */
-  function rastrear(evento, dados){
+  // As respostas do quiz NUNCA vão para a Meta. Quanto a pessoa tem para
+  // investir, quanto já investiu e o destino dela são dados sobre a situação
+  // financeira dela: é o tipo de informação que a Meta trata como proibida nas
+  // ferramentas de negócio, e que leva o pixel para Core Setup.
+  // Tudo continua indo para o painel do Supabase, que é banco nosso.
+  //
+  // Saem 3 eventos, TODOS sem parâmetro. O segundo argumento é recebido e
+  // ignorado de propósito, para os pontos de chamada continuarem iguais e
+  // ninguém reintroduzir dado sem perceber.
+  function rastrear(evento /* , dados — ignorado de propósito */){
     try{
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push(Object.assign({ event: evento }, dados || {}));
-      if (typeof window.fbq === 'function'){
-        // eventID amarra o evento do Meta à sessão do painel. Serve para
-        // cruzar os dois relatórios e é o que a Conversions API usa para
-        // não contar a mesma conversão duas vezes, se um dia entrar.
-        // o sufixo separa as respostas entre si: sem ele o Meta trata
-        // as cinco como o mesmo evento e conta só uma
-        var id = {};
-        try {
-          var sufixo = evento === 'quiz_resposta' && dados && dados.pergunta ? '-' + dados.pergunta : '';
-          id.eventID = Painel.sessao() + '-' + evento + sufixo;
-        } catch(e){}
+      if (typeof window.fbq !== 'function') return;
+      var id = {};
+      try { id.eventID = Painel.sessao() + '-' + evento; } catch(e){}
 
-        if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', dados, id);
-        else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', dados, id);
-        else window.fbq('trackCustom', evento, dados, id);
-      }
-      if (typeof window.gtag === 'function') window.gtag('event', evento, dados || {});
+      if (evento === 'quiz_iniciado')        window.fbq('trackCustom', 'quiz_iniciado', {}, id);
+      else if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', {}, id);
+      else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', {}, id);
+      // quiz_visualizado (duplica o PageView) e quiz_resposta: não vão para a Meta.
     }catch(e){}
   }
 
@@ -1541,10 +1671,38 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
       } catch(e){}
     }
 
+    // grava o lead na tabela separada. Nome e WhatsApp NAO vao para
+    // quiz_eventos: la fica so o passo do funil, sem dado pessoal.
+    function enviarLead(nome, whatsapp){
+      if (!ligado) return Promise.resolve();
+      var linha = Object.assign({ sessao: sessao }, origem, {
+        nome: String(nome).slice(0, 120),
+        whatsapp: String(whatsapp).slice(0, 11)
+      });
+      try {
+        return window.fetch(baseSupabase() + '/rest/v1/quiz_leads', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'apikey': CONFIG.supabaseChave,
+            'Authorization':'Bearer ' + CONFIG.supabaseChave,
+            'Prefer':'return=minimal'
+          },
+          body: JSON.stringify([linha]),
+          keepalive:true, mode:'cors'
+        }).catch(function(){});
+      } catch(e){ return Promise.resolve(); }
+    }
+
     return {
       sessao: function(){ return sessao; },
 
       visualizou: function(){ enviar({ evento: 'visualizou' }); },
+
+      lead: function(nome, whatsapp){
+        enviar({ evento: 'lead' });
+        return enviarLead(nome, whatsapp);
+      },
 
       iniciou: function(){
         marcaPasso = Date.now();
@@ -1731,8 +1889,153 @@ src="https://www.facebook.com/tr?id=1057320473675949&ev=PageView&noscript=1"
 
   /* ========================= INÍCIO ========================= */
   atualizarProgresso();
+  /* ========================= POPUP DE CAPTURA ========================= */
+  // Trava a pagina na abertura e so libera o quiz depois do nome + WhatsApp.
+  // Se o Supabase estiver desligado ou fora do ar, o popup continua liberando:
+  // rastreamento nunca pode impedir alguem de entrar no funil.
+  var Trava = (function(){
+    var caixa = document.getElementById('trava');
+    if (!caixa) return { abrir:function(){}, jaPreencheu:function(){ return false; } };
+
+    var form    = document.getElementById('travaForm');
+    var inNome  = document.getElementById('travaNome');
+    var inZap   = document.getElementById('travaZap');
+    var botao   = document.getElementById('travaEnviar');
+    var rotulo  = document.getElementById('travaTextoBotao');
+    var CHAVE   = 'quiz_lead_a';
+    var aberto = false, enviando = false, scrollY = 0;
+    var semMov = false;
+    try { semMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+
+    function so(v){ return String(v || '').replace(/\D/g, ''); }
+
+    function mascara(v){
+      var d = so(v).slice(0, 11);
+      if (!d) return '';
+      if (d.length <= 2)  return '(' + d;
+      if (d.length <= 6)  return '(' + d.slice(0,2) + ') ' + d.slice(2);
+      if (d.length <= 10) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + '-' + d.slice(6);
+      return '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7);
+    }
+
+    function nomeValido(v){
+      var t = String(v || '').trim();
+      return t.length >= 2 && /[A-Za-zÀ-ÿ]/.test(t);
+    }
+
+    function zapValido(d){
+      if (d.length !== 10 && d.length !== 11) return false;
+      var ddd = parseInt(d.slice(0, 2), 10);
+      if (!(ddd >= 11 && ddd <= 99)) return false;
+      if (d.length === 11 && d.charAt(2) !== '9') return false;
+      return true;
+    }
+
+    function erro(campo, alvo, msg){
+      document.getElementById(campo).classList.toggle('ruim', !!msg);
+      document.getElementById(alvo).textContent = msg || '';
+    }
+
+    function jaPreencheu(){
+      if (!(CONFIG.popupLembrarDias > 0)) return false;
+      try {
+        var q = parseInt(window.localStorage.getItem(CHAVE) || '', 10);
+        return !!q && (Date.now() - q) < CONFIG.popupLembrarDias * 86400000;
+      } catch(e){ return false; }
+    }
+    function lembrar(){
+      if (!(CONFIG.popupLembrarDias > 0)) return;
+      try { window.localStorage.setItem(CHAVE, String(Date.now())); } catch(e){}
+    }
+
+    function abrir(){
+      if (aberto) return;
+      aberto = true;
+      caixa.hidden = false;
+      scrollY = window.scrollY || 0;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      window.setTimeout(function(){
+        try { if (!/Mobi|Android|iPhone/i.test(navigator.userAgent)) inNome.focus(); } catch(e){}
+      }, 380);
+    }
+
+    function fechar(){
+      if (!aberto) return;
+      aberto = false;
+      caixa.classList.add('saindo');
+      window.setTimeout(function(){
+        caixa.hidden = true;
+        caixa.classList.remove('saindo');
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
+        try { window.scrollTo(0, scrollY); } catch(e){}
+        try { document.getElementById('startBtn').focus({ preventScroll:true }); } catch(e){}
+      }, semMov ? 0 : 240);
+    }
+
+    inZap.addEventListener('input', function(){
+      var d = mascara(this.value);
+      if (this.value !== d) this.value = d;
+      if (document.getElementById('campoZap').classList.contains('ruim')) erro('campoZap','erroZap','');
+    });
+    inNome.addEventListener('input', function(){
+      if (document.getElementById('campoNome').classList.contains('ruim')) erro('campoNome','erroNome','');
+    });
+
+    // Esc nao fecha: e trava, nao aviso
+    caixa.addEventListener('keydown', function(ev){
+      if (ev.key === 'Escape') ev.preventDefault();
+    });
+
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      if (enviando) return;
+
+      var nome = String(inNome.value || '').trim().replace(/\s+/g, ' ');
+      var zap  = so(inZap.value);
+      var ok = true;
+
+      if (!nomeValido(nome)){ erro('campoNome','erroNome','Escreva o seu nome'); ok = false; }
+      else erro('campoNome','erroNome','');
+      if (!zapValido(zap)){ erro('campoZap','erroZap','Confira o número com o DDD'); ok = false; }
+      else erro('campoZap','erroZap','');
+
+      if (!ok){ vibrar(18); (nomeValido(nome) ? inZap : inNome).focus(); return; }
+
+      enviando = true;
+      botao.setAttribute('disabled','disabled');
+      rotulo.textContent = 'LIBERANDO...';
+      vibrar(12);
+
+      if (CONFIG.popupAvisaMeta) rastrear('quiz_lead');
+
+      // um lead vale uma espera curta. Passou de 2s, libera assim mesmo.
+      var liberou = false;
+      function liberar(){
+        if (liberou) return;
+        liberou = true;
+        lembrar();
+        fechar();
+      }
+      window.setTimeout(liberar, 2000);
+      try {
+        var envio = Painel.lead(nome, zap);
+        if (envio && typeof envio.then === 'function') envio.then(liberar, liberar);
+        else liberar();
+      } catch(e){ liberar(); }
+    });
+
+    return { abrir: abrir, jaPreencheu: jaPreencheu };
+  })();
+
   rastrear('quiz_visualizado', {});
   Painel.visualizou();
+
+  if (CONFIG.popupLigado && !Trava.jaPreencheu()){
+    if (CONFIG.popupAtrasoMs > 0) window.setTimeout(Trava.abrir, CONFIG.popupAtrasoMs);
+    else Trava.abrir();
+  }
 
   // pré-carrega os destinos para o redirecionamento sair instantâneo
   [CONFIG.redirectWhats, CONFIG.redirectComunidade].forEach(function(u){
