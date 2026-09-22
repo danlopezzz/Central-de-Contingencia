@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#07100D" />
+<title>Descubra seu Perfil de Trader</title>
+<meta name="description" content="Quiz de 5 perguntas sobre sua rotina e seus objetivos. Leva menos de 1 minuto." />
+<meta name="robots" content="noindex, nofollow" />
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+// autoConfig ANTES do init: sem isso o Pixel lê sozinho o texto de todo botão
+// clicado, e os botões deste quiz SÃO as respostas.
+fbq('set', 'autoConfig', false, '1598167835188754');
+fbq('init', '1598167835188754');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Descubra seu Perfil de Trader" />
+<meta property="og:description" content="Quiz de 5 perguntas sobre sua rotina e seus objetivos. Leva menos de 1 minuto." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet" />
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='30' fill='%2307100D'/><path d='M18 92 L46 58 L64 78 L102 30' stroke='%2300D68F' stroke-width='13' stroke-linecap='round' stroke-linejoin='round' fill='none'/><circle cx='102' cy='30' r='9' fill='%235CFFC4'/></svg>" />
+
+<style>
+/* ============================================================
+   VARIAÇÃO B — "Terminal de Diagnóstico"
+   Princípios:
+   1. superfícies SÓLIDAS (translucidez lava o contraste no celular)
+   2. UMA escala de espaçamento, usada em tudo — nada de margem solta
+   3. acentos monoespaçados dão o tom técnico sem custar fonte extra
+   4. nada fixo no rodapé: o conteúdo nunca passa por baixo de nada
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0;}
+
+:root{
+  /* cor */
+  --verde:#00E0A4;
+  --verde-claro:#7CFFD8;
+  --verde-escuro:#00A87A;
+  --verde-fundo:rgba(0,224,164,.09);
+  --verde-borda:rgba(0,224,164,.38);
+
+  --fundo:#040F0C;
+  --painel:#0A1C17;
+  --painel-alto:#0E2620;
+  --traco:rgba(255,255,255,.07);
+  --traco-2:rgba(255,255,255,.12);
+
+  --texto:#E9F6F1;
+  --texto-2:#9CB3AB;
+  --texto-3:#5F776E;
+
+  /* ritmo vertical: uma escala só */
+  --e1:6px; --e2:10px; --e3:14px; --e4:20px; --e5:28px; --e6:38px;
+
+  --r:13px; --r-g:20px;
+
+  --display:'Outfit',system-ui,-apple-system,sans-serif;
+  --corpo:'DM Sans',system-ui,-apple-system,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;
+
+  --curva:cubic-bezier(.22,1,.36,1);
+  --curva-volta:cubic-bezier(.34,1.4,.64,1);
+}
+
+body{
+  background:var(--fundo);
+  color:var(--texto);
+  font-family:var(--corpo);
+  font-size:15.5px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100dvh;
+}
+
+/* ---------- fundo: malha de pontos + brilhos + varredura ---------- */
+.fundo-malha{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle at 1px 1px, rgba(0,224,164,.16) 1px, transparent 0);
+  background-size:26px 26px;
+  mask-image:radial-gradient(ellipse 120% 78% at 50% 24%, #000 20%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 120% 78% at 50% 24%, #000 20%, transparent 78%);
+  opacity:.5;
+}
+.brilho-topo{
+  position:fixed;top:-32vh;left:50%;transform:translateX(-50%);
+  width:150vw;height:74vh;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%, rgba(0,224,164,.16), transparent 62%);
+}
+.brilho-base{
+  position:fixed;bottom:-40vh;left:50%;transform:translateX(-50%);
+  width:130vw;height:70vh;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%, rgba(0,120,140,.13), transparent 66%);
+}
+#ondas{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.85;pointer-events:none;}
+
+/* ---------- estrutura ---------- */
+.palco{
+  position:relative;z-index:2;
+  min-height:100dvh;
+  display:flex;flex-direction:column;
+  max-width:720px;margin:0 auto;
+  padding:0 20px;
+}
+
+
+/* ---------- cabeçalho fixo no topo, com a barra de etapas ---------- */
+.cabeca{
+  position:sticky;top:0;z-index:20;
+  background:rgba(4,15,12,.80);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--traco);
+  /* sangra ate a borda da janela, mas o conteudo segue alinhado ao palco */
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
+  padding:16px max(20px, calc(50vw - 360px)) 13px;
+}
+@media(max-width:380px){ .cabeca{padding-left:16px;padding-right:16px;} }
+.cabeca-linha{display:flex;align-items:center;gap:11px;}
+.cabeca svg.logo{width:30px;height:30px;flex:none;}
+.cabeca .risco{width:1px;height:24px;background:var(--traco-2);flex:none;}
+.cabeca-nome{line-height:1.18;}
+.cabeca-nome b{
+  font-family:var(--display);font-weight:700;font-size:13.5px;
+  letter-spacing:.09em;display:block;
+}
+.cabeca-nome em{
+  font-style:normal;font-family:var(--mono);font-size:10px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--texto-3);
+}
+.contador{
+  margin-left:auto;font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;color:var(--texto-3);
+}
+.contador b{color:var(--verde);font-weight:400;}
+
+/* barra de etapas: 5 segmentos, dentro do cabeçalho — nada fixo embaixo */
+.trilha{display:flex;gap:5px;margin-top:13px;}
+.trilha[hidden]{display:none;}
+.trilha-passo{
+  flex:1;height:3px;border-radius:2px;
+  background:rgba(255,255,255,.10);
+  overflow:hidden;position:relative;
+}
+.trilha-passo i{
+  position:absolute;inset:0;display:block;width:0;border-radius:2px;
+  background:linear-gradient(90deg,var(--verde-escuro),var(--verde));
+  transition:width .55s var(--curva);
+}
+.trilha-passo.feito i{width:100%;}
+.trilha-passo.agora i{width:100%;background:linear-gradient(90deg,var(--verde),var(--verde-claro));}
+.trilha-passo.agora{box-shadow:0 0 12px rgba(0,224,164,.5);}
+
+/* ---------- miolo / telas ---------- */
+.miolo{position:relative;flex:1;display:flex;flex-direction:column;padding-top:var(--e4);}
+.tela{display:none;}
+.tela.ativa{display:block;}
+
+/* uma pilha só governa TODO o ritmo vertical */
+.escada{display:flex;flex-direction:column;gap:var(--e4);}
+
+.anima{animation:entra .42s var(--curva) both;}
+@keyframes entra{
+  from{opacity:0;transform:translateY(14px);}
+  to{opacity:1;transform:none;}
+}
+.saindo{animation:sai .2s ease-in both;}
+@keyframes sai{
+  from{opacity:1;transform:none;}
+  to{opacity:0;transform:translateY(-10px);}
+}
+
+/* ---------- etiquetas técnicas ---------- */
+.selo{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--verde-claro);
+  background:var(--verde-fundo);
+  border:1px solid var(--verde-borda);
+  border-radius:999px;padding:7px 14px 7px 12px;
+}
+.batida{
+  width:6px;height:6px;border-radius:50%;background:var(--verde);
+  box-shadow:0 0 0 0 rgba(0,224,164,.6);
+  animation:pulsa 2s infinite;flex:none;
+}
+@keyframes pulsa{
+  70%{box-shadow:0 0 0 9px rgba(0,224,164,0);}
+  100%{box-shadow:0 0 0 0 rgba(0,224,164,0);}
+}
+
+/* ---------- capa ---------- */
+h1{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(28px,7.6vw,44px);
+  line-height:1.13;letter-spacing:-.022em;
+  margin:0;text-wrap:balance;
+}
+h1 mark{
+  background:none;color:var(--verde);
+  position:relative;white-space:nowrap;
+}
+h1 mark::after{
+  content:'';position:absolute;left:0;right:0;bottom:.06em;height:.07em;
+  background:var(--verde);opacity:.4;border-radius:2px;
+}
+.entrada{
+  margin:0;color:var(--texto-2);
+  font-size:clamp(15px,4vw,17px);line-height:1.6;max-width:33rem;
+}
+.entrada b{color:var(--texto);font-weight:700;}
+
+.fatos{
+  display:flex;flex-direction:column;
+  background:var(--painel);
+  border:1px solid var(--traco);
+  border-radius:var(--r-g);
+  overflow:hidden;
+}
+.fato{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;font-size:14.5px;color:var(--texto-2);
+}
+.fato + .fato{border-top:1px solid var(--traco);}
+.fato b{color:var(--texto);font-weight:700;}
+.fato svg{
+  width:17px;height:17px;flex:none;
+  stroke:var(--verde);fill:none;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+
+/* ---------- botão principal ---------- */
+.acao{
+  display:grid;grid-template-columns:auto 1fr;align-items:center;gap:13px;
+  width:100%;border:0;cursor:pointer;
+  background:linear-gradient(135deg,var(--verde) 0%,var(--verde-claro) 100%);
+  color:#022018;
+  font-family:var(--display);font-weight:800;
+  border-radius:var(--r);
+  padding:17px 20px;
+  text-decoration:none;text-align:left;
+  box-shadow:0 12px 34px -12px rgba(0,224,164,.6);
+  transition:transform .18s var(--curva-volta), box-shadow .22s var(--curva), filter .18s;
+  -webkit-tap-highlight-color:transparent;
+}
+.acao:hover{transform:translateY(-2px);box-shadow:0 18px 44px -12px rgba(0,224,164,.72);}
+.acao:active{transform:translateY(0) scale(.988);}
+.acao svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.acao-texto{display:block;min-width:0;}
+/* sem segunda linha, o botao centraliza: seta grudada no texto */
+.acao.centro{grid-template-columns:auto auto;justify-content:center;gap:11px;}
+.acao.centro .cta-texto{text-align:center;}
+.cta-texto{
+  display:block;font-size:15px;line-height:1.24;
+  letter-spacing:.015em;text-transform:uppercase;text-wrap:balance;
+}
+.cta-sub{
+  display:block;font-family:var(--corpo);font-weight:500;
+  font-size:12.5px;line-height:1.35;margin-top:3px;
+  text-transform:none;letter-spacing:0;opacity:.72;
+}
+.cta-sub:empty{display:none;}
+
+.rodape-nota{margin:0;font-size:12.5px;color:var(--texto-3);}
+
+/* ---------- pergunta ---------- */
+.numero-pergunta{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--texto-3);
+}
+.numero-pergunta i{
+  font-style:normal;color:var(--verde);
+  border:1px solid var(--verde-borda);background:var(--verde-fundo);
+  border-radius:5px;padding:3px 7px;letter-spacing:.08em;
+}
+.chamada{
+  display:block;color:var(--verde-claro);
+  font-size:14.5px;line-height:1.55;
+  border-left:2px solid var(--verde-borda);
+  padding-left:13px;
+}
+.pergunta{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(22px,5.8vw,32px);
+  line-height:1.2;letter-spacing:-.018em;
+  margin:0;text-wrap:balance;
+}
+.apoio{
+  margin:calc(var(--e4) * -1 + var(--e2)) 0 0;
+  color:var(--texto-3);font-size:14px;line-height:1.5;
+}
+.apoio:empty{display:none;}
+
+/* alternativas: cartões sólidos, padding e gap idênticos */
+.opcoes{display:flex;flex-direction:column;gap:9px;}
+.opcao{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:13px;
+  width:100%;text-align:left;cursor:pointer;
+  font-family:var(--corpo);color:var(--texto);
+  background:var(--painel);
+  border:1px solid var(--traco);
+  border-radius:var(--r);
+  padding:15px 15px;
+  transition:border-color .2s var(--curva), background .2s var(--curva),
+             transform .2s var(--curva-volta), opacity .28s;
+  -webkit-tap-highlight-color:transparent;
+  animation:sobeOpcao .38s var(--curva) both;
+  animation-delay:calc(var(--i,0) * 48ms);
+}
+@keyframes sobeOpcao{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:none;}
+}
+.letra{
+  width:28px;height:28px;flex:none;align-self:start;margin-top:1px;
+  display:grid;place-items:center;
+  font-family:var(--mono);font-size:11.5px;font-weight:700;
+  color:var(--verde);background:var(--verde-fundo);
+  border:1px solid var(--verde-borda);border-radius:8px;
+  transition:background .2s, color .2s;
+}
+.rotulo{display:block;min-width:0;font-size:15.2px;line-height:1.36;font-weight:500;}
+.rotulo small{
+  display:block;margin-top:3px;
+  font-size:12.8px;line-height:1.4;font-weight:400;color:var(--texto-3);
+}
+.opcao .seta{
+  width:17px;height:17px;flex:none;align-self:center;
+  stroke:var(--texto-3);fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;
+  opacity:0;transform:translateX(-5px);
+  transition:opacity .2s, transform .2s var(--curva), stroke .2s;
+}
+@media(hover:hover){
+  .opcao:hover{border-color:var(--verde-borda);background:var(--painel-alto);transform:translateX(3px);}
+  .opcao:hover .seta{opacity:1;transform:none;stroke:var(--verde);}
+}
+.opcao:focus-visible{outline:2px solid var(--verde);outline-offset:3px;}
+.opcao.marcada{
+  border-color:var(--verde);
+  background:linear-gradient(135deg,rgba(0,224,164,.14),rgba(0,224,164,.05));
+  box-shadow:0 0 0 1px var(--verde), 0 10px 30px -14px rgba(0,224,164,.7);
+}
+.opcao.marcada .letra{background:var(--verde);color:#022018;border-color:var(--verde);}
+.opcao.marcada .seta{opacity:1;transform:none;stroke:var(--verde);}
+.opcao.apagada{opacity:.3;}
+
+.aviso{
+  display:flex;gap:11px;align-items:flex-start;
+  background:var(--painel);
+  border:1px solid var(--traco);
+  border-left:2px solid var(--verde-borda);
+  border-radius:var(--r);
+  padding:14px 15px;
+  font-size:13.2px;line-height:1.58;color:var(--texto-2);
+}
+.aviso svg{
+  width:16px;height:16px;flex:none;margin-top:2px;
+  stroke:var(--verde);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+
+.voltar,.refazer{
+  display:inline-flex;align-items:center;gap:8px;
+  background:none;border:0;cursor:pointer;padding:6px 0;
+  font-family:var(--corpo);font-size:13.5px;color:var(--texto-3);
+  transition:color .18s;
+}
+.voltar:hover,.refazer:hover{color:var(--verde);}
+.voltar svg,.refazer svg{
+  width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.1;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+
+/* ---------- análise: terminal ---------- */
+#t-analise.ativa{
+  display:flex;flex-direction:column;justify-content:center;
+  flex:1;min-height:56vh;
+}
+.analise{
+  display:flex;flex-direction:column;gap:var(--e4);
+  padding:var(--e5) 0;
+}
+.analise h2{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(20px,5.2vw,27px);line-height:1.24;margin:0;letter-spacing:-.015em;
+}
+.cursor{
+  display:inline-block;width:9px;height:1.05em;vertical-align:-.15em;
+  background:var(--verde);margin-left:5px;animation:pisca 1s steps(2) infinite;
+}
+@keyframes pisca{50%{opacity:0;}}
+.analise > p{margin:0;color:var(--texto-3);font-size:14px;}
+.registro{
+  background:var(--painel);
+  border:1px solid var(--traco);
+  border-radius:var(--r-g);
+  padding:var(--e3);
+  font-family:var(--mono);font-size:12.5px;
+  display:flex;flex-direction:column;gap:2px;
+  position:relative;overflow:hidden;
+}
+.registro::after{
+  content:'';position:absolute;left:0;right:0;height:58px;
+  background:linear-gradient(180deg,transparent,rgba(0,224,164,.07),transparent);
+  animation:varre 2.6s linear infinite;
+}
+@keyframes varre{from{top:-58px;}to{top:100%;}}
+.registro-linha{
+  display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;
+  padding:9px 8px;border-radius:7px;
+  color:var(--texto-3);opacity:.45;
+  transition:opacity .3s, color .3s, background .3s;
+}
+.registro-linha b{color:var(--verde-escuro);font-weight:400;}
+.registro-linha em{
+  font-style:normal;color:var(--verde);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;
+  opacity:0;transition:opacity .3s;
+}
+.registro-linha.ativa{
+  opacity:1;color:var(--texto);
+  background:rgba(0,224,164,.07);
+  box-shadow:inset 2px 0 0 var(--verde);
+}
+.registro-linha.ativa b{color:var(--verde-claro);}
+.registro-linha.ok{opacity:1;color:var(--texto-2);}
+.registro-linha.ok b{color:var(--verde);}
+.registro-linha.ok em{opacity:1;}
+
+/* ---------- resultado ---------- */
+.faixa-pronto{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:#022018;background:var(--verde);
+  border-radius:999px;padding:7px 14px;font-weight:700;
+}
+.faixa-pronto svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+.nome-perfil{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(25px,6.6vw,37px);line-height:1.13;letter-spacing:-.022em;
+  margin:0;text-wrap:balance;
+}
+.nome-perfil em{font-style:normal;color:var(--verde);}
+
+.bloco-cta{display:flex;flex-direction:column;gap:var(--e2);}
+.escassez{
+  display:flex;align-items:center;gap:8px;margin:0;
+  font-size:12.8px;color:var(--texto-3);
+}
+
+.medidor{
+  display:grid;grid-template-columns:auto 1fr;align-items:center;gap:var(--e4);
+  background:var(--painel);
+  border:1px solid var(--traco);
+  border-radius:var(--r-g);
+  padding:var(--e4);
+}
+.anel{position:relative;width:86px;height:86px;flex:none;}
+.anel svg{width:100%;height:100%;transform:rotate(-90deg);}
+.anel circle{fill:none;stroke-width:7;stroke-linecap:round;}
+.anel .fundo{stroke:rgba(255,255,255,.09);}
+.anel .frente{
+  stroke:url(#gradAnel);
+  stroke-dasharray:264;stroke-dashoffset:264;
+  transition:stroke-dashoffset 1.5s var(--curva);
+}
+.anel-valor{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--display);font-weight:800;font-size:25px;color:var(--verde-claro);
+}
+.medidor-texto{min-width:0;}
+.medidor-texto b{
+  display:block;font-family:var(--mono);font-size:10px;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--texto-3);font-weight:400;margin-bottom:5px;
+}
+.medidor-texto span{display:block;font-size:14.5px;line-height:1.45;color:var(--texto);}
+
+.leitura{
+  margin:0;font-size:15.2px;line-height:1.68;color:var(--texto-2);
+}
+.leitura b{color:var(--texto);font-weight:700;}
+
+.pontos{
+  display:flex;flex-direction:column;
+  background:var(--painel);
+  border:1px solid var(--traco);
+  border-radius:var(--r-g);
+  overflow:hidden;
+}
+.ponto{
+  display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:baseline;
+  padding:13px 16px;font-size:14px;line-height:1.5;color:var(--texto-2);
+}
+.ponto + .ponto{border-top:1px solid var(--traco);}
+.ponto i{
+  font-style:normal;font-family:var(--mono);font-size:10.5px;
+  color:var(--verde);letter-spacing:.06em;
+}
+.ponto b{color:var(--texto);font-weight:700;}
+
+/* ---------- rodapé ---------- */
+.aviso-legal{
+  margin:var(--e6) 0 0;padding:var(--e4) 0 var(--e5);
+  border-top:1px solid var(--traco);
+  font-size:11.5px;line-height:1.65;color:#3E5249;
+}
+
+/* ---------- popup de captura (tela de bloqueio) ---------- */
+.trava{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  background:rgba(3,10,8,.86);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  overflow-y:auto;
+  animation:travaEntra .3s var(--curva) both;
+}
+.trava[hidden]{display:none;}
+@keyframes travaEntra{from{opacity:0;}to{opacity:1;}}
+.trava.saindo{animation:travaSai .26s ease-in both;}
+@keyframes travaSai{from{opacity:1;}to{opacity:0;}}
+
+.trava-caixa{
+  width:100%;max-width:400px;margin:auto;
+  background:var(--painel);
+  border:1px solid var(--traco-2);
+  border-radius:var(--r-g);
+  padding:26px 22px 22px;
+  display:flex;flex-direction:column;gap:var(--e3);
+  box-shadow:0 28px 70px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(0,224,164,.10);
+  animation:caixaEntra .42s var(--curva-volta) both;
+}
+@keyframes caixaEntra{
+  from{opacity:0;transform:translateY(18px) scale(.97);}
+  to{opacity:1;transform:none;}
+}
+.trava-caixa > .selo{align-self:flex-start;}
+.trava-caixa h2{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(23px,6.2vw,28px);line-height:1.16;letter-spacing:-.02em;
+  margin:0;text-wrap:balance;
+}
+.trava-caixa > p{
+  margin:0;color:var(--texto-2);font-size:14.3px;line-height:1.55;
+}
+.trava-form{display:flex;flex-direction:column;gap:var(--e3);margin-top:var(--e1);}
+
+.campo{display:flex;flex-direction:column;gap:6px;}
+.campo > span{
+  font-family:var(--mono);font-size:10px;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--texto-3);
+}
+.campo input{
+  width:100%;
+  font-family:var(--corpo);font-size:16px;  /* 16px evita o zoom do iOS */
+  color:var(--texto);
+  background:#061511;
+  border:1px solid var(--traco-2);
+  border-radius:var(--r);
+  padding:14px 14px;
+  transition:border-color .18s, box-shadow .18s, background .18s;
+  -webkit-appearance:none;appearance:none;
+}
+.campo input::placeholder{color:#4A5F58;}
+.campo input:focus{
+  outline:none;border-color:var(--verde);
+  background:#071A14;
+  box-shadow:0 0 0 3px rgba(0,224,164,.16);
+}
+.campo.ruim input{border-color:#FF6B5B;box-shadow:0 0 0 3px rgba(255,107,91,.14);}
+.campo-erro{
+  font-style:normal;font-size:12px;color:#FF8B7E;min-height:0;
+}
+.campo-erro:empty{display:none;}
+
+.trava-caixa .acao{margin-top:var(--e1);}
+.trava-caixa .acao[disabled]{opacity:.62;pointer-events:none;}
+
+.trava-nota{
+  display:flex;align-items:center;gap:8px;justify-content:center;
+  margin:0;font-size:12px;color:var(--texto-3);
+}
+.trava-nota svg{
+  width:13px;height:13px;flex:none;
+  stroke:var(--verde);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;
+}
+
+@media(max-width:380px){
+  .trava{padding:14px;}
+  .trava-caixa{padding:22px 18px 18px;}
+}
+
+/* ---------- telas estreitas ---------- */
+@media(max-width:380px){
+  .palco{padding:0 16px;}
+  .opcao{padding:13px 13px;gap:11px;}
+  .rotulo{font-size:14.6px;}
+  .letra{width:26px;height:26px;font-size:11px;}
+  .medidor{grid-template-columns:1fr;gap:var(--e3);}
+  .anel{width:76px;height:76px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  #ondas{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- noscript do Pixel -->
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
+/></noscript>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <linearGradient id="gradMarca" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#00866F"/><stop offset=".5" stop-color="#00D68F"/><stop offset="1" stop-color="#5CFFC4"/>
+    </linearGradient>
+    <linearGradient id="gradAnel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00D68F"/><stop offset="1" stop-color="#5CFFC4"/>
+    </linearGradient>
+  </defs>
+  <symbol id="marca" viewBox="0 0 120 120">
+    <path d="M16 96 L46 58 L64 80 L100 32" fill="none" stroke="url(#gradMarca)"
+          stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="100" cy="32" r="10" fill="#5CFFC4"/>
+    <g fill="url(#gradMarca)" opacity=".92">
+      <rect x="24" y="66" width="15" height="24" rx="4"/>
+      <rect x="53" y="44" width="15" height="24" rx="4"/>
+      <rect x="82" y="52" width="15" height="24" rx="4"/>
+    </g>
+  </symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24"><polyline points="4 12.5 9.5 18 20 6.5"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+  <symbol id="i-volta" viewBox="0 0 24 24"><line x1="20" y1="12" x2="5" y2="12"/><polyline points="11 6 5 12 11 18"/></symbol>
+  <symbol id="i-relogio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></symbol>
+  <symbol id="i-alvo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/></symbol>
+  <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 2.8 4.5 6v5.6c0 4.4 3.1 8.5 7.5 9.6 4.4-1.1 7.5-5.2 7.5-9.6V6L12 2.8Z"/></symbol>
+  <symbol id="i-whats" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.03c-.25.69-1.44 1.32-1.98 1.37-.53.05-1.02.24-3.44-.72-2.9-1.14-4.73-4.1-4.87-4.29-.14-.19-1.15-1.53-1.15-2.92s.73-2.07 1-2.36c.26-.28.57-.35.76-.35.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.57.8 1.96.87 2.1.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.3.37-.42.5-.14.14-.29.29-.12.57.16.29.73 1.2 1.56 1.94 1.07.95 1.97 1.25 2.26 1.39.28.14.45.12.61-.07.17-.19.71-.83.9-1.11.19-.29.38-.24.64-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.11.07.66-.18 1.35Z" stroke="none" fill="currentColor"/></symbol>
+  <symbol id="i-telegram" viewBox="0 0 24 24"><path d="M21.6 4.3 2.9 11.5c-.9.35-.86 1.63.05 1.93l4.35 1.43 1.65 5.02c.27.82 1.34.98 1.84.28l2.28-3.2 4.4 3.25c.7.52 1.7.12 1.86-.74l2.6-13.9c.16-.9-.72-1.6-1.53-1.26ZM8.6 14.2l8.2-5.4c.2-.13.42.14.25.3l-6.4 6.2c-.2.2-.32.46-.35.74l-.2 1.62-1.5-3.46Z" stroke="none" fill="currentColor"/></symbol>
+  <symbol id="i-grupo" viewBox="0 0 24 24"><path d="M16 20v-1.8a3.6 3.6 0 0 0-3.6-3.6H6.6A3.6 3.6 0 0 0 3 18.2V20"/><circle cx="9.5" cy="7.6" r="3.6"/><path d="M21 20v-1.8a3.6 3.6 0 0 0-2.7-3.48"/><path d="M15.5 4.2a3.6 3.6 0 0 1 0 6.8"/></symbol>
+</svg>
+
+<div class="fundo-malha" aria-hidden="true"></div>
+<div class="brilho-topo" aria-hidden="true"></div>
+<div class="brilho-base" aria-hidden="true"></div>
+<canvas id="ondas" aria-hidden="true"></canvas>
+
+<!-- ============ POPUP DE CAPTURA (tela de bloqueio) ============ -->
+<div class="trava" id="trava" hidden>
+  <div class="trava-caixa" role="dialog" aria-modal="true" aria-labelledby="travaTitulo">
+    <span class="selo"><i class="batida"></i> Diagnóstico gratuito</span>
+    <h2 id="travaTitulo">Libere seu diagnóstico</h2>
+    <p>Preencha os dados abaixo para começar o diagnóstico gratuito e receber o resultado no final.</p>
+
+    <form class="trava-form" id="travaForm" novalidate>
+      <label class="campo" id="campoNome">
+        <span>Seu nome</span>
+        <input id="travaNome" type="text" name="nome" autocomplete="given-name"
+               placeholder="Como podemos te chamar?" maxlength="80"
+               aria-describedby="erroNome" required>
+        <em class="campo-erro" id="erroNome"></em>
+      </label>
+
+      <label class="campo" id="campoZap">
+        <span>WhatsApp</span>
+        <input id="travaZap" type="tel" name="whatsapp" autocomplete="tel-national"
+               inputmode="numeric" placeholder="(11) 90000-0000" maxlength="16"
+               aria-describedby="erroZap" required>
+        <em class="campo-erro" id="erroZap"></em>
+      </label>
+
+      <button class="acao centro" type="submit" id="travaEnviar">
+        <span class="acao-texto"><span class="cta-texto">Começar agora</span></span>
+        <svg><use href="#i-seta"/></svg>
+      </button>
+    </form>
+
+    <p class="trava-nota"><svg><use href="#i-escudo"/></svg> Seus dados estão protegidos</p>
+  </div>
+</div>
+
+<main class="palco">
+
+  <header class="cabeca">
+    <div class="cabeca-linha">
+      <svg class="logo" aria-hidden="true"><use href="#marca"/></svg>
+      <div class="risco"></div>
+      <div class="cabeca-nome">
+        <b>TRADING PRO</b>
+        <em>Diagnóstico</em>
+      </div>
+      <div class="contador" id="contador" hidden></div>
+    </div>
+    <nav class="trilha" id="trilha" hidden aria-label="Progresso"></nav>
+  </header>
+
+  <div class="miolo">
+
+      <!-- ============ CAPA ============ -->
+      <section class="tela ativa anima" id="t-capa" data-tela="capa">
+        <div class="escada">
+          <div><span class="selo"><i class="batida"></i> Diagnóstico gratuito</span></div>
+          <h1>Descubra em menos de 1 minuto se <mark>esse algoritmo</mark> é pra você ou não</h1>
+          <p class="entrada">
+            São <b>5 perguntas rápidas</b>. No final você recebe o caminho exato para o seu
+            momento, sem enrolação e sem teoria que não cabe na sua rotina.
+          </p>
+          <div class="fatos">
+            <div class="fato"><svg><use href="#i-relogio"/></svg> <span>Leva <b>menos de 1 minuto</b></span></div>
+            <div class="fato"><svg><use href="#i-alvo"/></svg> <span>São <b>5 perguntas</b>, uma por tela</span></div>
+            <div class="fato"><svg><use href="#i-escudo"/></svg> <span><b>Seus dados protegidos</b>, usados só para o seu diagnóstico</span></div>
+          </div>
+          <div>
+            <button class="acao centro" id="comecar" type="button">
+              <span class="acao-texto"><span class="cta-texto">COMEÇAR AGORA</span></span>
+              <svg><use href="#i-seta"/></svg>
+            </button>
+          </div>
+          <p class="rodape-nota">Resultado na hora, no final das 5 perguntas.</p>
+        </div>
+      </section>
+
+      <!-- ============ PERGUNTAS (montadas por trilha) ============ -->
+      <section class="tela" id="t-pergunta" data-tela="pergunta">
+        <div class="anima" id="corpo-pergunta"></div>
+      </section>
+
+      <!-- ============ ANÁLISE ============ -->
+      <section class="tela anima" id="t-analise" data-tela="analise">
+        <div class="analise">
+          <h2>Cruzando as suas respostas<span class="cursor"></span></h2>
+          <p>Montando o caminho que faz sentido para o seu caso</p>
+          <div class="registro" id="registro">
+            <div class="registro-linha" data-i="0"><b>&gt;</b> <span>lendo o seu objetivo</span> <em>ok</em></div>
+            <div class="registro-linha" data-i="1"><b>&gt;</b> <span>cruzando com o seu momento</span> <em>ok</em></div>
+            <div class="registro-linha" data-i="2"><b>&gt;</b> <span>identificando o gargalo</span> <em>ok</em></div>
+            <div class="registro-linha" data-i="3"><b>&gt;</b> <span>definindo a estrutura</span> <em>ok</em></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESULTADO ============ -->
+      <section class="tela anima" id="t-resultado" data-tela="resultado">
+        <div class="escada">
+          <div><span class="faixa-pronto"><svg><use href="#i-ok"/></svg> Diagnóstico pronto</span></div>
+          <h2 class="nome-perfil" id="nomePerfil"></h2>
+
+          <!-- o botão vem antes de tudo: ninguém precisa rolar -->
+          <div class="bloco-cta">
+            <a class="acao" id="botaoCta" href="#" rel="noopener">
+              <svg id="iconeCta"><use href="#i-telegram"/></svg>
+              <span class="acao-texto">
+                <span class="cta-texto" id="textoCta">CONTINUAR</span>
+                <span class="cta-sub" id="subCta"></span>
+              </span>
+            </a>
+            <p class="escassez"><i class="batida"></i> <span id="textoEscassez"></span></p>
+          </div>
+
+          <div class="medidor">
+            <div class="anel">
+              <svg viewBox="0 0 100 100">
+                <circle class="fundo" cx="50" cy="50" r="42"/>
+                <circle class="frente" id="anelFrente" cx="50" cy="50" r="42"/>
+              </svg>
+              <div class="anel-valor" id="anelValor">0</div>
+            </div>
+            <div class="medidor-texto">
+              <b id="rotuloMedidor">Nível de prontidão</b>
+              <span id="notaMedidor"></span>
+            </div>
+          </div>
+
+          <p class="leitura" id="leitura"></p>
+          <div class="pontos" id="pontos"></div>
+          <div>
+            <button class="refazer" id="refazer" type="button">
+              <svg><use href="#i-volta"/></svg> Refazer o diagnóstico
+            </button>
+          </div>
+        </div>
+      </section>
+
+  </div>
+
+  <p class="aviso-legal">
+    Este diagnóstico é uma ferramenta educacional. Resultados passados não garantem
+    resultados futuros. Opere com responsabilidade.
+  </p>
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  /* =========================================================
+     CONFIGURAÇÃO — altere apenas aqui
+     ========================================================= */
+  var CONFIG = {
+    // Tem valor para iniciar hoje -> especialista
+    // Especialista agora atende no Telegram. A comunidade segue igual.
+    redirectWhats: 'https://t.me/SuporteTradingPro',
+    // Não tem valor para iniciar -> comunidade
+    redirectComunidade: 'https://app.massflow.tech/api/go/comunidade-traderpro-tpnra3ppsd',
+    repassarParametros: true,
+    autoRedirectSegundos: 0,
+    tempoAnalise: 3400,
+    esperaPixelMs: 350,
+
+    // Painel de rastreamento desta variação. PROJETO SUPABASE PRÓPRIO
+    // do quiz C: nada aqui aponta para o banco do quiz A nem do quiz B.
+    // Cole a URL e a chave anon do projeto NOVO (Settings > API).
+    // Em branco, o quiz funciona igual, só não grava nada.
+    supabaseUrl: '',
+    supabaseChave: '',
+
+    // Identifica esta variação nos dados, para nunca misturar com a outra
+    variacao: 'C',
+
+    // ---- Popup de captura (trava a página na abertura) ----
+    // Ligar/desligar sem mexer em mais nada.
+    popupLigado: true,
+    // Quando abrir, em ms. 0 = junto com a página.
+    popupAtrasoMs: 0,
+    // 0 = trava sempre. Maior que 0 = lembra de quem já preencheu, por N dias.
+    popupLembrarDias: 0,
+    // A entrada do popup NÃO vira evento na Meta, seguindo o padrão da
+    // dashboard do diretor. O Lead continua saindo só no clique do CTA.
+    popupAvisaMeta: false
+  };
+
+  /* =========================================================
+     CONTEÚDO
+     A pergunta 1 define a trilha. As perguntas 2 e 3 mudam por
+     trilha. As perguntas 4 e 5 são fixas, e a 5 decide o destino.
+     ========================================================= */
+  var LETRAS = ['A','B','C','D','E'];
+
+  var PERGUNTA_1 = {
+    indice:'Objetivo', icone:'alvo',
+    titulo:'O que mais te chamou atenção no anúncio?',
+    apoio:'Escolha o que mais pesou na hora de você clicar.',
+    opcoes:[
+      { valor:'automacao', pontos:20,
+        titulo:'Ferramenta 100% automatizada', sub:'Uma operação que roda sozinha' },
+      { valor:'comecar', pontos:12,
+        titulo:'Iniciar no mercado financeiro sem dinheiro e sem tempo', sub:'Começar mesmo com pouco' },
+      { valor:'liberdade', pontos:17,
+        titulo:'Operar sem precisar olhar para o mercado sempre', sub:'Liberdade na rotina' },
+      { valor:'renda', pontos:15,
+        titulo:'Conquistar uma nova fonte de renda', sub:'Uma renda além da atual' }
+    ]
+  };
+
+  var TRILHAS = {
+
+    /* ---------- A: ferramenta 100% automatizada ---------- */
+    'automacao': {
+      q2: {
+        indice:'Momento', icone:'escudo',
+        titulo:'Hoje, como está a sua relação com o mercado?',
+        apoio:'Isso define de onde a sua automação parte.',
+        opcoes:[
+          { valor:'nunca-operei', pontos:12, titulo:'Nunca operei, mas quero começar já automatizado', sub:'Começar direto no certo',
+            recap:'Você quer <b>começar já automatizado</b>, sem passar anos no manual. É o caminho mais curto e também o mais raro.' },
+          { valor:'parei', pontos:14, titulo:'Já operei, mas parei em algum momento', sub:'Voltando ao mercado',
+            recap:'Você <b>já operou e parou</b>: o que costuma quebrar não é a estratégia, é o esforço manual que ela exige.' },
+          { valor:'as-vezes', pontos:16, titulo:'Opero de vez em quando, no manual', sub:'Sem regularidade',
+            recap:'Você <b>opera no manual de vez em quando</b>, e é justamente a irregularidade que a automação resolve primeiro.' },
+          { valor:'frequente', pontos:20, titulo:'Opero com frequência e quero automatizar o que já faço', sub:'Processo já definido',
+            recap:'Você <b>já opera com frequência</b>: tem processo para automatizar, não precisa inventar um do zero.' }
+        ]
+      },
+      q3: {
+        indice:'Gargalo', icone:'alvo',
+        titulo:'O que você mais quer que a ferramenta resolva?',
+        apoio:'A parte que mais depende de você hoje.',
+        opcoes:[
+          { valor:'sem-tempo', pontos:14, titulo:'Operar de forma automática pois não tenho tempo', sub:'O tempo é o que falta',
+            recap:'Você quer <b>operar de forma automática porque o tempo é o que falta</b>, e é justamente isso que tira a operação da sua agenda.' },
+          { valor:'executar', pontos:16, titulo:'Executar na hora certa, sem eu hesitar', sub:'Sem o peso da decisão',
+            recap:'Você quer <b>execução sem hesitação</b>, justamente onde o emocional mais custa caro.' },
+          { valor:'risco', pontos:18, titulo:'Controlar o risco automaticamente', sub:'Proteção em primeiro lugar',
+            recap:'Você quer <b>risco controlado automaticamente</b>, a decisão que mais define sobrevivência no longo prazo.' },
+          { valor:'tudo', pontos:20, titulo:'Tudo, quero o processo rodando sozinho', sub:'Operação independente',
+            recap:'Você quer o <b>processo inteiro rodando sozinho</b>, sem depender da sua presença.' }
+        ]
+      }
+    },
+
+    /* ---------- B: começar sem dinheiro e sem tempo ---------- */
+    'comecar': {
+      q2: {
+        indice:'Trava', icone:'escudo',
+        titulo:'O que hoje mais te impede de começar?',
+        apoio:'Não tem resposta errada. É só o ponto de partida.',
+        opcoes:[
+          { valor:'capital', pontos:9, titulo:'Não tenho capital sobrando no momento', sub:'O dinheiro é o limite',
+            recap:'Hoje o seu limite é <b>capital</b>, o que significa começar pequeno e crescer com o resultado, nunca com o improviso.' },
+          { valor:'tempo', pontos:12, titulo:'Não sobra tempo na minha rotina', sub:'A agenda é o limite',
+            recap:'Seu limite é <b>tempo</b>: você precisa de algo que caiba na sua rotina, não de mais uma obrigação nela.' },
+          { valor:'caminho', pontos:14, titulo:'Não sei por onde começar', sub:'Falta um caminho claro',
+            recap:'Você trava por <b>falta de um caminho claro</b>. Não é informação que falta, é ordem.' },
+          { valor:'medo', pontos:11, titulo:'Tenho medo de perder o pouco que tenho', sub:'O risco pesa mais',
+            recap:'O que te segura é o <b>medo de perder o pouco que tem</b>, e isso se resolve com risco controlado, não com coragem.' }
+        ]
+      },
+      q3: {
+        indice:'Rotina', icone:'relogio',
+        titulo:'Quanto tempo por dia você conseguiria reservar?',
+        apoio:'Seja realista com a rotina que você tem hoje.',
+        opcoes:[
+          { valor:'menos-30min', pontos:8, titulo:'Menos de 30 minutos', sub:'A rotina está cheia',
+            recap:'Com <b>menos de 30 minutos por dia</b>, só faz sentido um processo que trabalhe sem você na tela.' },
+          { valor:'30min-1h', pontos:12, titulo:'30 min a 1 hora', sub:'Uma janela curta e fixa',
+            recap:'Com <b>30 min a 1 hora por dia</b> dá para começar, desde que cada passo seja direto ao ponto.' },
+          { valor:'1-2h', pontos:16, titulo:'1 a 2 horas', sub:'Dá para evoluir rápido',
+            recap:'Com <b>1 a 2 horas por dia</b> dá para evoluir rápido sem virar sua rotina de cabeça para baixo.' },
+          { valor:'mais-2h', pontos:19, titulo:'Mais de 2 horas', sub:'Tempo é o que não falta',
+            recap:'Com <b>mais de 2 horas por dia</b>, seu limitante deixa de ser tempo e passa a ser método.' }
+        ]
+      }
+    },
+
+    /* ---------- C: operar sem viver olhando o mercado ---------- */
+    'liberdade': {
+      q2: {
+        indice:'Custo', icone:'alvo',
+        titulo:'O que mais te atrapalha por não conseguir acompanhar o mercado?',
+        apoio:'Escolha o que mais pesa no seu dia a dia.',
+        opcoes:[
+          { valor:'entradas', pontos:14, titulo:'Perco boas entradas enquanto estou ocupado', sub:'A oportunidade vem na hora errada',
+            recap:'Você perde <b>entradas que passam</b> enquanto está ocupado. É oportunidade indo embora por ausência, não por análise.' },
+          { valor:'saidas', pontos:15, titulo:'Não consigo sair na hora certa', sub:'Cedo demais ou tarde demais',
+            recap:'Seu custo está na <b>saída fora de hora</b>: sai cedo do que estava certo e tarde do que estava errado.' },
+          { valor:'cabeca', pontos:11, titulo:'Fico checando o gráfico o dia inteiro', sub:'O mercado não sai da cabeça',
+            recap:'O preço que você paga é <b>mental</b>: o gráfico te acompanha mesmo quando você está longe da tela.' },
+          { valor:'sobra-tempo', pontos:17, titulo:'Só opero quando sobra tempo', sub:'Resultado depende da agenda',
+            recap:'Você opera <b>só quando sobra tempo</b>, e resultado que depende de sobra na agenda não se repete.' }
+        ]
+      },
+      q3: {
+        indice:'Janela', icone:'relogio',
+        titulo:'Qual é a janela real que você consegue reservar por dia?',
+        apoio:'O tempo que existe de verdade, não o ideal.',
+        opcoes:[
+          { valor:'menos-30min', pontos:8, titulo:'Menos de 30 minutos', sub:'A agenda está no limite',
+            recap:'Com <b>menos de 30 minutos por dia</b>, sua operação precisa funcionar sem você na tela.' },
+          { valor:'30min-1h', pontos:12, titulo:'30 min a 1 hora', sub:'Uma janela curta e fixa',
+            recap:'Com <b>30 min a 1 hora por dia</b>, cada decisão precisa estar definida antes de você abrir o gráfico.' },
+          { valor:'1-2h', pontos:16, titulo:'1 a 2 horas', sub:'Dá para pegar o melhor do pregão',
+            recap:'Com <b>1 a 2 horas por dia</b> dá para pegar as melhores janelas, desde que você saiba quais são.' },
+          { valor:'manha-noite', pontos:11, titulo:'Só consigo olhar de manhã e à noite', sub:'Fora do horário comercial',
+            recap:'Olhando <b>só de manhã e à noite</b>, sua operação precisa caber fora do horário de pico.' }
+        ]
+      }
+    },
+
+    /* ---------- D: nova fonte de renda ---------- */
+    'renda': {
+      q2: {
+        indice:'Meta', icone:'alvo',
+        titulo:'O que você espera dessa nova fonte de renda?',
+        apoio:'O tamanho da meta muda o caminho.',
+        opcoes:[
+          { valor:'complementar', pontos:12, titulo:'Uma renda extra para complementar o mês', sub:'Começar somando',
+            recap:'Você busca uma <b>renda que complemente o mês</b>. É a meta mais realista e o melhor ponto de partida.' },
+          { valor:'substituir', pontos:15, titulo:'Substituir parte da minha renda atual', sub:'Menos dependência',
+            recap:'Você quer <b>substituir parte da sua renda atual</b>: isso exige consistência antes de volume.' },
+          { valor:'longo-prazo', pontos:18, titulo:'Construir liberdade financeira no longo prazo', sub:'Visão de longo prazo',
+            recap:'Você pensa em <b>liberdade no longo prazo</b>, o horizonte certo para quem quer durar no mercado.' },
+          { valor:'viver', pontos:20, titulo:'Viver do mercado um dia', sub:'A meta mais alta',
+            recap:'Sua meta é <b>viver do mercado</b>, o caminho que mais exige processo e menos perdoa improviso.' }
+        ]
+      },
+      q3: {
+        indice:'Base', icone:'escudo',
+        titulo:'Você já teve alguma experiência no mercado?',
+        apoio:'Saber de onde você parte encurta o caminho.',
+        opcoes:[
+          { valor:'nunca', pontos:10, titulo:'Nunca operei', sub:'Partindo do zero',
+            recap:'Você <b>nunca operou</b>: a vantagem é começar já no caminho certo, sem nada para desaprender.' },
+          { valor:'so-estudei', pontos:13, titulo:'Só estudei, nunca coloquei em prática', sub:'Teoria sem execução',
+            recap:'Você <b>estudou mas nunca executou</b>, e a distância entre saber e fazer é onde quase todo mundo para.' },
+          { valor:'nao-deu-certo', pontos:15, titulo:'Já operei e não deu certo', sub:'Tentou antes',
+            recap:'Você <b>já tentou e não deu certo</b>: na maioria das vezes faltou processo, não capacidade.' },
+          { valor:'opero-hoje', pontos:19, titulo:'Opero hoje, mas quero melhorar os resultados', sub:'Já está no jogo',
+            recap:'Você <b>já opera e quer melhorar</b>: é ajuste de processo, não recomeço.' }
+        ]
+      }
+    }
+  };
+
+  /* ---------- Pergunta 4: histórico ---------- */
+  var PERGUNTA_HISTORICO = {
+    indice:'Histórico', icone:'escudo',
+    titulo:'Você já investiu?',
+    apoio:'Isso define de onde a sua operação parte.',
+    opcoes:[
+      { valor:'nunca-investi', pontos:10, titulo:'Nunca investi, quero começar da forma certa e automática', sub:'Partindo do zero',
+        recap:'Você <b>nunca investiu</b> e quer começar já da forma certa e automática. A vantagem é não ter nada para desaprender.' },
+      { valor:'1k-5k', pontos:18, titulo:'Já investi de 1.000 a 5.000', sub:'Primeira faixa de capital',
+        recap:'Você <b>já investiu de R$ 1.000 a R$ 5.000</b>, então já conhece na prática o que é ver o dinheiro oscilar.' },
+      { valor:'5k-20k', pontos:24, titulo:'Já investi de 5.000 a 20.000', sub:'Capital consolidado',
+        recap:'Você <b>já investiu de R$ 5.000 a R$ 20.000</b>, uma faixa em que cada ponto de eficiência a mais já pesa no resultado.' },
+      { valor:'mais-100k', pontos:30, titulo:'Já investi mais de 100.000', sub:'Alto patrimônio',
+        recap:'Você <b>já investiu mais de R$ 100.000</b>. Nesse patamar, proteger o que existe pesa tanto quanto buscar retorno.' }
+    ]
+  };
+
+  /* ---------- Pergunta 5: a última, decide o destino ---------- */
+  var PERGUNTA_HOJE = {
+    indice:'Agora', icone:'relogio',
+    chamada:'Vou liberar gratuitamente esse algoritmo por <b>24 horas</b> para você testar. Me responde a última pergunta:',
+    titulo:'Você teria de R$ 100,00 a R$ 300,00 para iniciar hoje?',
+    apoio:'Esse valor fica na sua conta e você pode sacar a qualquer momento.',
+    aviso:'Como o algoritmo é liberado de forma gratuita, você precisa ter algum valor na sua conta para que a Trading Pro opere nela de forma automática. Por isso perguntamos se você tem qualquer valor acima de R$ 100,00 para iniciar. Esse valor fica na sua conta e você pode sacar a qualquer momento. Operamos em corretoras com mais de 10 anos de mercado e segurança.',
+    opcoes:[
+      { valor:'100-300', pontos:20, destino:'whats', titulo:'Sim, tenho de R$ 100,00 a R$ 300,00', sub:'Pronto para iniciar hoje',
+        recap:'Você tem <b>de R$ 100,00 a R$ 300,00</b> disponíveis, o suficiente para liberar o algoritmo e começar hoje.' },
+      { valor:'500-1000', pontos:26, destino:'whats', titulo:'Sim, tenho de R$ 500,00 a R$ 1.000,00', sub:'Margem maior para operar',
+        recap:'Você tem <b>de R$ 500,00 a R$ 1.000,00</b> disponíveis, margem confortável para o algoritmo trabalhar desde o primeiro dia.' },
+      { valor:'sem-capital', pontos:8, destino:'comunidade', titulo:'Não tenho nenhum investimento', sub:'Quero aprender primeiro',
+        recap:'Sem valor disponível agora, o passo certo é <b>construir base</b>: aprender o processo primeiro e capitalizar depois.' }
+    ]
+  };
+
+  /* ---------- Perfis do resultado ---------- */
+  var PERFIS = {
+    'automacao': {
+      nome:'Movido por <em>Automação</em>',
+      gargalo:'Operação que ainda depende de você o tempo todo',
+      nota:'Você quer escala, não sorte.',
+      leitura:'O que te chamou atenção foi a automação, e isso diz muito sobre você. Não está atrás de mais um curso nem de mais um sinal: quer um <strong>processo que funcione sem depender da sua presença</strong>. Esse é o raciocínio de quem pensa em escala, não em sorte.'
+    },
+    'comecar': {
+      nome:'Começando <em>do Zero Absoluto</em>',
+      gargalo:'Falta de tempo e de capital para dar o primeiro passo',
+      nota:'O capital inicial pesa menos que o processo.',
+      leitura:'O que te chamou atenção foi poder começar <strong>sem muito dinheiro e sem muito tempo</strong>, exatamente a barreira que trava a maioria. A verdade é que o capital inicial pesa menos do que o processo: quem começa pequeno e organizado chega mais longe do que quem começa grande e no escuro.'
+    },
+    'liberdade': {
+      nome:'Em busca de <em>Liberdade Operacional</em>',
+      gargalo:'Resultado preso ao tempo de tela',
+      nota:'Seu resultado está preso à tela.',
+      leitura:'O que te chamou atenção foi <strong>não precisar viver olhando o gráfico</strong>. Faz sentido: o mercado abre no mesmo horário em que a vida acontece. Quem depende de estar na tela não tem uma operação, tem um segundo emprego, e é essa troca que dá para desfazer.'
+    },
+    'renda': {
+      nome:'Construindo <em>uma Nova Fonte de Renda</em>',
+      gargalo:'Depender de uma única fonte de renda',
+      nota:'Renda que se repete vem de processo.',
+      leitura:'O que te chamou atenção foi <strong>construir uma nova fonte de renda</strong>, a motivação mais honesta que existe. Só que renda extra não nasce de sorte nem de palpite: ela vem de um processo que você consegue repetir mesmo nos dias em que a vontade não aparece.'
+    }
+  };
+
+  /* ========================= ESTADO ========================= */
+  var TOTAL = 5;
+  var perguntas = [PERGUNTA_1];
+  var respostas = [];
+  var passo = 0;
+  var telaAtual = 'capa';
+  var travado = false;
+
+  var $  = function(s,c){ return (c||document).querySelector(s); };
+  var $$ = function(s,c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
+
+  var telas = {
+    capa:      $('#t-capa'),
+    pergunta:  $('#t-pergunta'),
+    analise:   $('#t-analise'),
+    resultado: $('#t-resultado')
+  };
+  var corpo  = $('#corpo-pergunta');
+  var trilha = $('#trilha');
+
+  var semMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var msSai  = function(){ return semMovimento ? 20 : 220; };
+  var msEntra= function(){ return semMovimento ? 60 : 420; };
+
+  /* ========================= TRILHA DE ETAPAS ========================= */
+  function montarTrilha(){
+    var html = '';
+    for (var i = 0; i < TOTAL; i++){
+      html += '<div class="trilha-passo" data-p="' + i + '"><i></i></div>';
+    }
+    trilha.innerHTML = html;
+  }
+
+  function pintarTrilha(){
+    var contador = $('#contador');
+    if (telaAtual === 'capa'){
+      trilha.hidden = true;
+      contador.hidden = true;
+      return;
+    }
+    trilha.hidden = false;
+    var ativo = telaAtual === 'pergunta' ? passo : TOTAL;
+    $$('.trilha-passo', trilha).forEach(function(el, i){
+      el.classList.toggle('feito', i < ativo);
+      el.classList.toggle('agora', i === ativo);
+    });
+    if (telaAtual === 'pergunta'){
+      contador.hidden = false;
+      contador.innerHTML = '<b>' + ('0' + (passo + 1)) + '</b> / 0' + TOTAL;
+    } else {
+      contador.hidden = true;
+    }
+  }
+
+  /* ========================= NAVEGAÇÃO ========================= */
+  function trocarTela(nome, antes){
+    if (telaAtual === nome){ if (antes) antes(); return; }
+    var sai = telas[telaAtual], entra = telas[nome];
+    travado = true;
+    sai.classList.add('saindo');
+    window.setTimeout(function(){
+      sai.classList.remove('ativa','saindo','entrando');
+      telaAtual = nome;
+      if (antes) antes();
+      entra.classList.add('ativa','entrando');
+      reanimar(entra);
+      aoTopo();
+      pintarTrilha();
+      travado = false;
+      window.setTimeout(function(){ entra.classList.remove('entrando'); }, msEntra());
+      aoEntrar(nome);
+    }, msSai());
+  }
+
+  function irAoPasso(i){
+    if (i < 0){ passo = 0; trocarTela('capa'); return; }
+    if (i >= TOTAL){ trocarTela('analise'); return; }
+
+    if (telaAtual !== 'pergunta'){
+      trocarTela('pergunta', function(){ passo = i; desenharPergunta(); });
+      return;
+    }
+    travado = true;
+    corpo.classList.add('saindo');
+    window.setTimeout(function(){
+      passo = i;
+      corpo.classList.remove('saindo');
+      desenharPergunta();
+      aoTopo();
+      pintarTrilha();
+      travado = false;
+    }, msSai());
+  }
+
+  function aoTopo(){
+    window.scrollTo({ top:0, behavior: semMovimento ? 'auto' : 'smooth' });
+  }
+
+  function reanimar(tela){
+    $$('.escada > *', tela).forEach(function(el){
+      el.style.animation = 'none';
+      void el.offsetHeight;
+      el.style.animation = '';
+    });
+  }
+
+  function aoEntrar(nome){
+    if (nome === 'analise')   rodarAnalise();
+    if (nome === 'resultado') animarAnel();
+  }
+
+  /* ========================= RENDER DA PERGUNTA ========================= */
+  function esc(t){
+    return String(t == null ? '' : t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function desenharPergunta(){
+    var p = perguntas[passo];
+    var marcada = respostas[passo];
+
+    var opcoes = p.opcoes.map(function(o, i){
+      var sel = marcada && marcada.valor === o.valor;
+      return '<button class="opcao' + (sel ? ' marcada' : '') + '" type="button" data-i="' + i + '"'
+           +     ' style="--i:' + i + '">'
+           +   '<span class="letra">' + LETRAS[i] + '</span>'
+           +   '<span class="rotulo">' + esc(o.titulo) + (o.sub ? '<small>' + esc(o.sub) + '</small>' : '') + '</span>'
+           +   '<svg class="seta"><use href="#i-seta"/></svg>'
+           + '</button>';
+    }).join('');
+
+    var chamada = p.chamada ? '<span class="chamada">' + p.chamada + '</span>' : '';
+    var aviso = p.aviso
+      ? '<div class="aviso"><svg><use href="#i-escudo"/></svg><span>' + esc(p.aviso) + '</span></div>'
+      : '';
+
+    corpo.innerHTML =
+      '<div class="escada">'
+      +  '<div class="numero-pergunta"><i>' + ('0' + (passo + 1)) + '</i><span>' + esc(p.indice)
+      +    (passo === TOTAL - 1 ? ' · última' : '') + '</span></div>'
+      +  chamada
+      +  '<h2 class="pergunta">' + esc(p.titulo) + '</h2>'
+      +  '<p class="apoio">' + esc(p.apoio) + '</p>'
+      +  '<div class="opcoes">' + opcoes + '</div>'
+      +  aviso
+      +  '<div><button class="voltar" type="button" data-voltar><svg><use href="#i-volta"/></svg> Voltar</button></div>'
+      + '</div>';
+  }
+
+  /* ========================= RESPOSTAS ========================= */
+  function vibrar(ms){ if (navigator.vibrate){ try { navigator.vibrate(ms); } catch(e){} } }
+
+  function montarPerguntas(perfil){
+    var t = TRILHAS[perfil];
+    var mudou = perguntas[1] !== t.q2;
+    perguntas = [PERGUNTA_1, t.q2, t.q3, PERGUNTA_HISTORICO, PERGUNTA_HOJE];
+    if (mudou) respostas.length = 1;   // trocou de trilha: o resto não vale mais
+  }
+
+  function responder(i){
+    if (travado) return;
+    travado = true;
+    vibrar(12);
+
+    var p = perguntas[passo];
+    var o = p.opcoes[i];
+    var botoes = $$('.opcao', corpo);
+    botoes.forEach(function(b, k){
+      b.classList.remove('marcada');
+      if (k !== i) b.classList.add('apagada');
+    });
+    botoes[i].classList.remove('apagada');
+    botoes[i].classList.add('marcada');
+
+    respostas[passo] = {
+      valor:o.valor, texto:o.titulo, letra:LETRAS[i], pontos:o.pontos,
+      recap:o.recap || '', destino:o.destino || null
+    };
+    if (passo === 0) montarPerguntas(o.valor);
+
+    rastrear('quiz_resposta', { pergunta:passo + 1, resposta:o.valor,
+                                perfil: respostas[0] ? respostas[0].valor : null });
+    Painel.respondeu(passo + 1, p.titulo, o, respostas[0] ? respostas[0].valor : null);
+
+    var proximo = passo + 1;
+    window.setTimeout(function(){
+      travado = false;
+      irAoPasso(proximo);
+    }, semMovimento ? 120 : 340);
+  }
+
+  corpo.addEventListener('click', function(ev){
+    var op = ev.target.closest('.opcao');
+    if (op){ responder(Number(op.getAttribute('data-i'))); return; }
+    if (ev.target.closest('[data-voltar]') && !travado) irAoPasso(passo - 1);
+  });
+
+  $('#comecar').addEventListener('click', function(){
+    rastrear('quiz_iniciado', {});
+    Painel.iniciou();
+    irAoPasso(0);
+  });
+
+  $('#refazer').addEventListener('click', function(){
+    respostas = [];
+    perguntas = [PERGUNTA_1];
+    passo = 0;
+    trocarTela('capa');
+  });
+
+  function clicarQuandoLiberar(i, passoDaTecla, tentativas){
+    if (!travado){
+      if (telaAtual === 'pergunta' && passo === passoDaTecla) responder(i);
+      return;
+    }
+    if (tentativas <= 0) return;
+    window.setTimeout(function(){ clicarQuandoLiberar(i, passoDaTecla, tentativas - 1); }, 120);
+  }
+
+  document.addEventListener('keydown', function(ev){
+    if (ev.key === 'Enter' && telaAtual === 'capa'){ $('#comecar').click(); return; }
+    if (telaAtual !== 'pergunta') return;
+    if (ev.key === 'Backspace'){ ev.preventDefault(); if (!travado) irAoPasso(passo - 1); return; }
+    var total = perguntas[passo].opcoes.length, idx = -1;
+    if (/^[1-9]$/.test(ev.key)) idx = Number(ev.key) - 1;
+    else if (/^[a-eA-E]$/.test(ev.key)) idx = ev.key.toUpperCase().charCodeAt(0) - 65;
+    if (idx >= 0 && idx < total){ ev.preventDefault(); clicarQuandoLiberar(idx, passo, 12); }
+  });
+
+  /* ========================= ANÁLISE ========================= */
+  function rodarAnalise(){
+    Painel.analisando();
+    var linhas = $$('.registro-linha');
+    linhas.forEach(function(l){ l.classList.remove('ativa','ok'); });
+    var passoMs = CONFIG.tempoAnalise / (linhas.length + 1);
+    linhas.forEach(function(l, i){
+      window.setTimeout(function(){
+        l.classList.add('ativa');
+        if (i > 0){
+          linhas[i - 1].classList.remove('ativa');
+          linhas[i - 1].classList.add('ok');
+        }
+        vibrar(6);
+      }, passoMs * (i + 1) * 0.92);
+    });
+    // a última linha também precisa fechar como concluída
+    window.setTimeout(function(){
+      var u = linhas[linhas.length - 1];
+      if (u){ u.classList.remove('ativa'); u.classList.add('ok'); }
+    }, CONFIG.tempoAnalise * 0.94);
+    window.setTimeout(function(){
+      montarResultado();
+      trocarTela('resultado');
+    }, CONFIG.tempoAnalise);
+  }
+
+  /* ========================= RESULTADO ========================= */
+  var PONTOS_MAX = 116;   // trilha mais "cara": 20 + 20 + 20 + 30 + 26
+  var scoreAtual = 0;
+
+  function calcularScore(){
+    var bruto = 0;
+    respostas.forEach(function(r){ if (r) bruto += r.pontos; });
+    return Math.max(60, Math.min(98, Math.round(55 + (bruto / PONTOS_MAX) * 42)));
+  }
+
+  function animarAnel(){
+    var volta = 2 * Math.PI * 42;                   // 264, o perímetro do anel
+    $('#anelFrente').style.strokeDashoffset = volta * (1 - scoreAtual / 100);
+    var atual = 0, alvo = scoreAtual, el = $('#anelValor');
+    el.textContent = '0';
+    var t = window.setInterval(function(){
+      atual += Math.max(1, Math.ceil((alvo - atual) / 8));
+      if (atual >= alvo){ atual = alvo; window.clearInterval(t); }
+      el.textContent = atual;
+    }, semMovimento ? 5 : 26);
+  }
+
+  function montarResultado(){
+    var perfil  = PERFIS[respostas[0].valor];
+    var ultima  = respostas[4];
+    var destino = (ultima && ultima.destino) || 'comunidade';
+    var temValor = destino === 'whats';
+    scoreAtual = calcularScore();
+
+    $('#nomePerfil').innerHTML = perfil.nome;
+    $('#rotuloMedidor').textContent = temValor ? 'Nível de prontidão' : 'Potencial identificado';
+    $('#notaMedidor').textContent = perfil.nota;
+
+    var fecho = temValor
+      ? '<br><br>Como você tem valor disponível para começar hoje, o próximo passo é <strong>liberar o algoritmo junto com um especialista</strong>, no seu ritmo.'
+      : '<br><br>Como você ainda não tem valor disponível, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
+    $('#leitura').innerHTML = perfil.leitura + fecho;
+
+    var linhas = [{ i:'01', txt:'<b>Seu gargalo hoje:</b> ' + esc(perfil.gargalo) }];
+    respostas.slice(1).forEach(function(r, k){
+      if (r && r.recap) linhas.push({ i:'0' + (k + 2), txt:r.recap });
+    });
+    $('#pontos').innerHTML = linhas.map(function(l){
+      return '<div class="ponto"><i>' + l.i + '</i><span>' + l.txt + '</span></div>';
+    }).join('');
+
+    var destinoUrl, textoCta, subCta, iconeCta, escassez;
+    if (temValor){
+      destinoUrl = montarLink(CONFIG.redirectWhats);
+      textoCta   = 'FALAR COM UM ESPECIALISTA';
+      subCta     = 'e receber a Trading Pro';
+      iconeCta   = '#i-telegram';
+      escassez   = 'Liberação gratuita do algoritmo por 24 horas';
+    } else {
+      destinoUrl = montarLink(CONFIG.redirectComunidade);
+      textoCta   = 'ENTRAR NA COMUNIDADE';
+      subCta     = 'acesso gratuito';
+      iconeCta   = '#i-grupo';
+      escassez   = 'Acesso gratuito, entrada imediata';
+    }
+    var cta = $('#botaoCta');
+    cta.href = destinoUrl;
+    $('#textoCta').textContent = textoCta;
+    $('#subCta').textContent = subCta;
+    $('#iconeCta').querySelector('use').setAttribute('href', iconeCta);
+    $('#textoEscassez').textContent = escassez;
+
+    Painel.resultado(perfil.nome.replace(/<[^>]+>/g, ''), scoreAtual, destino, respostas[0].valor);
+    rastrear('quiz_finalizado', {
+      destino: destino, score: scoreAtual,
+      perfil: respostas[0].valor,
+      resposta_2: respostas[1] ? respostas[1].valor : null,
+      resposta_3: respostas[2] ? respostas[2].valor : null,
+      historico:  respostas[3] ? respostas[3].valor : null,
+      valor_hoje: ultima ? ultima.valor : null
+    });
+
+    if (CONFIG.autoRedirectSegundos > 0){
+      window.setTimeout(function(){ cta.click(); }, CONFIG.autoRedirectSegundos * 1000);
+    }
+  }
+
+  $('#botaoCta').addEventListener('click', function(ev){
+    var destino = (respostas[4] && respostas[4].destino) || 'comunidade';
+    rastrear('quiz_cta_clique', { destino:destino, perfil: respostas[0] ? respostas[0].valor : null });
+    Painel.clicouCta(destino, respostas[0] ? respostas[0].valor : null);
+
+    // segura o clique só o suficiente para o Pixel enviar o Lead
+    var outraAba = ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button === 1;
+    if (outraAba || !CONFIG.esperaPixelMs) return;
+    if (typeof window.fbq !== 'function') return;
+    var url = this.href;
+    if (!url || url.indexOf('http') !== 0) return;
+
+    ev.preventDefault();
+    var foi = false;
+    window.setTimeout(function(){
+      if (foi) return;
+      foi = true;
+      window.location.href = url;
+    }, CONFIG.esperaPixelMs);
+  });
+
+  /* ========================= LINK ========================= */
+  function montarLink(base){
+    if (!CONFIG.repassarParametros) return base;
+    var entrada = window.location.search;
+    if (!entrada || entrada.length < 2) return base;
+    try{
+      var url = new URL(base);
+      new URLSearchParams(entrada).forEach(function(v, k){
+        if (!url.searchParams.has(k)) url.searchParams.set(k, v);
+      });
+      return url.toString();
+    }catch(e){
+      return base + (base.indexOf('?') > -1 ? '&' : '?') + entrada.slice(1);
+    }
+  }
+
+  /* ========================= RASTREAMENTO ========================= */
+  // As respostas do quiz NUNCA vão para a Meta. Quanto a pessoa tem para
+  // investir, quanto já investiu e o destino dela são dados sobre a situação
+  // financeira dela: é o tipo de informação que a Meta trata como proibida nas
+  // ferramentas de negócio, e que leva o pixel para Core Setup.
+  // Tudo isso continua indo para o painel do Supabase, que é banco nosso.
+  //
+  // Aqui saem 3 eventos, TODOS sem nenhum parâmetro. O segundo argumento
+  // (dados) é recebido e ignorado de propósito, para os pontos de chamada
+  // continuarem iguais e ninguém reintroduzir dado sem perceber.
+  function rastrear(evento /* , dados — ignorado de propósito */){
+    try{
+      if (typeof window.fbq !== 'function') return;
+      var id = {};
+      try { id.eventID = Painel.sessao() + '-' + evento; } catch(e){}
+
+      if (evento === 'quiz_iniciado')        window.fbq('trackCustom', 'quiz_iniciado', {}, id);
+      else if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', {}, id);
+      else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', {}, id);
+      // quiz_visualizado (duplica o PageView) e quiz_resposta: não vão para a Meta.
+    }catch(e){}
+  }
+
+  /* ========================= PAINEL: ENVIO DE EVENTOS =========================
+     Cada passo vira uma linha no Supabase DESTA variação. À prova de falha:
+     se o banco estiver fora ou bloqueado, o quiz segue funcionando.
+     ========================================================================= */
+  var Painel = (function(){
+    var ligado = !!(CONFIG.supabaseUrl && CONFIG.supabaseChave);
+    var base = CONFIG.supabaseUrl.replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+    var endereco = ligado ? base + '/rest/v1/quiz_eventos' : '';
+    var sessao = criarSessao();
+    var origem = lerOrigem();
+    var marca = Date.now();
+    var ultimo = 0;
+    var avisouSaida = false;
+
+    function criarSessao(){
+      try {
+        var atual = window.sessionStorage.getItem('quizc_sessao');
+        if (atual) return atual;
+      } catch(e){}
+      var id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+      try { window.sessionStorage.setItem('quizc_sessao', id); } catch(e){}
+      return id;
+    }
+
+    function aparelho(){
+      var ua = navigator.userAgent || '';
+      if (/iPad|Tablet|PlayBook|Silk/i.test(ua)) return 'tablet';
+      if (/Mobi|Android|iPhone|iPod/i.test(ua)) return 'celular';
+      return 'computador';
+    }
+
+    function cookie(nome){
+      try {
+        var c = document.cookie.split('; ').find(function(x){ return x.indexOf(nome + '=') === 0; });
+        return c ? c.slice(nome.length + 1).slice(0, 180) : null;
+      } catch(e){ return null; }
+    }
+
+    function lerOrigem(){
+      var q = {};
+      try {
+        new URLSearchParams(window.location.search).forEach(function(v, k){
+          q[k.toLowerCase()] = String(v).slice(0, 120);
+        });
+      } catch(e){}
+      var ref = '';
+      try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch(e){}
+      return {
+        variacao: CONFIG.variacao,
+        fbclid: q.fbclid || null, fbp: cookie('_fbp'), fbc: cookie('_fbc'),
+        utm_source:q.utm_source||null, utm_medium:q.utm_medium||null,
+        utm_campaign:q.utm_campaign||null, utm_content:q.utm_content||null, utm_term:q.utm_term||null,
+        dispositivo: aparelho(), referencia: ref || null
+      };
+    }
+
+    function enviar(dados){
+      if (!ligado) return;
+      if (!origem.fbp) origem.fbp = cookie('_fbp');
+      if (!origem.fbc) origem.fbc = cookie('_fbc');
+      var linha = Object.assign({ sessao: sessao }, origem, dados);
+      try {
+        window.fetch(endereco, {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'apikey': CONFIG.supabaseChave,
+            'Authorization':'Bearer ' + CONFIG.supabaseChave,
+            'Prefer':'return=minimal'
+          },
+          body: JSON.stringify([linha]),
+          keepalive:true, mode:'cors'
+        }).catch(function(){});
+      } catch(e){}
+    }
+
+    // grava o lead na tabela separada. Nome e WhatsApp NAO vao para
+    // quiz_eventos: la fica so o passo do funil, sem dado pessoal.
+    function enviarLead(nome, whatsapp){
+      if (!ligado) return Promise.resolve();
+      var linha = Object.assign({ sessao: sessao }, origem, {
+        variacao: CONFIG.variacao,
+        nome: String(nome).slice(0, 120),
+        whatsapp: String(whatsapp).slice(0, 11)
+      });
+      try {
+        return window.fetch(base + '/rest/v1/quiz_leads', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'apikey': CONFIG.supabaseChave,
+            'Authorization':'Bearer ' + CONFIG.supabaseChave,
+            'Prefer':'return=minimal'
+          },
+          body: JSON.stringify([linha]),
+          keepalive:true, mode:'cors'
+        }).catch(function(){});
+      } catch(e){ return Promise.resolve(); }
+    }
+
+    return {
+      sessao: function(){ return sessao; },
+      visualizou: function(){ enviar({ evento:'visualizou' }); },
+      lead: function(nome, whatsapp){
+        enviar({ evento:'lead' });
+        return enviarLead(nome, whatsapp);
+      },
+      iniciou: function(){ marca = Date.now(); enviar({ evento:'iniciou' }); },
+      respondeu: function(p, pergunta, opcao, trilha){
+        var agora = Date.now();
+        ultimo = p;
+        enviar({ evento:'respondeu', passo:p, pergunta:String(pergunta).slice(0,180),
+                 valor:opcao.valor, rotulo:String(opcao.titulo || '').slice(0,180),
+                 trilha:trilha || null, tempo_ms: Math.min(agora - marca, 3600000) });
+        marca = agora;
+      },
+      analisando: function(){ enviar({ evento:'analisando' }); },
+      resultado: function(perfil, score, destino, trilha){
+        enviar({ evento:'resultado', perfil:perfil, score:score, destino:destino, trilha:trilha });
+      },
+      clicouCta: function(destino, trilha){
+        enviar({ evento:'clicou_cta', destino:destino, trilha:trilha });
+      },
+      saiu: function(){
+        if (avisouSaida || !ultimo) return;
+        avisouSaida = true;
+        enviar({ evento:'saiu', passo:ultimo });
+      }
+    };
+  })();
+
+  window.addEventListener('pagehide', function(){ Painel.saiu(); });
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'hidden') Painel.saiu();
+  });
+
+  /* ========================= POPUP DE CAPTURA ========================= */
+  // Trava a pagina na abertura e so libera o quiz depois do nome + WhatsApp.
+  // Se o Supabase estiver desligado, o popup continua funcionando: ele nunca
+  // pode impedir alguem de entrar no funil por causa do rastreamento.
+  var Trava = (function(){
+    var caixa   = $('#trava');
+    if (!caixa) return { abrir:function(){} };
+
+    var form    = $('#travaForm');
+    var inNome  = $('#travaNome');
+    var inZap   = $('#travaZap');
+    var botao   = $('#travaEnviar');
+    var CHAVE   = 'quizc_lead';
+    var aberto  = false;
+    var enviando= false;
+    var scrollY = 0;
+
+    function so(v){ return String(v || '').replace(/\D/g, ''); }
+
+    // (11) 90000-0000
+    function mascara(v){
+      var d = so(v).slice(0, 11);
+      if (!d) return '';
+      if (d.length <= 2)  return '(' + d;
+      if (d.length <= 6)  return '(' + d.slice(0,2) + ') ' + d.slice(2);
+      if (d.length <= 10) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + '-' + d.slice(6);
+      return '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7);
+    }
+
+    function nomeValido(v){
+      var t = String(v || '').trim();
+      return t.length >= 2 && /[A-Za-zÀ-ÿ]/.test(t);
+    }
+
+    function zapValido(d){
+      if (d.length !== 10 && d.length !== 11) return false;
+      var ddd = parseInt(d.slice(0, 2), 10);
+      if (!(ddd >= 11 && ddd <= 99)) return false;
+      if (d.length === 11 && d.charAt(2) !== '9') return false;   // celular
+      return true;
+    }
+
+    function erro(campo, alvo, msg){
+      $('#' + campo).classList.toggle('ruim', !!msg);
+      $('#' + alvo).textContent = msg || '';
+    }
+
+    function jaPreencheu(){
+      if (!(CONFIG.popupLembrarDias > 0)) return false;
+      try {
+        var bruto = window.localStorage.getItem(CHAVE);
+        if (!bruto) return false;
+        var quando = parseInt(bruto, 10);
+        if (!quando) return false;
+        return (Date.now() - quando) < CONFIG.popupLembrarDias * 86400000;
+      } catch(e){ return false; }
+    }
+
+    function lembrar(){
+      if (!(CONFIG.popupLembrarDias > 0)) return;
+      try { window.localStorage.setItem(CHAVE, String(Date.now())); } catch(e){}
+    }
+
+    function travarRolagem(){
+      scrollY = window.scrollY || 0;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    }
+
+    function soltarRolagem(){
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      try { window.scrollTo(0, scrollY); } catch(e){}
+    }
+
+    function abrir(){
+      if (aberto) return;
+      aberto = true;
+      caixa.hidden = false;
+      travarRolagem();
+      // no celular o teclado subindo na hora atrapalha: espera o desenho
+      window.setTimeout(function(){
+        try { if (!/Mobi|Android|iPhone/i.test(navigator.userAgent)) inNome.focus(); } catch(e){}
+      }, 380);
+    }
+
+    function fechar(){
+      if (!aberto) return;
+      aberto = false;
+      caixa.classList.add('saindo');
+      window.setTimeout(function(){
+        caixa.hidden = true;
+        caixa.classList.remove('saindo');
+        soltarRolagem();
+        try { $('#comecar').focus({ preventScroll:true }); } catch(e){}
+      }, semMovimento ? 0 : 240);
+    }
+
+    // mascara enquanto digita, sem perder a posicao do cursor no fim
+    inZap.addEventListener('input', function(){
+      var antes = this.value;
+      var depois = mascara(antes);
+      if (antes !== depois) this.value = depois;
+      if ($('#campoZap').classList.contains('ruim')) erro('campoZap', 'erroZap', '');
+    });
+    inNome.addEventListener('input', function(){
+      if ($('#campoNome').classList.contains('ruim')) erro('campoNome', 'erroNome', '');
+    });
+
+    // a tecla Esc nao fecha: e uma trava, nao um aviso
+    caixa.addEventListener('keydown', function(ev){
+      if (ev.key === 'Escape') ev.preventDefault();
+    });
+
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      if (enviando) return;
+
+      var nome = String(inNome.value || '').trim().replace(/\s+/g, ' ');
+      var zap  = so(inZap.value);
+      var ok = true;
+
+      if (!nomeValido(nome)){ erro('campoNome', 'erroNome', 'Escreva o seu nome'); ok = false; }
+      else erro('campoNome', 'erroNome', '');
+
+      if (!zapValido(zap)){ erro('campoZap', 'erroZap', 'Confira o número com o DDD'); ok = false; }
+      else erro('campoZap', 'erroZap', '');
+
+      if (!ok){
+        vibrar(18);
+        (nomeValido(nome) ? inZap : inNome).focus();
+        return;
+      }
+
+      enviando = true;
+      botao.setAttribute('disabled', 'disabled');
+      $('#travaEnviar .cta-texto').textContent = 'Liberando...';
+      vibrar(12);
+
+      if (CONFIG.popupAvisaMeta) rastrear('quiz_lead', {});
+
+      // um lead vale uma espera curta. Passou de 2s, libera assim mesmo:
+      // nunca segurar a pessoa na porta por causa do rastreamento.
+      var liberou = false;
+      function liberar(){
+        if (liberou) return;
+        liberou = true;
+        lembrar();
+        fechar();
+      }
+      window.setTimeout(liberar, 2000);
+      try {
+        // TrackFather: mesmo lead para o painel do parceiro.
+        try {
+          var pTF = new URLSearchParams(window.location.search);
+          fetch('https://meueditor.manager01.39digital.com.br/webhook/quiztrading-lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            keepalive: true,
+            mode: 'cors',
+            body: JSON.stringify({
+              nome: nome,
+              telefone: (zap.indexOf('55') === 0 && zap.length > 11) ? zap : ('55' + zap),
+              pagina: window.location.href,
+              data_envio: new Date().toISOString(),
+              utm_source: pTF.get('utm_source') || '',
+              utm_medium: pTF.get('utm_medium') || '',
+              utm_campaign: pTF.get('utm_campaign') || '',
+              utm_content: pTF.get('utm_content') || '',
+              utm_term: pTF.get('utm_term') || ''
+            })
+          }).catch(function(){});
+        } catch (e) {}
+
+        var envio = Painel.lead(nome, zap);
+        if (envio && typeof envio.then === 'function') envio.then(liberar, liberar);
+        else liberar();
+      } catch(e){ liberar(); }
+    });
+
+    return { abrir: abrir, jaPreencheu: jaPreencheu };
+  })();
+
+  /* ========================= FUNDO: LINHA DE TENDÊNCIA ========================= */
+  (function fundo(){
+    if (semMovimento) return;
+    var cv = document.getElementById('ondas');
+    if (!cv) return;
+    var ctx = cv.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var L, A, t = 0;
+
+    function medir(){
+      L = cv.clientWidth; A = cv.clientHeight;
+      cv.width = L * dpr; cv.height = A * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    // uma linha de tendência só, com brilho. Discreta o bastante para
+    // nunca competir com o texto, viva o bastante para a tela respirar.
+    function linha(base, amp, vel, alfa, largura){
+      ctx.beginPath();
+      for (var x = 0; x <= L; x += 7){
+        var y = base
+              + Math.sin((x * 0.0062) + t * vel) * amp
+              + Math.sin((x * 0.0131) - t * vel * 0.6) * (amp * 0.42);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = 'rgba(0,224,164,' + alfa + ')';
+      ctx.lineWidth = largura;
+      ctx.stroke();
+    }
+
+    function desenhar(){
+      ctx.clearRect(0, 0, L, A);
+      ctx.lineCap = 'round';
+      ctx.shadowColor = 'rgba(0,224,164,.5)';
+      ctx.shadowBlur = 14;
+      linha(A * 0.80, 20, 0.0090, '.16', 1.7);
+      ctx.shadowBlur = 0;
+      linha(A * 0.86, 27, 0.0061, '.07', 1.2);
+      linha(A * 0.72, 15, 0.0117, '.05', 1);
+      t++;
+      window.requestAnimationFrame(desenhar);
+    }
+
+    var espera;
+    window.addEventListener('resize', function(){
+      window.clearTimeout(espera);
+      espera = window.setTimeout(medir, 180);
+    });
+    medir();
+    desenhar();
+  })();
+
+  /* ========================= INÍCIO ========================= */
+  montarTrilha();
+  pintarTrilha();
+  rastrear('quiz_visualizado', {});
+  Painel.visualizou();
+
+  if (CONFIG.popupLigado && !Trava.jaPreencheu()){
+    if (CONFIG.popupAtrasoMs > 0) window.setTimeout(Trava.abrir, CONFIG.popupAtrasoMs);
+    else Trava.abrir();
+  }
+
+  [CONFIG.redirectWhats, CONFIG.redirectComunidade].forEach(function(u){
+    var l = document.createElement('link');
+    l.rel = 'dns-prefetch';
+    try { l.href = new URL(u).origin; document.head.appendChild(l); } catch(e){}
+  });
+
+})();
+</script>
+<script src="https://api-dash.trackfather.com.br/quiztrading-track.js"></script>
+</body>
+</html>
