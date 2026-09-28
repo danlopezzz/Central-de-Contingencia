@@ -487,6 +487,56 @@ h1 mark::after{
   font-size:12.8px;color:var(--texto-3);
 }
 
+.video-bloco{display:flex;flex-direction:column;gap:var(--e2);}
+.video-titulo{
+  margin:0;font-family:var(--display);font-weight:700;
+  font-size:clamp(16px,4.2vw,19px);line-height:1.25;letter-spacing:-.01em;
+  color:var(--texto);text-wrap:balance;
+}
+.video-caixa{
+  position:relative;aspect-ratio:16/9;width:100%;
+  background:#000;
+  border:1px solid var(--traco);border-radius:var(--r-g);
+  overflow:hidden;
+}
+.video-caixa video{
+  display:block;width:100%;height:100%;object-fit:contain;background:#000;
+}
+/* capa própria: sem ela o navegador mostra um retângulo preto */
+.video-capa{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  border:0;cursor:pointer;padding:0;
+  /* OPACA de propósito: as controls nativas ficam ligadas desde o começo,
+     para o vídeo continuar tocável se o JS falhar. Se a capa fosse
+     translúcida, a barra de controles apareceria por trás dela. */
+  background:
+    radial-gradient(120% 95% at 50% 42%, rgba(0,224,164,.20), transparent 68%),
+    #050F0D;
+  transition:opacity .25s var(--curva);
+}
+.video-capa[hidden]{display:none;}
+.video-play{
+  display:grid;place-items:center;width:64px;height:64px;border-radius:50%;
+  background:var(--verde);color:#022018;
+  box-shadow:0 10px 30px -8px rgba(0,224,164,.6);
+  transition:transform .2s var(--curva);
+}
+.video-play svg{width:26px;height:26px;fill:currentColor;margin-left:3px;}
+.video-capa:hover .video-play{transform:scale(1.07);}
+.video-capa-txt{
+  font-family:var(--display);font-weight:700;font-size:14px;color:var(--texto);
+  display:flex;align-items:center;gap:9px;
+}
+.video-capa-txt b{
+  font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.1em;
+  color:var(--texto-3);
+}
+@media(max-width:380px){
+  .video-play{width:56px;height:56px;}
+  .video-play svg{width:22px;height:22px;}
+}
+
 .medidor{
   display:grid;grid-template-columns:auto 1fr;align-items:center;gap:var(--e4);
   background:var(--painel);
@@ -797,6 +847,27 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
               </span>
             </a>
             <p class="escassez"><i class="batida"></i> <span id="textoEscassez"></span></p>
+          </div>
+
+          <!-- Vídeo: aparece nos DOIS desfechos, sempre ABAIXO do CTA, para não
+               empurrar o botão para fora da tela. Não toca sozinho: o arquivo
+               tem 13 MB e som, então tocar sem toque queimaria dados de quem
+               não vai assistir e sairia mudo de qualquer jeito. No primeiro
+               toque ele já toca COM som. -->
+          <div class="video-bloco">
+            <h3 class="video-titulo">Veja abaixo como funciona a nossa ferramenta</h3>
+            <div class="video-caixa">
+              <video id="videoFerramenta" preload="metadata" playsinline controls
+                     width="1024" height="576">
+                <source src="ferramenta.mp4" type="video/mp4" />
+                O seu navegador não consegue exibir este vídeo.
+              </video>
+              <button class="video-capa" id="videoCapa" type="button"
+                      aria-label="Assistir ao vídeo de 1 minuto e 50 segundos">
+                <span class="video-play"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="8,5 20,12 8,19"/></svg></span>
+                <span class="video-capa-txt">Assistir agora <b>1 min 50</b></span>
+              </button>
+            </div>
           </div>
 
           <div class="medidor">
@@ -1471,6 +1542,29 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
       window.location.href = url;
     }, CONFIG.esperaPixelMs);
   });
+
+  /* ========================= VÍDEO ========================= */
+  // Um toque na capa: ela some e o vídeo toca com som. Se o navegador recusar
+  // o play (política de mídia), a capa volta e as controls nativas continuam
+  // ali, então nunca sobra um retângulo morto na tela.
+  (function video(){
+    var v = document.getElementById('videoFerramenta');
+    var capa = document.getElementById('videoCapa');
+    if (!v || !capa) return;
+
+    function esconderCapa(){ capa.hidden = true; }
+
+    capa.addEventListener('click', function(){
+      esconderCapa();
+      try {
+        v.muted = false;
+        var p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(function(){ capa.hidden = false; });
+      } catch(e){ capa.hidden = false; }
+    });
+
+    v.addEventListener('play', esconderCapa);   // se usar as controls nativas
+  })();
 
   /* ========================= LINK ========================= */
   function montarLink(base){
