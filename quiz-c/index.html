@@ -1496,7 +1496,9 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
   //   chegou no resultado QuizCompleto        QuizCompleto
   //   clicou no CTA       Lead                SubmitForm
   function rastrear(evento /* , dados — ignorado de propósito */){
-    var id = {};
+    // um id por evento, o MESMO nas duas plataformas: se um dia entrar API
+    // de conversao server-side, a deduplicacao ja funciona.
+    var id = '';
     try { id = Painel.sessao() + '-' + evento; } catch(e){ id = ''; }
 
     // ---- Meta ----
