@@ -8,6 +8,24 @@
 <meta name="description" content="Quiz de 5 perguntas sobre sua rotina e seus objetivos. Leva menos de 1 minuto." />
 <meta name="robots" content="noindex, nofollow" />
 
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+// autoConfig ANTES do init: sem isso o Pixel lê sozinho o texto de todo botão
+// clicado, e os botões deste quiz SÃO as respostas.
+fbq('set', 'autoConfig', false, '1598167835188754');
+fbq('init', '1598167835188754');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->
+
 <!-- TikTok Pixel Code Start -->
 <script>
 !function (w, d, t) {
@@ -622,6 +640,11 @@ h1 mark::after{
 </style>
 </head>
 <body>
+
+<!-- noscript do Pixel da Meta (o TikTok não usa) -->
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
+/></noscript>
 
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
@@ -1409,10 +1432,12 @@ h1 mark::after{
     rastrear('quiz_cta_clique', { destino:destino, perfil: respostas[0] ? respostas[0].valor : null });
     Painel.clicouCta(destino, respostas[0] ? respostas[0].valor : null);
 
-    // segura o clique só o suficiente para o Pixel enviar o SubmitForm
+    // segura o clique só o suficiente para os pixels enviarem o evento de lead
     var outraAba = ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button === 1;
     if (outraAba || !CONFIG.esperaPixelMs) return;
-    if (!window.ttq || typeof window.ttq.track !== 'function') return;
+    var temMeta   = typeof window.fbq === 'function';
+    var temTikTok = !!(window.ttq && typeof window.ttq.track === 'function');
+    if (!temMeta && !temTikTok) return;
     var url = this.href;
     if (!url || url.indexOf('http') !== 0) return;
 
@@ -1442,7 +1467,7 @@ h1 mark::after{
   }
 
   /* ========================= RASTREAMENTO ========================= */
-  // As respostas do quiz NUNCA vão para o TikTok. Quanto a pessoa tem para
+  // As respostas do quiz NUNCA vão para a Meta nem para o TikTok. Quanto a pessoa tem para
   // investir, quanto já investiu e o destino dela são dados sobre a situação
   // financeira dela, e é o tipo de informação que as plataformas tratam como
   // categoria sensível.
@@ -1456,22 +1481,46 @@ h1 mark::after{
   // painel:  Events Manager > o pixel > Settings > Automatic Advanced
   // Matching > OFF. O próprio TikTok recomenda desligar em site financeiro.
   //
-  // Aqui saem 3 eventos, TODOS sem nenhum parâmetro. O segundo argumento
-  // (dados) é recebido e ignorado de propósito, para os pontos de chamada
-  // continuarem iguais e ninguém reintroduzir dado sem perceber.
+  // Aqui saem 3 eventos por plataforma, TODOS sem nenhum parâmetro. O segundo
+  // argumento (dados) é recebido e ignorado de propósito, para os pontos de
+  // chamada continuarem iguais e ninguém reintroduzir dado sem perceber.
+  //
+  // Os dois pixels são independentes: cada um tem a sua própria guarda, então
+  // se um deles for bloqueado por adblock ou não carregar, o outro continua
+  // disparando normalmente.
+  //
+  // O MESMO passo do funil, nas duas plataformas:
+  //                       Meta                TikTok
+  //   abriu a página      PageView            page()
+  //   começou o quiz      quiz_iniciado       quiz_iniciado
+  //   chegou no resultado QuizCompleto        QuizCompleto
+  //   clicou no CTA       Lead                SubmitForm
   function rastrear(evento /* , dados — ignorado de propósito */){
-    try{
-      if (!window.ttq || typeof window.ttq.track !== 'function') return;
-      var id = {};
-      try { id.event_id = Painel.sessao() + '-' + evento; } catch(e){}
+    var id = {};
+    try { id = Painel.sessao() + '-' + evento; } catch(e){ id = ''; }
 
-      if (evento === 'quiz_iniciado')        window.ttq.track('quiz_iniciado', {}, id);
-      else if (evento === 'quiz_finalizado') window.ttq.track('QuizCompleto', {}, id);
-      // SubmitForm e o evento padrao de lead do TikTok: e por ele que o
-      // gestor otimiza a campanha.
-      else if (evento === 'quiz_cta_clique') window.ttq.track('SubmitForm', {}, id);
-      // quiz_visualizado (duplica o ttq.page) e quiz_resposta: nao saem daqui.
+    // ---- Meta ----
+    try{
+      if (typeof window.fbq === 'function'){
+        var idMeta = id ? { eventID: id } : {};
+        if (evento === 'quiz_iniciado')        window.fbq('trackCustom', 'quiz_iniciado', {}, idMeta);
+        else if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', {}, idMeta);
+        else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', {}, idMeta);
+      }
     }catch(e){}
+
+    // ---- TikTok ----
+    try{
+      if (window.ttq && typeof window.ttq.track === 'function'){
+        var idTok = id ? { event_id: id } : {};
+        // SubmitForm é o evento padrão de lead do TikTok: é por ele que o
+        // gestor otimiza a campanha.
+        if (evento === 'quiz_iniciado')        window.ttq.track('quiz_iniciado', {}, idTok);
+        else if (evento === 'quiz_finalizado') window.ttq.track('QuizCompleto', {}, idTok);
+        else if (evento === 'quiz_cta_clique') window.ttq.track('SubmitForm', {}, idTok);
+      }
+    }catch(e){}
+    // quiz_visualizado (duplica PageView/page) e quiz_resposta: não saem daqui.
   }
 
   /* ========================= PAINEL: ENVIO DE EVENTOS =========================
