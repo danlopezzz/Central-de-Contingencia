@@ -468,12 +468,18 @@ h1 mark::after{
   border-radius:999px;padding:7px 14px;font-weight:700;
 }
 .faixa-pronto svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
-.nome-perfil{
+.veredito{display:flex;flex-direction:column;gap:var(--e2);}
+.veredito-titulo{
   font-family:var(--display);font-weight:800;
-  font-size:clamp(25px,6.6vw,37px);line-height:1.13;letter-spacing:-.022em;
+  font-size:clamp(24px,6.2vw,34px);line-height:1.12;letter-spacing:-.022em;
   margin:0;text-wrap:balance;
 }
-.nome-perfil em{font-style:normal;color:var(--verde);}
+.veredito-titulo em{font-style:normal;color:var(--verde);}
+.veredito-texto{
+  margin:0;font-size:15.2px;line-height:1.6;color:var(--texto-2);
+  text-wrap:pretty;
+}
+.veredito-texto strong{color:var(--texto);font-weight:700;}
 
 .bloco-cta{display:flex;flex-direction:column;gap:var(--e2);}
 .escassez{
@@ -507,11 +513,6 @@ h1 mark::after{
   text-transform:uppercase;color:var(--texto-3);font-weight:400;margin-bottom:5px;
 }
 .medidor-texto span{display:block;font-size:14.5px;line-height:1.45;color:var(--texto);}
-
-.leitura{
-  margin:0;font-size:15.2px;line-height:1.68;color:var(--texto-2);
-}
-.leitura b{color:var(--texto);font-weight:700;}
 
 .pontos{
   display:flex;flex-direction:column;
@@ -779,12 +780,17 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
       <section class="tela anima" id="t-resultado" data-tela="resultado">
         <div class="escada">
           <div><span class="faixa-pronto"><svg><use href="#i-ok"/></svg> Diagnóstico pronto</span></div>
-          <h2 class="nome-perfil" id="nomePerfil"></h2>
 
-          <!-- o botão vem antes de tudo: ninguém precisa rolar -->
+          <!-- o veredito vem primeiro, curto de propósito: o botão logo abaixo
+               precisa caber na tela sem ninguém rolar nada. -->
+          <div class="veredito">
+            <h2 class="veredito-titulo" id="vereditoTitulo"></h2>
+            <p class="veredito-texto" id="vereditoTexto"></p>
+          </div>
+
           <div class="bloco-cta">
             <a class="acao" id="botaoCta" href="#" rel="noopener">
-              <svg id="iconeCta"><use href="#i-telegram"/></svg>
+              <svg id="iconeCta"><use href="#i-whats"/></svg>
               <span class="acao-texto">
                 <span class="cta-texto" id="textoCta">CONTINUAR</span>
                 <span class="cta-sub" id="subCta"></span>
@@ -807,7 +813,6 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
             </div>
           </div>
 
-          <p class="leitura" id="leitura"></p>
           <div class="pontos" id="pontos"></div>
           <div>
             <button class="refazer" id="refazer" type="button">
@@ -1374,14 +1379,31 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
     var temValor = destino === 'whats';
     scoreAtual = calcularScore();
 
-    $('#nomePerfil').innerHTML = perfil.nome;
-    $('#rotuloMedidor').textContent = temValor ? 'Nível de prontidão' : 'Potencial identificado';
-    $('#notaMedidor').textContent = perfil.nota;
+    // O veredito sai do que a pessoa RESPONDEU, não de um arquétipo pronto.
+    // Curto de propósito: o botão logo abaixo tem que caber na tela.
+    var titulo, texto;
+    if (temValor){
+      titulo = 'Essa ferramenta foi feita <em>para você</em>';
+      texto  = 'Baseado nas suas respostas, o seu caso é exatamente o que a ferramenta '
+             + 'resolve, e você tem valor disponível para começar. '
+             + '<strong>Falta só liberar o algoritmo com um especialista.</strong>';
+    } else {
+      titulo = 'Ainda <em>não é a hora</em>, e é bom saber disso';
+      texto  = 'Baseado nas suas respostas, a ferramenta ainda não é o passo certo para você '
+             + 'agora: ela precisa de um valor na conta para operar. Em vez de te empurrar algo '
+             + 'fora de hora, <strong>a sua entrada é na comunidade gratuita</strong>, '
+             + 'com atualizações e dicas.';
+    }
+    $('#vereditoTitulo').innerHTML = titulo;
+    $('#vereditoTexto').innerHTML  = texto;
 
-    var fecho = temValor
-      ? '<br><br>Como você tem valor disponível para começar hoje, o próximo passo é <strong>liberar o algoritmo junto com um especialista</strong>, no seu ritmo.'
-      : '<br><br>Como você ainda não tem valor disponível, o caminho certo é <strong>entrar na comunidade gratuita</strong>, aprender o processo e chegar preparado quando o capital vier.';
-    $('#leitura').innerHTML = perfil.leitura + fecho;
+    // A frase do anel também segue o veredito. Antes vinha do arquétipo e
+    // contradizia o texto: dizer "você quer escala" para quem acabou de ser
+    // mandado para a comunidade não fecha.
+    $('#rotuloMedidor').textContent = temValor ? 'Nível de prontidão' : 'Potencial identificado';
+    $('#notaMedidor').textContent = temValor
+      ? 'O seu perfil e o seu momento batem.'
+      : 'O perfil bate. Falta só o momento.';
 
     var linhas = [{ i:'01', txt:'<b>Seu gargalo hoje:</b> ' + esc(perfil.gargalo) }];
     respostas.slice(1).forEach(function(r, k){
@@ -1395,8 +1417,8 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
     if (temValor){
       destinoUrl = montarLink(CONFIG.redirectWhats);
       textoCta   = 'FALAR COM UM ESPECIALISTA';
-      subCta     = 'e receber a Trading Pro';
-      iconeCta   = '#i-telegram';
+      subCta     = 'e liberar a Trading Pro';
+      iconeCta   = '#i-whats';
       escassez   = 'Liberação gratuita do algoritmo por 24 horas';
     } else {
       destinoUrl = montarLink(CONFIG.redirectComunidade);
