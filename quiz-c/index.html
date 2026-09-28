@@ -8,23 +8,19 @@
 <meta name="description" content="Quiz de 5 perguntas sobre sua rotina e seus objetivos. Leva menos de 1 minuto." />
 <meta name="robots" content="noindex, nofollow" />
 
-<!-- Meta Pixel Code -->
+<!-- TikTok Pixel Code Start -->
 <script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-// autoConfig ANTES do init: sem isso o Pixel lê sozinho o texto de todo botão
-// clicado, e os botões deste quiz SÃO as respostas.
-fbq('set', 'autoConfig', false, '1598167835188754');
-fbq('init', '1598167835188754');
-fbq('track', 'PageView');
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
+  ttq.load('DATCJ8JC77UAAGDAK2RG');
+  ttq.page();
+}(window, document, 'ttq');
 </script>
-<!-- End Meta Pixel Code -->
+<!-- TikTok Pixel Code End -->
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Descubra seu Perfil de Trader" />
@@ -627,11 +623,6 @@ h1 mark::after{
 </head>
 <body>
 
-<!-- noscript do Pixel -->
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
-/></noscript>
-
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
     <linearGradient id="gradMarca" x1="0" y1="1" x2="1" y2="0">
@@ -821,7 +812,7 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
   var CONFIG = {
     // Tem valor para iniciar hoje -> especialista
     // Especialista agora atende no Telegram. A comunidade segue igual.
-    redirectWhats: 'https://t.me/SuporteTradingPro',
+    redirectWhats: 'https://wa.link/x0i685',
     // Não tem valor para iniciar -> comunidade
     redirectComunidade: 'https://app.massflow.tech/api/go/comunidade-traderpro-tpnra3ppsd',
     repassarParametros: true,
@@ -846,9 +837,9 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
     popupAtrasoMs: 0,
     // 0 = trava sempre. Maior que 0 = lembra de quem já preencheu, por N dias.
     popupLembrarDias: 0,
-    // A entrada do popup NÃO vira evento na Meta, seguindo o padrão da
-    // dashboard do diretor. O Lead continua saindo só no clique do CTA.
-    popupAvisaMeta: false
+    // A entrada do popup NÃO vira evento no TikTok. O SubmitForm continua
+    // saindo só no clique do CTA, no fim do quiz.
+    popupAvisaPixel: false
   };
 
   /* =========================================================
@@ -1418,10 +1409,10 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
     rastrear('quiz_cta_clique', { destino:destino, perfil: respostas[0] ? respostas[0].valor : null });
     Painel.clicouCta(destino, respostas[0] ? respostas[0].valor : null);
 
-    // segura o clique só o suficiente para o Pixel enviar o Lead
+    // segura o clique só o suficiente para o Pixel enviar o SubmitForm
     var outraAba = ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button === 1;
     if (outraAba || !CONFIG.esperaPixelMs) return;
-    if (typeof window.fbq !== 'function') return;
+    if (!window.ttq || typeof window.ttq.track !== 'function') return;
     var url = this.href;
     if (!url || url.indexOf('http') !== 0) return;
 
@@ -1451,25 +1442,35 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
   }
 
   /* ========================= RASTREAMENTO ========================= */
-  // As respostas do quiz NUNCA vão para a Meta. Quanto a pessoa tem para
+  // As respostas do quiz NUNCA vão para o TikTok. Quanto a pessoa tem para
   // investir, quanto já investiu e o destino dela são dados sobre a situação
-  // financeira dela: é o tipo de informação que a Meta trata como proibida nas
-  // ferramentas de negócio, e que leva o pixel para Core Setup.
+  // financeira dela, e é o tipo de informação que as plataformas tratam como
+  // categoria sensível.
   // Tudo isso continua indo para o painel do Supabase, que é banco nosso.
+  //
+  // ATENÇÃO — ISTO NÃO SE RESOLVE NO CÓDIGO:
+  // o TikTok tem o "Automatic Advanced Matching", que lê SOZINHO os campos
+  // de formulário, o texto da página e os cliques em botão. Aqui isso pegaria
+  // o nome e o telefone do popup e o texto dos botões, que SÃO as respostas.
+  // Na Meta dava para desligar por código (autoConfig). No TikTok, só no
+  // painel:  Events Manager > o pixel > Settings > Automatic Advanced
+  // Matching > OFF. O próprio TikTok recomenda desligar em site financeiro.
   //
   // Aqui saem 3 eventos, TODOS sem nenhum parâmetro. O segundo argumento
   // (dados) é recebido e ignorado de propósito, para os pontos de chamada
   // continuarem iguais e ninguém reintroduzir dado sem perceber.
   function rastrear(evento /* , dados — ignorado de propósito */){
     try{
-      if (typeof window.fbq !== 'function') return;
+      if (!window.ttq || typeof window.ttq.track !== 'function') return;
       var id = {};
-      try { id.eventID = Painel.sessao() + '-' + evento; } catch(e){}
+      try { id.event_id = Painel.sessao() + '-' + evento; } catch(e){}
 
-      if (evento === 'quiz_iniciado')        window.fbq('trackCustom', 'quiz_iniciado', {}, id);
-      else if (evento === 'quiz_finalizado') window.fbq('trackCustom', 'QuizCompleto', {}, id);
-      else if (evento === 'quiz_cta_clique') window.fbq('track', 'Lead', {}, id);
-      // quiz_visualizado (duplica o PageView) e quiz_resposta: não vão para a Meta.
+      if (evento === 'quiz_iniciado')        window.ttq.track('quiz_iniciado', {}, id);
+      else if (evento === 'quiz_finalizado') window.ttq.track('QuizCompleto', {}, id);
+      // SubmitForm e o evento padrao de lead do TikTok: e por ele que o
+      // gestor otimiza a campanha.
+      else if (evento === 'quiz_cta_clique') window.ttq.track('SubmitForm', {}, id);
+      // quiz_visualizado (duplica o ttq.page) e quiz_resposta: nao saem daqui.
     }catch(e){}
   }
 
@@ -1748,7 +1749,7 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
       $('#travaEnviar .cta-texto').textContent = 'Liberando...';
       vibrar(12);
 
-      if (CONFIG.popupAvisaMeta) rastrear('quiz_lead', {});
+      if (CONFIG.popupAvisaPixel) rastrear('quiz_lead', {});
 
       // um lead vale uma espera curta. Passou de 2s, libera assim mesmo:
       // nunca segurar a pessoa na porta por causa do rastreamento.
