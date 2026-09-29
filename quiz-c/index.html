@@ -516,6 +516,29 @@ h1 mark::after{
   transition:opacity .25s var(--curva);
 }
 .video-capa[hidden]{display:none;}
+
+/* pílula de som: fica enquanto o vídeo roda mudo */
+.video-som{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 20px;border:0;border-radius:999px;cursor:pointer;
+  background:var(--verde);color:#022018;
+  font-family:var(--display);font-weight:800;font-size:14px;letter-spacing:-.01em;
+  box-shadow:0 12px 34px -10px rgba(0,224,164,.75);
+  animation:pulsaSom 2.2s ease-in-out infinite;
+}
+.video-som[hidden]{display:none;}
+.video-som-ico{display:grid;place-items:center;width:22px;height:22px;flex:none;}
+.video-som-ico svg{
+  width:22px;height:22px;fill:currentColor;
+  stroke:currentColor;stroke-width:2;stroke-linecap:round;
+}
+@keyframes pulsaSom{
+  0%,100%{ transform:translate(-50%,-50%) scale(1); }
+  50%    { transform:translate(-50%,-50%) scale(1.045); }
+}
+@media(prefers-reduced-motion:reduce){ .video-som{animation:none;} }
+@media(max-width:380px){ .video-som{font-size:13px;padding:11px 16px;} }
 .video-play{
   display:grid;place-items:center;width:64px;height:64px;border-radius:50%;
   background:var(--verde);color:#022018;
@@ -850,19 +873,35 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
           </div>
 
           <!-- Vídeo: aparece nos DOIS desfechos, sempre ABAIXO do CTA, para não
-               empurrar o botão para fora da tela. Não toca sozinho: o arquivo
-               tem 13 MB e som, então tocar sem toque queimaria dados de quem
-               não vai assistir e sairia mudo de qualquer jeito. No primeiro
-               toque ele já toca COM som. -->
+               empurrar o botão para fora da tela.
+
+               Ele começa sozinho, MUDO. Isso não é escolha: navegador nenhum
+               deixa vídeo começar sozinho com som. Mudo é o único jeito de
+               começar sem toque, e um toque ativa o som.
+
+               Sem preload e sem o atributo autoplay de propósito: assim o
+               arquivo de 13 MB não começa a baixar enquanto a pessoa ainda
+               está respondendo. Quem manda tocar é o aoEntrar('resultado'). -->
           <div class="video-bloco">
             <h3 class="video-titulo">Veja abaixo como funciona a nossa ferramenta</h3>
-            <div class="video-caixa">
-              <video id="videoFerramenta" preload="metadata" playsinline controls
+            <div class="video-caixa" id="videoCaixa">
+              <video id="videoFerramenta" preload="none" playsinline controls muted
                      width="1024" height="576">
                 <source src="ferramenta.mp4" type="video/mp4" />
                 O seu navegador não consegue exibir este vídeo.
               </video>
-              <button class="video-capa" id="videoCapa" type="button"
+
+              <!-- aparece enquanto está tocando mudo -->
+              <button class="video-som" id="videoSom" type="button" hidden
+                      aria-label="Ativar o som do vídeo">
+                <span class="video-som-ico"><svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 9v6h4l5 4V5L8 9H4z"/><line x1="17" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="17" y2="15"/>
+                </svg></span>
+                <span>Toque para ativar o som</span>
+              </button>
+
+              <!-- só aparece se o navegador recusar o início automático -->
+              <button class="video-capa" id="videoCapa" type="button" hidden
                       aria-label="Assistir ao vídeo de 1 minuto e 50 segundos">
                 <span class="video-play"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="8,5 20,12 8,19"/></svg></span>
                 <span class="video-capa-txt">Assistir agora <b>1 min 50</b></span>
@@ -1273,7 +1312,7 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
 
   function aoEntrar(nome){
     if (nome === 'analise')   rodarAnalise();
-    if (nome === 'resultado') animarAnel();
+    if (nome === 'resultado'){ animarAnel(); Video.comecar(); }
   }
 
   /* ========================= RENDER DA PERGUNTA ========================= */
@@ -1544,26 +1583,92 @@ src="https://www.facebook.com/tr?id=1598167835188754&ev=PageView&noscript=1"
   });
 
   /* ========================= VÍDEO ========================= */
-  // Um toque na capa: ela some e o vídeo toca com som. Se o navegador recusar
-  // o play (política de mídia), a capa volta e as controls nativas continuam
-  // ali, então nunca sobra um retângulo morto na tela.
-  (function video(){
+  // Começa sozinho, mudo, no instante em que a tela de resultado aparece.
+  //
+  // Mudo não é preferência: autoplay COM som é bloqueado por todo navegador,
+  // no celular e no computador. Mudo é o único jeito de começar sem toque.
+  // Por isso a pílula "toque para ativar o som" fica em cima do vídeo.
+  //
+  // Se ainda assim o navegador recusar (iOS em Modo de Baixo Consumo, economia
+  // de dados), a capa de play aparece e a pessoa toca. Nunca fica um retângulo
+  // parado na tela.
+  var Video = (function(){
     var v = document.getElementById('videoFerramenta');
+    var caixa = document.getElementById('videoCaixa');
+    var som = document.getElementById('videoSom');
     var capa = document.getElementById('videoCapa');
-    if (!v || !capa) return;
+    if (!v || !som || !capa) return { comecar: function(){} };
 
-    function esconderCapa(){ capa.hidden = true; }
+    var comecou = false;
+
+    function ativarSom(){
+      try { v.muted = false; v.volume = 1; } catch(e){}
+      som.hidden = true;
+      if (v.paused) { try { v.play(); } catch(e){} }
+    }
+
+    som.addEventListener('click', function(ev){ ev.stopPropagation(); ativarSom(); });
+    // tocar em qualquer lugar do vídeo também ativa o som, enquanto estiver mudo
+    caixa.addEventListener('click', function(){ if (v.muted) ativarSom(); });
 
     capa.addEventListener('click', function(){
-      esconderCapa();
-      try {
-        v.muted = false;
-        var p = v.play();
-        if (p && typeof p.catch === 'function') p.catch(function(){ capa.hidden = false; });
-      } catch(e){ capa.hidden = false; }
+      capa.hidden = true;
+      ativarSom();
     });
 
-    v.addEventListener('play', esconderCapa);   // se usar as controls nativas
+    v.addEventListener('play', function(){ capa.hidden = true; });
+    v.addEventListener('volumechange', function(){ if (!v.muted) som.hidden = true; });
+    v.addEventListener('ended', function(){ som.hidden = true; });
+
+    function desistir(){                 // mostra a capa e tira a pílula
+      if (!v.muted) return;              // já ativaram o som: está tudo certo
+      som.hidden = true;
+      capa.hidden = false;
+    }
+
+    // Cão de guarda. O play() pode ficar PENDENTE para sempre quando o vídeo
+    // não consegue carregar: rede ruim, arquivo travado, codec recusado. Aí
+    // não vem nem resolve nem reject, e sem isto a pessoa ficaria olhando um
+    // retângulo preto sem nada para tocar. Se em 4s o vídeo não andou de
+    // verdade, a capa de play aparece.
+    function vigiar(){
+      window.setTimeout(function(){
+        if (v.currentTime > 0 && !v.paused) return;   // está rodando, tudo certo
+        desistir();
+      }, 4000);
+    }
+
+    v.addEventListener('error', desistir);
+    v.addEventListener('stalled', function(){
+      window.setTimeout(function(){ if (!(v.currentTime > 0)) desistir(); }, 3000);
+    });
+    // se ele destravar sozinho depois, a capa some e a pílula volta
+    v.addEventListener('timeupdate', function(){
+      if (v.currentTime > 0 && !v.paused){
+        capa.hidden = true;
+        if (v.muted) som.hidden = false;
+      }
+    });
+
+    return {
+      comecar: function(){
+        if (comecou) return;
+        comecou = true;
+        try {
+          v.muted = true;              // obrigatório para começar sem toque
+          v.preload = 'auto';
+          v.load();
+          var p = v.play();
+          if (p && typeof p.catch === 'function') {
+            p.then(function(){ som.hidden = false; })
+             .catch(desistir);
+          } else {
+            som.hidden = false;
+          }
+        } catch(e){ desistir(); }
+        vigiar();
+      }
+    };
   })();
 
   /* ========================= LINK ========================= */
